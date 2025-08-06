@@ -22,18 +22,17 @@ const Header = () => {
     }
   };
 
+  // Simplified navigation for $100M brand focus
   const navItems = [
-    { label: 'Services', href: 'services' },
-    { label: 'Process', href: 'process' },
-    { label: 'Pricing', href: 'pricing' },
+    { label: 'Results', href: 'testimonials' },
     { label: 'FAQ', href: 'faq' },
   ];
 
   return (
     <header 
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 ${
         isScrolled 
-          ? 'bg-white/95 backdrop-blur-md shadow-soft' 
+          ? 'bg-white/98 backdrop-blur-xl shadow-premium border-b border-gold/20' 
           : 'bg-transparent'
       }`}
     >
@@ -58,11 +57,12 @@ const Header = () => {
               </button>
             ))}
             <Button 
-              variant="hero" 
+              variant="cta" 
               size="lg"
               onClick={() => scrollToSection('contact')}
+              className="font-bold"
             >
-              Get Started
+              Claim $2.4M Savings
             </Button>
           </nav>
 
@@ -88,12 +88,12 @@ const Header = () => {
               </button>
             ))}
             <Button 
-              variant="hero" 
+              variant="cta" 
               size="lg" 
-              className="w-full mt-4"
+              className="w-full mt-4 font-bold"
               onClick={() => scrollToSection('contact')}
             >
-              Get Started
+              Claim $2.4M Savings
             </Button>
           </div>
         )}

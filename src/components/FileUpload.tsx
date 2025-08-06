@@ -71,20 +71,26 @@ const FileUpload = () => {
   };
 
   return (
-    <section id="contact" className="py-20 bg-background">
+    <section id="contact" className="py-32 bg-gradient-to-br from-primary via-primary-dark to-dark-section">
       <div className="container mx-auto px-4 lg:px-8">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="font-sora font-bold text-3xl lg:text-5xl mb-6">
-              Get Your Free 
-              <span className="text-gradient"> Migration Quote</span>
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 bg-gold/20 backdrop-blur-sm border border-gold/30 rounded-full px-6 py-3 mb-8">
+              <Calculator size={20} className="text-gold" />
+              <span className="text-gold font-semibold text-lg">Instant Quote Calculator</span>
+            </div>
+            <h2 className="font-sora font-bold text-4xl lg:text-6xl mb-8 text-white">
+              Claim Your
+              <span className="text-gradient-premium bg-gradient-to-r from-gold via-gold-light to-accent bg-clip-text text-transparent"> $2.4M Savings</span>
+              <br />
+              <span className="text-white">Migration Plan</span>
             </h2>
-            <p className="text-xl text-muted-foreground">
-              Upload your Zapier or Make.com workflow JSON and get instant pricing
+            <p className="text-2xl text-white/90 max-w-3xl mx-auto">
+              Upload your current workflow and get your personalized escape plan in 30 seconds
             </p>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-soft p-8 lg:p-12">
+          <div className="bg-white/98 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 lg:p-12">
             {!uploadedFile ? (
               <div
                 className="border-2 border-dashed border-muted hover:border-primary transition-colors rounded-xl p-12 text-center cursor-pointer"
@@ -97,8 +103,8 @@ const FileUpload = () => {
                 <p className="text-muted-foreground mb-6">
                   Drag and drop your exported JSON file or click to browse
                 </p>
-                <Button variant="outline">
-                  Choose File
+                <Button variant="cta" size="lg" className="font-bold">
+                  Choose Your Workflow File
                 </Button>
                 <input
                   ref={fileInputRef}
@@ -148,12 +154,12 @@ const FileUpload = () => {
                   </div>
                 )}
 
-                <div className="flex gap-4 justify-center">
-                  <Button variant="outline" onClick={resetUpload}>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <Button variant="outline" onClick={resetUpload} size="lg">
                     Upload Different File
                   </Button>
-                  <Button variant="hero" className="px-8">
-                    Request Detailed Quote
+                  <Button variant="cta" className="px-12 font-bold" size="lg">
+                    GET MY COMPLETE $2.4M SAVINGS PLAN
                   </Button>
                 </div>
               </div>

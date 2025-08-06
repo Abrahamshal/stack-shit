@@ -19,13 +19,11 @@ const Index = () => {
       <Hero />
       <SocialProof />
       <PainVsGain />
-      <Services />
-      <Process />
       <Pricing />
-      <FileUpload />
-      <CalendlyEmbed />
       <Testimonials />
       <FAQ />
+      <FileUpload />
+      <CalendlyEmbed />
       <CTABanner />
       <Footer />
     </div>

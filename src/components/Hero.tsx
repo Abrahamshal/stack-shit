@@ -29,17 +29,17 @@ const Hero = () => {
       </div>
 
       {/* Urgency Banner */}
-      <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-20 animate-premium-entrance">
-        <div className="bg-urgent/90 backdrop-blur-sm text-white px-6 py-2 rounded-full border border-urgent/50 urgency-pulse">
-          <span className="flex items-center gap-2 text-sm font-bold">
-            <Clock size={16} className="animate-spin" />
-            🔥 LIMITED: Only 12 Migration Slots Left This Month
+      <div className="absolute top-20 left-1/2 transform -translate-x-1/2 z-30 animate-premium-entrance">
+        <div className="bg-urgent/95 backdrop-blur-xl text-white px-8 py-3 rounded-full border border-urgent/70 urgency-pulse shadow-2xl">
+          <span className="flex items-center gap-2 text-base font-bold">
+            <Clock size={18} className="animate-spin" />
+            🔥 CRITICAL: Only 7 Migration Slots Left This Month
           </span>
         </div>
       </div>
 
-      <div className="relative z-10 container mx-auto px-4 lg:px-8 text-center mt-16">
-        <div className="max-w-5xl mx-auto">
+      <div className="relative z-20 container mx-auto px-4 lg:px-8 text-center pt-32">
+        <div className="max-w-6xl mx-auto">
           {/* Authority Badge */}
           <div className="inline-flex items-center gap-2 bg-gold/20 backdrop-blur-sm border border-gold/30 rounded-full px-6 py-2 mb-8 animate-premium-entrance">
             <TrendingUp size={20} className="text-gold" />
@@ -47,24 +47,28 @@ const Hero = () => {
           </div>
 
           {/* Hook Transformation */}
-          <h1 className="font-sora font-bold text-5xl sm:text-6xl lg:text-8xl text-white mb-8 animate-premium-entrance leading-tight">
-            The <span className="text-gradient-premium">$2.4M</span>
+          <h1 className="font-sora font-bold text-6xl sm:text-7xl lg:text-9xl text-white mb-12 animate-premium-entrance leading-[0.9] tracking-tight">
+            The <span className="text-gradient-premium bg-gradient-to-r from-gold via-gold-light to-accent bg-clip-text text-transparent">$2.4M</span>
             <br />
-            <span className="text-gold">Automation Escape</span>
+            <span className="text-gold drop-shadow-2xl">Automation</span>
             <br />
-            <span className="text-white">Plan</span>
+            <span className="text-white drop-shadow-2xl">Escape Plan</span>
           </h1>
           
           {/* Problem + Solution */}
-          <p className="text-2xl lg:text-3xl text-white/95 mb-6 max-w-4xl mx-auto leading-relaxed animate-premium-entrance font-medium" style={{ animationDelay: '0.3s' }}>
-            <span className="text-urgent font-bold">STOP</span> paying Zapier & Make.com 
-            <span className="text-gold font-bold"> $2,400+/month</span> for limited automations
+          <p className="text-3xl lg:text-4xl text-white/98 mb-8 max-w-5xl mx-auto leading-relaxed animate-premium-entrance font-bold" style={{ animationDelay: '0.3s' }}>
+            <span className="text-urgent bg-urgent/20 px-3 py-1 rounded-lg">STOP</span> paying Zapier & Make.com 
+            <span className="text-gold bg-gold/20 px-3 py-1 rounded-lg ml-2">$2,400+/month</span>
+            <br />
+            <span className="text-white/90 text-2xl lg:text-3xl mt-4 block">for basic automations that lock you in</span>
           </p>
 
-          <p className="text-xl lg:text-2xl text-white/90 mb-12 max-w-4xl mx-auto animate-premium-entrance" style={{ animationDelay: '0.4s' }}>
-            Get <span className="text-gold font-bold">unlimited workflows</span>, 
-            <span className="text-accent font-bold"> complete ownership</span>, and 
-            <span className="text-success font-bold"> 90% cost savings</span> with your private n8n empire
+          <p className="text-2xl lg:text-3xl text-white/95 mb-16 max-w-5xl mx-auto animate-premium-entrance font-semibold" style={{ animationDelay: '0.4s' }}>
+            Get <span className="text-gold bg-gold/20 px-2 py-1 rounded">unlimited workflows</span>, 
+            <span className="text-accent bg-accent/20 px-2 py-1 rounded mx-2">complete ownership</span>, and 
+            <span className="text-success bg-success/20 px-2 py-1 rounded">90% cost savings</span>
+            <br />
+            <span className="text-white/90 text-xl lg:text-2xl mt-4 block">with your private n8n automation empire</span>
           </p>
 
           {/* Social Proof Stats */}
@@ -83,38 +87,57 @@ const Hero = () => {
             </div>
           </div>
 
-          {/* CTA Stack */}
-          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center animate-premium-entrance" style={{ animationDelay: '0.6s' }}>
+          {/* Single, Focused CTA */}
+          <div className="flex justify-center animate-premium-entrance mb-8" style={{ animationDelay: '0.6s' }}>
             <Button 
               variant="cta" 
               size="xl"
               onClick={() => scrollToSection('contact')}
-              className="group premium-shine"
+              className="group premium-shine text-xl px-16 py-6 h-20 shadow-2xl hover:shadow-gold/50 transform hover:scale-110 transition-all duration-300"
             >
-              <DollarSign className="mr-2" size={20} />
-              Claim Your $2.4M Savings Plan
-              <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={20} />
+              <DollarSign className="mr-3" size={28} />
+              CLAIM YOUR $2.4M SAVINGS PLAN
+              <ArrowRight className="ml-3 group-hover:translate-x-2 transition-transform" size={28} />
             </Button>
-            
+          </div>
+          
+          {/* Secondary CTA */}
+          <div className="flex justify-center animate-premium-entrance" style={{ animationDelay: '0.7s' }}>
             <Button 
               variant="outline-light" 
-              size="xl"
+              size="lg"
               onClick={() => scrollToSection('calendly')}
-              className="group"
+              className="group text-lg px-8"
             >
               <Zap className="mr-2 group-hover:scale-110 transition-transform" size={20} />
-              Book Emergency Strategy Call
+              Book Emergency Strategy Call (Free)
             </Button>
           </div>
 
           {/* Scarcity + Risk Reversal */}
-          <div className="mt-12 space-y-4 animate-premium-entrance" style={{ animationDelay: '0.8s' }}>
-            <p className="text-gold font-semibold text-lg">
-              ⚡ Next Price Increase: January 15th (+40%)
-            </p>
-            <p className="text-white/80 text-sm">
-              ✅ 30-Day Money-Back Guarantee | ✅ White-Glove Migration | ✅ 24/7 Priority Support
-            </p>
+          <div className="mt-16 space-y-6 animate-premium-entrance" style={{ animationDelay: '0.8s' }}>
+            <div className="bg-urgent/20 backdrop-blur-sm border border-urgent/40 rounded-2xl px-8 py-4 max-w-2xl mx-auto">
+              <p className="text-urgent font-bold text-xl">
+                ⚡ URGENT: Next Price Increase January 15th (+40%)
+              </p>
+              <p className="text-white/90 text-lg mt-2">
+                Lock in today's pricing before it's gone forever
+              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl px-6 py-4 border border-white/20">
+                <p className="text-success font-bold text-lg">✅ 30-Day Money-Back</p>
+                <p className="text-white/80 text-sm">Zero risk guarantee</p>
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl px-6 py-4 border border-white/20">
+                <p className="text-success font-bold text-lg">✅ White-Glove Migration</p>
+                <p className="text-white/80 text-sm">We do everything for you</p>
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl px-6 py-4 border border-white/20">
+                <p className="text-success font-bold text-lg">✅ 24/7 Priority Support</p>
+                <p className="text-white/80 text-sm">Direct access to experts</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>

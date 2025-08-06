@@ -15,10 +15,14 @@ const buttonVariants = cva(
         secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        hero: "bg-gradient-to-r from-primary to-primary-light text-primary-foreground hover:shadow-glow hover:scale-105 font-semibold",
+        // Premium $100M Brand Variants
+        hero: "btn-hero premium-shine hover:scale-105 shadow-gold",
+        premium: "btn-premium hover:scale-105 shadow-accent",
+        urgent: "btn-urgent urgency-pulse hover:scale-110",
+        "outline-light": "btn-outline-light hover:scale-105",
+        cta: "bg-gradient-to-r from-gold via-gold-light to-accent text-gold-foreground hover:shadow-gold hover:scale-105 font-bold tracking-wide uppercase",
+        // Legacy variants for compatibility
         accent: "bg-accent text-accent-foreground hover:bg-accent-light hover:scale-105 font-semibold",
-        "outline-light": "border-2 border-white/20 text-white hover:bg-white/10 backdrop-blur-sm font-medium",
-        cta: "bg-gradient-to-r from-primary via-primary-light to-accent text-white hover:shadow-glow hover:scale-105 font-bold tracking-wide",
       },
       size: {
         default: "h-10 px-4 py-2",

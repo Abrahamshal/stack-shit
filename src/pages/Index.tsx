@@ -2,7 +2,6 @@ import Header from '@/components/Header';
 import Hero from '@/components/Hero';
 import SocialProof from '@/components/SocialProof';
 import PainVsGain from '@/components/PainVsGain';
-import Services from '@/components/Services';
 import Process from '@/components/Process';
 import Pricing from '@/components/Pricing';
 import FileUpload from '@/components/FileUpload';
@@ -19,6 +18,7 @@ const Index = () => {
       <Hero />
       <SocialProof />
       <PainVsGain />
+      <Process />
       <Pricing />
       <Testimonials />
       <FAQ />

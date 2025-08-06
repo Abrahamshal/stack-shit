@@ -33,8 +33,8 @@ const CTABanner = () => {
             </h2>
             
             <p className="text-xl lg:text-2xl text-white/80 mb-12 leading-relaxed">
-              Join hundreds of teams who've already made the switch to cost-effective, 
-              self-hosted automation with n8n.
+              Join 247+ teams who've transformed their automation costs while gaining 
+              complete control with self-hosted n8n workflows.
             </p>
           </div>
 
@@ -61,20 +61,20 @@ const CTABanner = () => {
             </Button>
           </div>
 
-          <div className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
-            <div>
-              <div className="text-3xl lg:text-4xl font-bold text-accent mb-2">500+</div>
-              <div className="text-white/70">Workflows Migrated</div>
+            <div className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
+              <div>
+                <div className="text-3xl lg:text-4xl font-bold text-accent mb-2">247+</div>
+                <div className="text-white/70">Successful Migrations</div>
+              </div>
+              <div>
+                <div className="text-3xl lg:text-4xl font-bold text-accent mb-2">77%</div>
+                <div className="text-white/70">Average Cost Reduction</div>
+              </div>
+              <div>
+                <div className="text-3xl lg:text-4xl font-bold text-accent mb-2">72h</div>
+                <div className="text-white/70">Typical Migration Time</div>
+              </div>
             </div>
-            <div>
-              <div className="text-3xl lg:text-4xl font-bold text-accent mb-2">72%</div>
-              <div className="text-white/70">Average Cost Savings</div>
-            </div>
-            <div>
-              <div className="text-3xl lg:text-4xl font-bold text-accent mb-2">3 Days</div>
-              <div className="text-white/70">Average Migration Time</div>
-            </div>
-          </div>
         </div>
       </div>
     </section>

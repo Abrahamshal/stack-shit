@@ -4,19 +4,19 @@ import { Check, Star, ArrowRight } from 'lucide-react';
 const Pricing = () => {
   const plans = [
     {
-      name: "Pay-As-You-Go Migration",
-      price: "$20",
-      period: "per node",
-      description: "Perfect for one-time migrations",
+      name: "Migration Package",
+      price: "$15",
+      period: "per workflow",
+      description: "Complete workflow migration service",
       features: [
-        "Complete workflow analysis",
-        "Full migration & testing", 
-        "Data validation",
-        "Basic documentation",
-        "Email support"
+        "Full workflow analysis & mapping",
+        "Complete migration & testing", 
+        "Data validation & optimization",
+        "Documentation & training",
+        "30-day post-migration support"
       ],
-      footnote: "Minimum 10 nodes",
-      cta: "Get Quote",
+      footnote: "Minimum 5 workflows",
+      cta: "Get Migration Quote",
       popular: false
     },
     {
@@ -81,11 +81,11 @@ const Pricing = () => {
       <div className="container mx-auto px-4 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="font-sora font-bold text-3xl lg:text-5xl mb-6 text-white">
-            Transparent Pricing for 
-            <span className="text-accent"> Every Scale</span>
+            Simple, Transparent 
+            <span className="text-accent"> Pricing</span>
           </h2>
           <p className="text-xl text-white/80 max-w-3xl mx-auto">
-            No hidden fees, no surprises. Choose the plan that grows with your automation needs.
+            Choose the right level of support for your automation transformation journey.
           </p>
         </div>
 

@@ -9,8 +9,8 @@ const Testimonials = () => {
       name: "Sarah Chen",
       role: "Operations Director",
       company: "TechFlow Solutions",
-      content: "Flowstrate migrated our 47 Zapier workflows to n8n in just 3 days. The cost savings are incredible - we're now paying $399/month instead of $2,400. ROI was immediate.",
-      costSaved: "85%",
+      content: "Our migration to n8n cut our automation costs by 83% - from $2,400/month with Zapier to just $399 with managed n8n hosting. The migration was seamless and completed in 3 days.",
+      costSaved: "83%",
       migrationTime: "3 days",
       rating: 5
     },
@@ -18,8 +18,8 @@ const Testimonials = () => {
       name: "Marcus Rodriguez", 
       role: "RevOps Manager",
       company: "GrowthStack Inc",
-      content: "The strategy call alone was worth 10x the $149 fee. They identified bottlenecks we didn't even know existed and helped us automate our entire lead scoring process.",
-      costSaved: "73%",
+      content: "The strategy consultation helped us identify $18K in annual savings opportunities. We eliminated 15 different automation tools and consolidated everything into our own n8n instance.",
+      costSaved: "76%",
       migrationTime: "5 days", 
       rating: 5
     },
@@ -27,8 +27,8 @@ const Testimonials = () => {
       name: "Emily Watson",
       role: "CTO",
       company: "DataFlow Ventures",
-      content: "Self-hosting with n8n gives us the control we needed for GDPR compliance. Flowstrate's managed hosting means we get all the benefits without the DevOps headaches.",
-      costSaved: "68%",
+      content: "Self-hosting with n8n gives us complete control and GDPR compliance. The managed hosting service handles all technical aspects while we focus on building workflows that drive our business.",
+      costSaved: "71%",
       migrationTime: "2 days",
       rating: 5
     }

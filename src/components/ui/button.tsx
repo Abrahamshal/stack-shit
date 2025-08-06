@@ -15,12 +15,12 @@ const buttonVariants = cva(
         secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        // Premium $100M Brand Variants
-        hero: "btn-hero premium-shine hover:scale-105 shadow-gold",
-        premium: "btn-premium hover:scale-105 shadow-accent",
-        urgent: "btn-urgent urgency-pulse hover:scale-110",
-        "outline-light": "btn-outline-light hover:scale-105",
-        cta: "bg-gradient-to-r from-gold via-gold-light to-accent text-gold-foreground hover:shadow-gold hover:scale-105 font-bold tracking-wide uppercase",
+        // Premium Brand Variants - Fixed for proper contrast
+        hero: "bg-gradient-to-r from-primary to-primary-dark text-white border border-primary/20 hover:scale-105 shadow-lg hover:shadow-primary/30 font-semibold",
+        premium: "bg-gradient-to-r from-accent to-accent/90 text-white border border-accent/20 hover:scale-105 shadow-lg hover:shadow-accent/30 font-semibold",
+        urgent: "bg-urgent text-white border border-urgent/20 hover:bg-urgent/90 hover:scale-105 font-bold",
+        "outline-light": "border-2 border-white/30 bg-white/10 text-white hover:bg-white/20 hover:border-white/50 backdrop-blur-sm",
+        cta: "bg-gradient-to-r from-gold via-gold-light to-accent text-white hover:shadow-lg hover:shadow-gold/50 hover:scale-105 font-bold tracking-wide",
         // Legacy variants for compatibility
         accent: "bg-accent text-accent-foreground hover:bg-accent-light hover:scale-105 font-semibold",
       },

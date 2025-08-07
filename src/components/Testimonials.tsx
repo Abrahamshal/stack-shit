@@ -1,35 +1,60 @@
 import { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, Star, TrendingDown, Clock } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Star, TrendingDown, Clock, Youtube, Twitter, Play } from 'lucide-react';
 
 const Testimonials = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const testimonials = [
     {
-      name: "Sarah Chen",
-      role: "Operations Director",
-      company: "TechFlow Solutions",
-      content: "Our migration to n8n cut our automation costs by 83% - from $2,400/month with Zapier to just $399 with managed n8n hosting. The migration was seamless and completed in 3 days.",
-      costSaved: "83%",
-      migrationTime: "3 days",
+      type: "youtube",
+      name: "Alex Thompson",
+      role: "Tech Review Channel",
+      company: "DevOps Weekly",
+      content: "n8n vs Zapier: Why I saved $2,000/month by switching",
+      thumbnail: "I tested both platforms extensively. n8n's self-hosted approach gives you unlimited executions for a fraction of the cost.",
+      costSaved: "$2,000/mo",
+      views: "45K views",
       rating: 5
     },
     {
-      name: "Marcus Rodriguez", 
-      role: "RevOps Manager",
-      company: "GrowthStack Inc",
-      content: "The strategy consultation helped us identify $18K in annual savings opportunities. We eliminated 15 different automation tools and consolidated everything into our own n8n instance.",
-      costSaved: "76%",
-      migrationTime: "5 days", 
+      type: "twitter", 
+      name: "@automation_guru",
+      role: "Automation Consultant",
+      company: "Twitter",
+      content: "Just migrated a client from Zapier to @n8n_io. They went from paying $600/month for 50k tasks to $50/month hosting their own instance. 🤯",
+      engagement: "234 likes • 52 retweets",
+      date: "2 weeks ago",
       rating: 5
     },
     {
-      name: "Emily Watson",
-      role: "CTO",
-      company: "DataFlow Ventures",
-      content: "Self-hosting with n8n gives us complete control and GDPR compliance. The managed hosting service handles all technical aspects while we focus on building workflows that drive our business.",
-      costSaved: "71%",
-      migrationTime: "2 days",
+      type: "youtube",
+      name: "Sarah's Automation Lab",
+      role: "Workflow Specialist",
+      company: "YouTube",
+      content: "Complete n8n Setup Guide: Save 90% on Automation Costs",
+      thumbnail: "Step-by-step guide showing how I replaced my entire automation stack with n8n. Includes real cost comparisons.",
+      costSaved: "90%",
+      views: "28K views",
+      rating: 5
+    },
+    {
+      type: "twitter",
+      name: "@startup_steve",
+      role: "Startup Founder",
+      company: "Twitter",
+      content: "Switching to n8n was the best decision for our startup. We're saving $800/month and have WAY more flexibility. Stack Shift handled the entire migration in 3 days. 🚀",
+      engagement: "156 likes • 31 retweets",
+      date: "1 month ago",
+      rating: 5
+    },
+    {
+      type: "n8n",
+      name: "Community Testimonial",
+      role: "n8n Forum User",
+      company: "n8n Community",
+      content: "I saved $15,000 annually by moving from Zapier to n8n. The community support is incredible and the platform is so much more powerful.",
+      source: "n8n Community Forum",
+      verified: true,
       rating: 5
     }
   ];
@@ -65,41 +90,85 @@ const Testimonials = () => {
         <div className="relative max-w-4xl mx-auto">
           <div className="bg-white rounded-2xl shadow-soft p-8 lg:p-12">
             <div className="text-center mb-8">
-              {/* Star Rating */}
-              <div className="flex justify-center gap-1 mb-4">
-                {[...Array(testimonials[currentSlide].rating)].map((_, i) => (
-                  <Star key={i} size={20} className="text-yellow-400 fill-current" />
-                ))}
+              {/* Platform Icon */}
+              <div className="flex justify-center mb-4">
+                {testimonials[currentSlide].type === 'youtube' && (
+                  <div className="bg-red-100 p-3 rounded-full">
+                    <Youtube size={24} className="text-red-600" />
+                  </div>
+                )}
+                {testimonials[currentSlide].type === 'twitter' && (
+                  <div className="bg-blue-100 p-3 rounded-full">
+                    <Twitter size={24} className="text-blue-600" />
+                  </div>
+                )}
+                {testimonials[currentSlide].type === 'n8n' && (
+                  <div className="flex justify-center gap-1">
+                    {[...Array(testimonials[currentSlide].rating)].map((_, i) => (
+                      <Star key={i} size={20} className="text-yellow-400 fill-current" />
+                    ))}
+                  </div>
+                )}
               </div>
               
-              {/* Testimonial Content */}
-              <blockquote className="text-lg lg:text-xl text-foreground leading-relaxed mb-8 italic">
-                "{testimonials[currentSlide].content}"
-              </blockquote>
-
-              {/* Stats */}
-              <div className="flex flex-wrap justify-center gap-8 mb-8">
-                <div className="flex items-center gap-2 bg-accent/10 rounded-lg px-4 py-2">
-                  <TrendingDown size={20} className="text-accent" />
-                  <span className="font-semibold text-accent">
-                    {testimonials[currentSlide].costSaved} cost saved
-                  </span>
+              {/* Content */}
+              {testimonials[currentSlide].type === 'youtube' && (
+                <div className="mb-6">
+                  <h3 className="font-sora font-bold text-xl mb-3 flex items-center justify-center gap-2">
+                    <Play size={20} className="text-red-600" />
+                    {testimonials[currentSlide].content}
+                  </h3>
+                  <p className="text-muted-foreground mb-4">
+                    {testimonials[currentSlide].thumbnail}
+                  </p>
+                  <div className="flex justify-center gap-4 text-sm">
+                    <span className="text-muted-foreground">{testimonials[currentSlide].views}</span>
+                    {testimonials[currentSlide].costSaved && (
+                      <span className="text-accent font-semibold">Saved {testimonials[currentSlide].costSaved}</span>
+                    )}
+                  </div>
                 </div>
-                <div className="flex items-center gap-2 bg-primary/10 rounded-lg px-4 py-2">
-                  <Clock size={20} className="text-primary" />
-                  <span className="font-semibold text-primary">
-                    {testimonials[currentSlide].migrationTime} to migrate
-                  </span>
+              )}
+              
+              {testimonials[currentSlide].type === 'twitter' && (
+                <div className="mb-6">
+                  <blockquote className="text-lg text-foreground leading-relaxed mb-4">
+                    {testimonials[currentSlide].content}
+                  </blockquote>
+                  <div className="flex justify-center gap-4 text-sm text-muted-foreground">
+                    <span>{testimonials[currentSlide].engagement}</span>
+                    <span>•</span>
+                    <span>{testimonials[currentSlide].date}</span>
+                  </div>
                 </div>
-              </div>
+              )}
+              
+              {testimonials[currentSlide].type === 'n8n' && (
+                <div className="mb-6">
+                  <blockquote className="text-lg lg:text-xl text-foreground leading-relaxed mb-4 italic">
+                    "{testimonials[currentSlide].content}"
+                  </blockquote>
+                  <div className="flex justify-center items-center gap-2 text-sm">
+                    <span className="text-muted-foreground">{testimonials[currentSlide].source}</span>
+                    {testimonials[currentSlide].verified && (
+                      <span className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-semibold">
+                        Verified
+                      </span>
+                    )}
+                  </div>
+                </div>
+              )}
 
               {/* Author */}
-              <div>
+              <div className="mt-6">
                 <h4 className="font-sora font-semibold text-lg">
                   {testimonials[currentSlide].name}
                 </h4>
                 <p className="text-muted-foreground">
-                  {testimonials[currentSlide].role} at {testimonials[currentSlide].company}
+                  {testimonials[currentSlide].role}
+                  {testimonials[currentSlide].company !== 'Twitter' && 
+                   testimonials[currentSlide].company !== 'YouTube' && 
+                   ` • ${testimonials[currentSlide].company}`}
                 </p>
               </div>
             </div>

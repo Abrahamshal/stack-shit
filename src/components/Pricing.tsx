@@ -5,8 +5,8 @@ const Pricing = () => {
   const plans = [
     {
       name: "Migration Package",
-      price: "$15",
-      period: "per workflow",
+      price: "$20",
+      period: "per node",
       description: "Complete workflow migration service",
       features: [
         "Full workflow analysis & mapping",
@@ -15,57 +15,41 @@ const Pricing = () => {
         "Documentation & training",
         "30-day post-migration support"
       ],
-      footnote: "Minimum 5 workflows",
+      footnote: "Minimum order varies",
       cta: "Get Migration Quote",
       popular: false
     },
     {
-      name: "Starter",
-      price: "$199",
+      name: "Maintenance Plan",
+      price: "$200",
       period: "/month",
-      description: "Ideal for small teams getting started",
+      description: "Essential automation maintenance",
       features: [
-        "2 hours monthly development",
-        "Weekly automated backups",
+        "Weekly automation backups",
         "Security updates",
         "Basic monitoring",
         "Email support",
-        "Free migration (>$500 orders)"
+        "Free migration included",
+        "Monitor major bugs, logs, and fix/optimize"
       ],
       cta: "Start Free Trial",
-      popular: true
+      popular: false
     },
     {
-      name: "Growth", 
-      price: "$399",
+      name: "Development Plan", 
+      price: "$499",
       period: "/month",
-      description: "Perfect for scaling businesses",
+      description: "For growing automation needs",
       features: [
-        "6 hours monthly development",
-        "Daily automated backups",
+        "Everything in Maintenance Plan",
+        "Monthly development hours included",
         "Priority SLA support",
         "Advanced monitoring & alerts",
         "Custom integrations",
-        "Free migration & server setup"
+        "Dedicated support channel"
       ],
       cta: "Start Free Trial",
-      popular: false
-    },
-    {
-      name: "Enterprise",
-      price: "Custom",
-      period: "pricing",
-      description: "For mission-critical operations", 
-      features: [
-        "Unlimited development hours",
-        "High-availability cluster",
-        "24×7 pager support",
-        "Dedicated success manager",
-        "Custom SLA agreements",
-        "White-label options"
-      ],
-      cta: "Talk to Us",
-      popular: false
+      popular: true
     }
   ];
 
@@ -89,7 +73,7 @@ const Pricing = () => {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
           {plans.map((plan, index) => (
             <div key={index} className={`relative bg-white/5 backdrop-blur-sm rounded-2xl p-8 border transition-all duration-300 hover:scale-105 ${
               plan.popular 
@@ -141,7 +125,7 @@ const Pricing = () => {
               <Button 
                 variant={plan.popular ? "cta" : "outline-light"}
                 className="w-full"
-                onClick={() => scrollToSection(plan.name === "Enterprise" ? "contact" : "calendly")}
+                onClick={() => scrollToSection(plan.name === "Migration Package" ? "quote-calculator" : "calendly")}
               >
                 {plan.cta}
                 <ArrowRight size={16} className="ml-2" />
@@ -150,9 +134,19 @@ const Pricing = () => {
           ))}
         </div>
 
-        <div className="text-center mt-12">
+        <div className="text-center mt-12 space-y-4">
           <p className="text-white/60 text-sm">
-            * Orders ≥ $500 include free n8n server installation & hardening
+            * Migration is billed separately and not included in monthly plans (except where noted)
+          </p>
+          <p className="text-white/80 text-base">
+            Need a complex buildout? 
+            <Button 
+              variant="link" 
+              className="text-accent hover:text-accent/80 underline p-0 h-auto"
+              onClick={() => scrollToSection('calendly')}
+            >
+              Click here to book a call
+            </Button>
           </p>
         </div>
       </div>

@@ -11,7 +11,7 @@ const CalendlyEmbed = () => {
               <span className="text-gradient"> Automation Strategy Call</span>
             </h2>
             <p className="text-xl text-muted-foreground mb-8">
-              Get expert guidance on optimizing your workflow architecture - $149
+              Get expert guidance on optimizing your workflow architecture - FREE
             </p>
 
             <div className="flex flex-wrap justify-center gap-8 mb-12">
@@ -21,7 +21,7 @@ const CalendlyEmbed = () => {
               </div>
               <div className="flex items-center gap-3 bg-white rounded-lg px-6 py-3 shadow-sm">
                 <DollarSign size={20} className="text-accent" />
-                <span className="font-medium">$149 flat rate</span>
+                <span className="font-medium">FREE Strategy Session</span>
               </div>
               <div className="flex items-center gap-3 bg-white rounded-lg px-6 py-3 shadow-sm">
                 <Calendar size={20} className="text-primary" />

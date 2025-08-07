@@ -10,6 +10,7 @@ import Testimonials from '@/components/Testimonials';
 import FAQ from '@/components/FAQ';
 import CTABanner from '@/components/CTABanner';
 import Footer from '@/components/Footer';
+import QuoteCalculator from '@/components/QuoteCalculator';
 
 const Index = () => {
   return (
@@ -21,9 +22,10 @@ const Index = () => {
       <Process />
       <Pricing />
       <Testimonials />
-      <FAQ />
+      <QuoteCalculator />
       <FileUpload />
       <CalendlyEmbed />
+      <FAQ />
       <CTABanner />
       <Footer />
     </div>

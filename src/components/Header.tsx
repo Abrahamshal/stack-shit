@@ -42,16 +42,17 @@ const Header = () => {
             className="font-sora font-bold text-2xl text-gradient cursor-pointer"
             onClick={() => scrollToSection('hero')}
           >
-            Flowstrate
+            Stack Shift
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
+          <nav className="hidden md:flex items-center space-x-8" aria-label="Main navigation">
             {navItems.map((item) => (
               <button
                 key={item.href}
                 onClick={() => scrollToSection(item.href)}
-                className="text-foreground hover:text-primary transition-colors font-medium"
+                className="text-foreground hover:text-primary transition-colors font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-md px-2 py-1"
+                aria-label={`Navigate to ${item.label} section`}
               >
                 {item.label}
               </button>
@@ -61,15 +62,19 @@ const Header = () => {
               size="lg"
               onClick={() => scrollToSection('contact')}
               className="font-bold"
+              aria-label="Navigate to contact section and claim savings"
             >
-              Claim $2.4M Savings
+              Save $15K+/Year → Get Started
             </Button>
           </nav>
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden p-2"
+            className="md:hidden p-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-md"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={isMobileMenuOpen}
+            aria-controls="mobile-menu"
           >
             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -77,12 +82,17 @@ const Header = () => {
 
         {/* Mobile Navigation */}
         {isMobileMenuOpen && (
-          <div className="md:hidden bg-white/95 backdrop-blur-md rounded-lg mt-2 p-4 shadow-soft">
+          <nav 
+            id="mobile-menu"
+            className="md:hidden bg-white/95 backdrop-blur-md rounded-lg mt-2 p-4 shadow-soft"
+            aria-label="Mobile navigation"
+          >
             {navItems.map((item) => (
               <button
                 key={item.href}
                 onClick={() => scrollToSection(item.href)}
-                className="block w-full text-left py-3 text-foreground hover:text-primary transition-colors font-medium"
+                className="block w-full text-left py-3 text-foreground hover:text-primary transition-colors font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-md px-2"
+                aria-label={`Navigate to ${item.label} section`}
               >
                 {item.label}
               </button>
@@ -92,10 +102,11 @@ const Header = () => {
               size="lg" 
               className="w-full mt-4 font-bold"
               onClick={() => scrollToSection('contact')}
+              aria-label="Navigate to contact section and claim savings"
             >
-              Claim $2.4M Savings
+              Save $15K+/Year → Get Started
             </Button>
-          </div>
+          </nav>
         )}
       </div>
     </header>

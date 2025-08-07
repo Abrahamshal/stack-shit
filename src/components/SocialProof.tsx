@@ -15,10 +15,10 @@ const SocialProof = () => {
       <div className="container mx-auto px-4 lg:px-8">
         <div className="text-center mb-8">
           <p className="text-muted-foreground font-medium text-lg">
-            We integrate with
+            Join 247+ companies saving $2.4M+ annually
           </p>
           <p className="text-sm text-muted-foreground mt-2">
-            Connect with 400+ apps through n8n's extensive integration library
+            Replace Zapier, Make.com, and more with 400+ integrations on your own infrastructure
           </p>
         </div>
         

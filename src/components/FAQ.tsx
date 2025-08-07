@@ -71,10 +71,10 @@ const FAQ = () => {
               Still have questions?
             </p>
             <a 
-              href="mailto:hello@flowstrate.com"
+              href="mailto:hello@stackshift.com"
               className="text-primary hover:text-primary-light font-semibold transition-colors"
             >
-              Contact us at hello@flowstrate.com
+              Contact us at hello@stackshift.com
             </a>
           </div>
         </div>

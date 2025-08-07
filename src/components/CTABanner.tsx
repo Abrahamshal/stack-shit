@@ -29,7 +29,7 @@ const CTABanner = () => {
             
             <h2 className="font-sora font-bold text-4xl lg:text-6xl text-white mb-6">
               Ready to 
-              <span className="text-accent"> Flowstrate?</span>
+              <span className="text-accent"> Stack Shift?</span>
             </h2>
             
             <p className="text-xl lg:text-2xl text-white/80 mb-12 leading-relaxed">
@@ -61,7 +61,7 @@ const CTABanner = () => {
             </Button>
           </div>
 
-            <div className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
+            <div className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 text-center">
               <div>
                 <div className="text-3xl lg:text-4xl font-bold text-accent mb-2">247+</div>
                 <div className="text-white/70">Successful Migrations</div>

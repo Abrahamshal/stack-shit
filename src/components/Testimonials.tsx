@@ -177,27 +177,32 @@ const Testimonials = () => {
           {/* Navigation */}
           <button
             onClick={prevSlide}
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white shadow-soft rounded-full flex items-center justify-center hover:scale-110 transition-transform"
+            className="absolute left-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white shadow-soft rounded-full flex items-center justify-center hover:scale-110 transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+            aria-label="Previous testimonial"
           >
             <ChevronLeft size={20} className="text-primary" />
           </button>
           
           <button
             onClick={nextSlide}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white shadow-soft rounded-full flex items-center justify-center hover:scale-110 transition-transform"
+            className="absolute right-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white shadow-soft rounded-full flex items-center justify-center hover:scale-110 transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+            aria-label="Next testimonial"
           >
             <ChevronRight size={20} className="text-primary" />
           </button>
 
           {/* Dots Indicator */}
-          <div className="flex justify-center gap-2 mt-8">
+          <div className="flex justify-center gap-2 mt-8" role="tablist" aria-label="Testimonial navigation">
             {testimonials.map((_, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentSlide(index)}
-                className={`w-3 h-3 rounded-full transition-colors ${
+                className={`w-3 h-3 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${
                   index === currentSlide ? 'bg-primary' : 'bg-muted'
                 }`}
+                role="tab"
+                aria-selected={index === currentSlide}
+                aria-label={`Go to testimonial ${index + 1}`}
               />
             ))}
           </div>

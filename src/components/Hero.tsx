@@ -41,10 +41,10 @@ const Hero = () => {
           </div>
 
           {/* Hook Transformation - Mobile optimized */}
-          <h1 className="font-sora font-bold text-4xl sm:text-5xl lg:text-7xl text-white mb-6 sm:mb-8 animate-premium-entrance leading-tight px-2">
-            Stop paying per task
+          <h1 className="font-sora font-bold text-3xl sm:text-5xl lg:text-7xl text-white mb-6 sm:mb-8 animate-premium-entrance leading-tight px-2">
+            Stop paying $600/month
             <br />
-            <span className="text-gold drop-shadow-2xl">Start owning your stack</span>
+            <span className="text-gold drop-shadow-2xl">Own your automation for $50</span>
           </h1>
           
           {/* Problem + Solution - Mobile optimized */}
@@ -54,7 +54,7 @@ const Hero = () => {
           </p>
 
           <p className="text-base sm:text-lg lg:text-xl text-white mb-8 sm:mb-12 max-w-4xl mx-auto animate-premium-entrance px-4" style={{ animationDelay: '0.4s' }}>
-            Save 70-90% on automation costs while gaining complete control, unlimited tasks, and enterprise-grade security with your own n8n instance
+            Save $15,000+/year on automation costs. Get unlimited tasks, complete control, and enterprise security. Break even in 2 months.
           </p>
 
 
@@ -67,7 +67,7 @@ const Hero = () => {
               className="group premium-shine text-base sm:text-lg px-8 sm:px-12 py-3 sm:py-4 shadow-2xl hover:shadow-gold/50 transform hover:scale-105 transition-all duration-300"
             >
               <DollarSign className="mr-2" size={20} />
-              Get Your Savings Analysis
+              Calculate My Exact Savings
               <ArrowRight className="ml-2 group-hover:translate-x-2 transition-transform" size={18} />
             </Button>
             
@@ -78,7 +78,7 @@ const Hero = () => {
               className="group premium-shine text-base sm:text-lg px-8 sm:px-12 py-3 sm:py-4 shadow-2xl hover:shadow-gold/50 transform hover:scale-105 transition-all duration-300"
             >
               <Zap className="mr-2 group-hover:scale-110 transition-transform" size={18} />
-              Book Your Strategy Session
+              Get Free Migration Quote (Limited Spots)
             </Button>
           </div>
 

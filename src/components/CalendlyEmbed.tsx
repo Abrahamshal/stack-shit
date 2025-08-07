@@ -41,7 +41,7 @@ const CalendlyEmbed = () => {
                 </p>
                 <div className="text-sm text-muted-foreground bg-muted/50 rounded-lg p-4">
                   <code>
-                    &lt;iframe src="https://calendly.com/flowstrate/strategy-call" 
+                    &lt;iframe src="https://calendly.com/stackshift/strategy-call" 
                     <br />width="100%" height="600px"&gt;&lt;/iframe&gt;
                   </code>
                 </div>

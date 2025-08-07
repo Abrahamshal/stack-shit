@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Clock, DollarSign, TrendingUp, Zap } from 'lucide-react';
+import { BackgroundImage } from '@/components/ui/optimized-image';
 import heroImage from '@/assets/hero-nodes.jpg';
 
 const Hero = () => {
@@ -13,9 +14,10 @@ const Hero = () => {
   return (
     <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Premium Background with Overlay */}
-      <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0"
-        style={{ backgroundImage: `url(${heroImage})` }}
+      <BackgroundImage 
+        src={heroImage}
+        className="absolute inset-0 z-0"
+        priority={true}
       />
       <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary-dark to-accent/90 z-10" />
       

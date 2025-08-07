@@ -11,7 +11,12 @@
     "preview": "vite preview",
     "test": "vitest",
     "test:ui": "vitest --ui",
-    "test:coverage": "vitest --coverage"
+    "test:coverage": "vitest --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:debug": "playwright test --debug",
+    "test:visual": "playwright test --config=playwright-visual.config.ts",
+    "test:visual:update": "playwright test --config=playwright-visual.config.ts --update-snapshots"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -66,6 +71,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.32.0",
+    "@playwright/test": "^1.54.2",
     "@tailwindcss/typography": "^0.5.16",
     "@testing-library/jest-dom": "^6.6.4",
     "@testing-library/react": "^16.3.0",

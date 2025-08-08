@@ -6,55 +6,54 @@ const Testimonials = () => {
 
   const testimonials = [
     {
-      type: "youtube",
-      name: "Alex Thompson",
-      role: "Tech Review Channel",
-      company: "DevOps Weekly",
-      content: "n8n vs Zapier: Why I saved $2,000/month by switching",
-      thumbnail: "I tested both platforms extensively. n8n's self-hosted approach gives you unlimited executions for a fraction of the cost.",
-      costSaved: "$2,000/mo",
-      views: "45K views",
-      rating: 5
-    },
-    {
-      type: "twitter", 
-      name: "@automation_guru",
-      role: "Automation Consultant",
-      company: "Twitter",
-      content: "Just migrated a client from Zapier to @n8n_io. They went from paying $600/month for 50k tasks to $50/month hosting their own instance. 🤯",
-      engagement: "234 likes • 52 retweets",
-      date: "2 weeks ago",
-      rating: 5
-    },
-    {
-      type: "youtube",
-      name: "Sarah's Automation Lab",
-      role: "Workflow Specialist",
-      company: "YouTube",
-      content: "Complete n8n Setup Guide: Save 90% on Automation Costs",
-      thumbnail: "Step-by-step guide showing how I replaced my entire automation stack with n8n. Includes real cost comparisons.",
-      costSaved: "90%",
-      views: "28K views",
-      rating: 5
-    },
-    {
       type: "twitter",
-      name: "@startup_steve",
-      role: "Startup Founder",
+      name: "@afuentest",
+      role: "SEO Agency Owner",
       company: "Twitter",
-      content: "Switching to n8n was the best decision for our startup. We're saving $800/month and have WAY more flexibility. Stack Shift handled the entire migration in 3 days. 🚀",
-      engagement: "156 likes • 31 retweets",
-      date: "1 month ago",
+      content: "This n8n automation has generated over $200k in sales for my clients... I use it every single day in my SEO agency and it works like a charm",
+      engagement: "Real testimonial",
+      date: "Augusto Fuentes",
       rating: 5
     },
     {
       type: "n8n",
-      name: "Community Testimonial",
-      role: "n8n Forum User",
-      company: "n8n Community",
-      content: "I saved $15,000 annually by moving from Zapier to n8n. The community support is incredible and the platform is so much more powerful.",
-      source: "n8n Community Forum",
+      name: "jsreally",
+      role: "70k workflow runs/month",
+      company: "Reddit r/n8n",
+      content: "We are on the cloud pro plan. It's much cheaper than make or zapier. We are saving over $600 a month so far switching from make.",
+      source: "Reddit r/n8n",
       verified: true,
+      rating: 5
+    },
+    {
+      type: "twitter",
+      name: "@maximpoulsen",
+      role: "Developer",
+      company: "Twitter",
+      content: "I've said it many times. But I'll say it again. n8n is the GOAT. Anything is possible with n8n. You just need some technical knowledge + imagination. I'm actually looking to start a side project. Just to have an excuse to use n8n more 😅",
+      engagement: "Real testimonial",
+      date: "Maxim Poulsen",
+      rating: 5
+    },
+    {
+      type: "n8n",
+      name: "Francois Laßl",
+      role: "Developer",
+      company: "n8n Community",
+      content: "Found the holy grail of automation yesterday... What would've taken me 3 days to code from scratch? Done in 2 hours. The best part? If you still want to get your hands dirty with code, you can just drop in custom code nodes. Zero restrictions.",
+      source: "n8n Community",
+      verified: true,
+      rating: 5
+    },
+    {
+      type: "youtube",
+      name: "Bart Slodyczka",
+      role: "n8n Expert (21.3K subs)",
+      company: "YouTube",
+      content: "Analyzed 2,000+ real production n8n workflows",
+      thumbnail: "44% of workflows use AI processing. Average workflow uses 14 nodes. Most users save 30-40 hours/month with n8n automations.",
+      costSaved: "30-40 hrs/mo",
+      views: "8K+ views",
       rating: 5
     }
   ];
@@ -80,10 +79,10 @@ const Testimonials = () => {
         <div className="text-center mb-16">
           <h2 className="font-sora font-bold text-3xl lg:text-5xl mb-6">
             Real Results from 
-            <span className="text-gradient"> Real Customers</span>
+            <span className="text-gradient"> n8n Users</span>
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            See how teams are saving thousands while gaining complete control over their automations
+            See how users are saving using n8n
           </p>
         </div>
 

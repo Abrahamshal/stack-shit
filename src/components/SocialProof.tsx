@@ -1,42 +1,99 @@
 const SocialProof = () => {
   const integrations = [
-    { name: 'Shopify', width: '110px' },
-    { name: 'Airtable', width: '130px' },
-    { name: 'HubSpot', width: '120px' },
-    { name: 'Slack', width: '100px' },
-    { name: 'Google Sheets', width: '140px' },
-    { name: 'Notion', width: '100px' },
-    { name: 'Stripe', width: '90px' },
-    { name: 'Mailchimp', width: '120px' },
+    'Slack',
+    'Google Sheets',
+    'HubSpot',
+    'Salesforce',
+    'Stripe',
+    'Shopify',
+    'Airtable',
+    'Notion',
+    'Discord',
+    'Mailchimp',
+    'GitHub',
+    'GitLab',
+    'Dropbox',
+    'Twitter',
+    'LinkedIn',
+    'Facebook',
+    'Instagram',
+    'WhatsApp',
+    'Telegram',
+    'Microsoft Teams',
+    'Zoom',
+    'Calendly',
+    'Typeform',
+    'Jira',
+    'Asana',
+    'Trello',
+    'Monday.com',
+    'ClickUp',
+    'Todoist',
+    'Evernote',
+    'PayPal',
+    'Square',
+    'QuickBooks',
+    'Xero',
+    'FreshBooks',
+    'SendGrid',
+    'Twilio',
+    'AWS',
+    'Google Cloud',
+    'Azure',
   ];
 
+  // Duplicate the array for seamless infinite scroll
+  const duplicatedIntegrations = [...integrations, ...integrations];
+
   return (
-    <section className="py-12 bg-muted/50">
-      <div className="container mx-auto px-4 lg:px-8">
-        <div className="text-center mb-8">
-          <p className="text-muted-foreground font-medium text-lg">
-            Join 247+ companies saving $2.4M+ annually
-          </p>
-          <p className="text-sm text-muted-foreground mt-2">
-            Replace Zapier, Make.com, and more with 400+ integrations on your own infrastructure
-          </p>
-        </div>
+    <>
+      <style>{`
+        @keyframes scroll-left {
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(-50%);
+          }
+        }
         
-        <div className="flex flex-wrap justify-center items-center gap-6 lg:gap-12 opacity-60 hover:opacity-80 transition-opacity duration-300">
-          {integrations.map((integration) => (
-            <div
-              key={integration.name}
-              className="flex items-center justify-center grayscale hover:grayscale-0 transition-all duration-300"
-              style={{ width: integration.width }}
-            >
-              <div className="text-xl font-semibold text-muted-foreground">
-                {integration.name}
-              </div>
+        .animate-infinite-scroll {
+          animation: scroll-left 40s linear infinite;
+        }
+        
+        .animate-infinite-scroll:hover {
+          animation-play-state: paused;
+        }
+      `}</style>
+      
+      <section className="py-12 bg-muted/50 overflow-hidden">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-bold text-foreground mb-2">
+              Integrate with 400+ apps using n8n
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              Connect your entire tech stack with n8n's extensive library of integrations
+            </p>
+          </div>
+          
+          <div className="relative">
+            <div className="flex gap-8 items-center animate-infinite-scroll">
+              {duplicatedIntegrations.map((integration, index) => (
+                <div
+                  key={`${integration}-${index}`}
+                  className="flex-shrink-0 px-4 py-2 rounded-lg bg-background/50 border border-border/50 hover:border-primary/50 transition-all duration-300"
+                >
+                  <span className="text-lg font-medium text-muted-foreground whitespace-nowrap">
+                    {integration}
+                  </span>
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 };
 

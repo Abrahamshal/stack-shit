@@ -33,7 +33,7 @@ const CTABanner = () => {
             </h2>
             
             <p className="text-xl lg:text-2xl text-white/80 mb-12 leading-relaxed">
-              Join 247+ teams who've transformed their automation costs while gaining 
+              Join 128k+ developers who've transformed their automation costs while gaining 
               complete control with self-hosted n8n workflows.
             </p>
           </div>
@@ -63,16 +63,16 @@ const CTABanner = () => {
 
             <div className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 text-center">
               <div>
-                <div className="text-3xl lg:text-4xl font-bold text-accent mb-2">247+</div>
-                <div className="text-white/70">Successful Migrations</div>
+                <div className="text-3xl lg:text-4xl font-bold text-accent mb-2">400+</div>
+                <div className="text-white/70">n8n Integrations</div>
               </div>
               <div>
-                <div className="text-3xl lg:text-4xl font-bold text-accent mb-2">77%</div>
+                <div className="text-3xl lg:text-4xl font-bold text-accent mb-2">90%</div>
                 <div className="text-white/70">Average Cost Reduction</div>
               </div>
               <div>
-                <div className="text-3xl lg:text-4xl font-bold text-accent mb-2">72h</div>
-                <div className="text-white/70">Typical Migration Time</div>
+                <div className="text-3xl lg:text-4xl font-bold text-accent mb-2">100M+</div>
+                <div className="text-white/70">Docker Pulls</div>
               </div>
             </div>
         </div>

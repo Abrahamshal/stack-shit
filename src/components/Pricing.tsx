@@ -16,7 +16,7 @@ const Pricing = () => {
         "30-day post-migration support"
       ],
       footnote: "Minimum order varies",
-      cta: "Get Migration Quote",
+      cta: "Get Started",
       popular: false
     },
     {
@@ -32,8 +32,8 @@ const Pricing = () => {
         "Free migration included",
         "Monitor major bugs, logs, and fix/optimize"
       ],
-      cta: "Start Free Trial",
-      popular: false
+      cta: "Get Started",
+      popular: true
     },
     {
       name: "Development Plan", 
@@ -48,8 +48,8 @@ const Pricing = () => {
         "Custom integrations",
         "Dedicated support channel"
       ],
-      cta: "Start Free Trial",
-      popular: true
+      cta: "Get Started",
+      popular: false
     }
   ];
 
@@ -138,16 +138,20 @@ const Pricing = () => {
           <p className="text-white/60 text-sm">
             * Migration is billed separately and not included in monthly plans (except where noted)
           </p>
-          <p className="text-white/80 text-base">
-            Need a complex buildout? 
+          <div className="space-y-2">
+            <p className="text-white/80 text-base">
+              Need a complex buildout?
+            </p>
             <Button 
-              variant="link" 
-              className="text-accent hover:text-accent/80 underline p-0 h-auto"
+              variant="cta" 
+              size="lg"
+              className="mt-2"
               onClick={() => scrollToSection('calendly')}
             >
-              Click here to book a call
+              Book a Call
+              <ArrowRight size={16} className="ml-2" />
             </Button>
-          </p>
+          </div>
         </div>
       </div>
     </section>

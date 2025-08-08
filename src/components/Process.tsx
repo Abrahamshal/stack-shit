@@ -1,30 +1,36 @@
 import { Upload, Clock, Server, Phone } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
+import { Badge } from './ui/badge';
 
 const Process = () => {
   const steps = [
     {
-      icon: <Upload size={32} className="text-accent" />,
+      icon: Upload,
       title: "Upload JSON",
       description: "Export your workflows from Zapier or Make.com and upload the JSON files to our secure analysis tool.",
-      step: "01"
+      step: 1,
+      color: "text-blue-500"
     },
     {
-      icon: <Clock size={32} className="text-primary" />,
+      icon: Clock,
       title: "Fixed Quote in Minutes",
       description: "Our automated analysis counts nodes and complexity, providing you with transparent, fixed pricing instantly.",
-      step: "02"
+      step: 2,
+      color: "text-green-500"
     },
     {
-      icon: <Server size={32} className="text-accent" />,
+      icon: Server,
       title: "We Port & Harden Your n8n Server",
       description: "Our experts migrate your workflows, set up security, and optimize performance. Free server setup for orders ≥ $500.",
-      step: "03"
+      step: 3,
+      color: "text-purple-500"
     },
     {
-      icon: <Phone size={32} className="text-primary" />,
+      icon: Phone,
       title: "Go-Live Call & 7-Day Support",
       description: "Personal onboarding session to walk through your new setup, plus a full week of priority support.",
-      step: "04"
+      step: 4,
+      color: "text-orange-500"
     }
   ];
 
@@ -41,44 +47,68 @@ const Process = () => {
           </p>
         </div>
 
-        <div className="relative">
-          {/* Timeline Line - Hidden on mobile */}
-          <div className="hidden lg:block absolute top-24 left-0 right-0 h-1 bg-gradient-to-r from-primary to-accent transform -translate-y-1/2" style={{ zIndex: 1 }} />
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
-            {steps.map((step, index) => (
-              <div key={index} className="relative">
-                {/* Step Number */}
-                <div className="relative z-10 w-16 h-16 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center text-white font-bold text-lg mb-6 mx-auto lg:mx-0 pulse-glow">
-                  {step.step}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+          {steps.map((step, index) => {
+            const Icon = step.icon;
+            return (
+              <Card 
+                key={index} 
+                className="relative group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-muted"
+              >
+                {/* Step Number Badge */}
+                <div className="absolute -top-3 -right-3 z-10">
+                  <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm shadow-md">
+                    {step.step}
+                  </div>
                 </div>
                 
-                {/* Content */}
-                <div className="text-center lg:text-left">
-                  <div className="w-16 h-16 bg-gradient-to-br from-primary/10 to-accent/10 rounded-xl flex items-center justify-center mb-4 mx-auto lg:mx-0">
-                    {step.icon}
+                <CardHeader className="space-y-4">
+                  {/* Icon Container */}
+                  <div className={`w-14 h-14 rounded-lg bg-secondary/50 flex items-center justify-center ${step.color} group-hover:scale-110 transition-transform duration-300`}>
+                    <Icon size={28} />
                   </div>
-                  <h3 className="font-sora font-semibold text-xl mb-3">
+                  
+                  <CardTitle className="text-lg font-sora">
                     {step.title}
-                  </h3>
-                  <p className="text-muted-foreground leading-relaxed">
+                  </CardTitle>
+                </CardHeader>
+                
+                <CardContent>
+                  <CardDescription className="text-sm leading-relaxed">
                     {step.description}
-                  </p>
-                </div>
+                  </CardDescription>
+                </CardContent>
 
-                {/* Mobile Connector */}
+                {/* Mobile Step Indicator - Dots between cards */}
                 {index < steps.length - 1 && (
-                  <div className="lg:hidden w-1 h-8 bg-gradient-to-b from-primary to-accent mx-auto mt-8" />
+                  <div className="lg:hidden flex justify-center mt-6 -mb-3">
+                    <div className="flex flex-col items-center gap-1">
+                      <div className="w-1 h-1 bg-muted-foreground/30 rounded-full" />
+                      <div className="w-1 h-1 bg-muted-foreground/30 rounded-full" />
+                      <div className="w-1 h-1 bg-muted-foreground/30 rounded-full" />
+                    </div>
+                  </div>
                 )}
-              </div>
-            ))}
-          </div>
+                
+                {/* Desktop Connector - Subtle dots */}
+                {index < steps.length - 1 && (
+                  <div className="hidden lg:flex absolute top-1/2 -right-4 transform -translate-y-1/2 z-0">
+                    <div className="flex items-center gap-1">
+                      <div className="w-1.5 h-1.5 bg-muted-foreground/20 rounded-full" />
+                      <div className="w-1.5 h-1.5 bg-muted-foreground/20 rounded-full" />
+                      <div className="w-1.5 h-1.5 bg-muted-foreground/20 rounded-full" />
+                    </div>
+                  </div>
+                )}
+              </Card>
+            );
+          })}
         </div>
 
         <div className="text-center mt-16">
-          <div className="inline-flex items-center gap-2 bg-accent/10 text-accent px-6 py-3 rounded-full font-semibold">
+          <Badge variant="secondary" className="px-6 py-3 text-base font-medium">
             🎉 Orders ≥ $500 include free n8n server installation & hardening
-          </div>
+          </Badge>
         </div>
       </div>
     </section>

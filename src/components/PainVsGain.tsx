@@ -1,4 +1,4 @@
-import { X, Check, DollarSign, Lock, Shield, Infinity, Zap, Settings } from 'lucide-react';
+import { X, Check, DollarSign, Lock, Shield, Infinity as InfinityIcon, Zap, Settings } from 'lucide-react';
 
 const PainVsGain = () => {
   const pains = [
@@ -21,7 +21,7 @@ const PainVsGain = () => {
 
   const gains = [
     {
-      icon: <Infinity className="text-accent" size={24} />,
+      icon: <InfinityIcon className="text-accent" size={24} />,
       title: "Unlimited Tasks",
       description: "Run as many automations as you need with flat monthly cost"
     },
@@ -42,8 +42,9 @@ const PainVsGain = () => {
       <div className="container mx-auto px-4 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="font-sora font-bold text-3xl lg:text-5xl mb-6">
-            Stop Paying Per Task, Start 
-            <span className="text-gradient"> Owning Your Stack</span>
+            Stop Paying Per Task
+            <br />
+            <span className="text-gradient">Start Owning Your Stack</span>
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             Transform from expensive SaaS dependency to cost-effective self-hosted automation

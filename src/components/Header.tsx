@@ -47,11 +47,11 @@ const Header = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8" aria-label="Main navigation">
-            {navItems.map((item) => (
+            {!isScrolled && navItems.map((item) => (
               <button
                 key={item.href}
                 onClick={() => scrollToSection(item.href)}
-                className="text-foreground hover:text-primary transition-colors font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-md px-2 py-1"
+                className="text-white hover:text-gold transition-colors font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-md px-2 py-1"
                 aria-label={`Navigate to ${item.label} section`}
               >
                 {item.label}
@@ -64,7 +64,7 @@ const Header = () => {
               className="font-bold"
               aria-label="Navigate to contact section and claim savings"
             >
-              Save $15K+/Year → Get Started
+              Migrate to n8n → Get Started
             </Button>
           </nav>
 
@@ -104,7 +104,7 @@ const Header = () => {
               onClick={() => scrollToSection('contact')}
               aria-label="Navigate to contact section and claim savings"
             >
-              Save $15K+/Year → Get Started
+              Migrate to n8n → Get Started
             </Button>
           </nav>
         )}

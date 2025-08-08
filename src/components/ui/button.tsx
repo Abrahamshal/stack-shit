@@ -15,14 +15,14 @@ const buttonVariants = cva(
         secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        // Premium Brand Variants - Fixed for proper contrast
-        hero: "bg-gradient-to-r from-primary to-primary-dark text-white border border-primary/20 hover:scale-105 shadow-lg hover:shadow-primary/30 font-semibold",
-        premium: "bg-gradient-to-r from-accent to-accent/90 text-white border border-accent/20 hover:scale-105 shadow-lg hover:shadow-accent/30 font-semibold",
-        urgent: "bg-urgent text-white border border-urgent/20 hover:bg-urgent/90 hover:scale-105 font-bold",
+        // Premium Brand Variants - Solid colors for better consistency
+        hero: "bg-primary text-white border border-primary/20 hover:bg-primary/90 hover:scale-105 shadow-lg hover:shadow-primary/30 font-semibold",
+        premium: "bg-violet-600 text-white border border-violet-600/20 hover:bg-violet-700 hover:scale-105 shadow-lg hover:shadow-violet-600/30 font-semibold",
+        urgent: "bg-red-600 text-white border border-red-600/20 hover:bg-red-700 hover:scale-105 font-bold",
         "outline-light": "border-2 border-white/30 bg-white/10 text-white hover:bg-white/20 hover:border-white/50 backdrop-blur-sm",
-        cta: "bg-gradient-to-r from-gold via-gold-light to-accent text-white hover:shadow-lg hover:shadow-gold/50 hover:scale-105 font-bold tracking-wide",
+        cta: "bg-amber-500 text-white hover:bg-amber-600 hover:shadow-lg hover:shadow-amber-500/30 hover:scale-105 font-bold tracking-wide",
         // Legacy variants for compatibility
-        accent: "bg-accent text-accent-foreground hover:bg-accent-light hover:scale-105 font-semibold",
+        accent: "bg-indigo-600 text-white hover:bg-indigo-700 hover:scale-105 font-semibold",
       },
       size: {
         default: "h-10 px-4 py-2",

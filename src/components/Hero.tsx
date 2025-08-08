@@ -37,8 +37,8 @@ const Hero = () => {
           <div className="inline-flex items-center gap-2 bg-gold/20 backdrop-blur-sm border border-gold/30 rounded-full px-4 sm:px-6 py-2 mb-6 sm:mb-8 animate-premium-entrance">
             <TrendingUp size={16} className="text-gold sm:w-5 sm:h-5" />
             <span className="text-gold font-semibold text-sm sm:text-base">
-              <span className="hidden sm:inline">247+ Successful Migrations • 5-Star Rated</span>
-              <span className="sm:hidden">247+ Migrations • 5-Star</span>
+              <span className="hidden sm:inline">128k+ GitHub Stars • 100M+ Docker Pulls • 400+ Integrations</span>
+              <span className="sm:hidden">128k Stars • 400+ Integrations</span>
             </span>
           </div>
 
@@ -50,13 +50,13 @@ const Hero = () => {
           </h1>
           
           {/* Problem + Solution - Mobile optimized */}
-          <p className="text-lg sm:text-xl lg:text-2xl text-white/98 mb-4 sm:mb-6 max-w-4xl mx-auto leading-relaxed animate-premium-entrance font-semibold px-4" style={{ animationDelay: '0.3s' }}>
+          <p className="text-lg sm:text-xl lg:text-2xl text-white mb-4 sm:mb-6 max-w-4xl mx-auto leading-relaxed animate-premium-entrance font-semibold px-4" style={{ animationDelay: '0.3s' }}>
             Transform your expensive SaaS automations into 
             <span className="text-gold bg-gold/20 px-2 py-1 rounded mx-1">unlimited, self-hosted workflows</span>
           </p>
 
           <p className="text-base sm:text-lg lg:text-xl text-white mb-8 sm:mb-12 max-w-4xl mx-auto animate-premium-entrance px-4" style={{ animationDelay: '0.4s' }}>
-            Save $15,000+/year on automation costs. Get unlimited tasks, complete control, and enterprise security. Break even in 2 months.
+            Migrate to n8n and unlock unlimited automation. Get enterprise security, complete control, and join 128k+ developers. Break even in 2 months.
           </p>
 
 
@@ -66,7 +66,7 @@ const Hero = () => {
               variant="cta" 
               size="lg"
               onClick={() => scrollToSection('quote-calculator')}
-              className="group premium-shine text-base sm:text-lg px-8 sm:px-12 py-3 sm:py-4 shadow-2xl hover:shadow-gold/50 transform hover:scale-105 transition-all duration-300"
+              className="group text-base sm:text-lg px-8 sm:px-12 py-3 sm:py-4 shadow-2xl hover:shadow-amber-500/50 transform hover:scale-105 transition-all duration-300"
             >
               <DollarSign className="mr-2" size={20} />
               Calculate My Exact Savings
@@ -77,10 +77,11 @@ const Hero = () => {
               variant="cta" 
               size="lg"
               onClick={() => scrollToSection('calendly')}
-              className="group premium-shine text-base sm:text-lg px-8 sm:px-12 py-3 sm:py-4 shadow-2xl hover:shadow-gold/50 transform hover:scale-105 transition-all duration-300"
+              className="group text-base sm:text-lg px-8 sm:px-12 py-3 sm:py-4 shadow-2xl hover:shadow-amber-500/50 transform hover:scale-105 transition-all duration-300"
             >
               <Zap className="mr-2 group-hover:scale-110 transition-transform" size={18} />
-              Get Free Migration Quote (Limited Spots)
+              Get Free Migration Quote
+              <span className="ml-1 text-xs">(Limited Spots)</span>
             </Button>
           </div>
 

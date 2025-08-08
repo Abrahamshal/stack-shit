@@ -108,15 +108,21 @@ export const useWorkflowAnalyzer = () => {
     setIsAnalyzing(true);
     const fileArray = Array.from(files);
     const newWorkflows: Workflow[] = [];
+    const newFiles: WorkflowFile[] = [];
 
     for (const file of fileArray) {
       const workflow = await analyzeFile(file);
       if (workflow) {
         newWorkflows.push(workflow);
+        newFiles.push({
+          file,
+          nodeCount: workflow.totalNodes
+        });
       }
     }
 
     if (newWorkflows.length > 0) {
+      setUploadedFiles(prev => [...prev, ...newFiles]);
       setAnalysisResults(prevResults => {
         const allWorkflows = [...(prevResults?.workflows || []), ...newWorkflows];
         const totalWorkflows = allWorkflows.length;
@@ -152,11 +158,20 @@ export const useWorkflowAnalyzer = () => {
     setIsAnalyzing(false);
   }, []);
   
+  // Computed values for backward compatibility
+  const totalNodeCount = analysisResults?.summary.totalNodes || 0;
+  const estimatedPrice = analysisResults?.summary.totalPrice || 0;
+  
   return {
     uploadedFiles,
     analysisResults,
     isAnalyzing,
     handleFileUpload,
     resetAnalysis,
+    totalNodeCount,
+    estimatedPrice,
+    removeFile: (index: number) => {
+      setUploadedFiles(prev => prev.filter((_, i) => i !== index));
+    }
   };
 };

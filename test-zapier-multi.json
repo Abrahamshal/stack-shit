@@ -1,0 +1,144 @@
+{
+  "metadata": {
+    "version": "gdpr_v1"
+  },
+  "zaps": [
+    {
+      "id": 1001,
+      "title": "New Customer Welcome Email",
+      "status": "on",
+      "nodes": {
+        "node1": {
+          "id": "node1",
+          "title": "New Customer Trigger",
+          "action": "new_customer",
+          "selected_api": "ShopifyAPI"
+        },
+        "node2": {
+          "id": "node2",
+          "title": "Send Welcome Email",
+          "action": "send_email",
+          "selected_api": "MailchimpAPI"
+        },
+        "node3": {
+          "id": "node3",
+          "title": "Add to CRM",
+          "action": "create_contact",
+          "selected_api": "HubSpotAPI"
+        }
+      }
+    },
+    {
+      "id": 1002,
+      "title": "Invoice Payment Processor",
+      "status": "on",
+      "nodes": {
+        "node4": {
+          "id": "node4",
+          "title": "Payment Received",
+          "action": "payment_webhook",
+          "selected_api": "StripeAPI"
+        },
+        "node5": {
+          "id": "node5",
+          "title": "Update Invoice",
+          "action": "update_invoice",
+          "selected_api": "QuickBooksAPI"
+        },
+        "node6": {
+          "id": "node6",
+          "title": "Send Receipt",
+          "action": "send_receipt",
+          "selected_api": "SendGridAPI"
+        },
+        "node7": {
+          "id": "node7",
+          "title": "Log Transaction",
+          "action": "add_row",
+          "selected_api": "GoogleSheetsAPI"
+        }
+      }
+    },
+    {
+      "id": 1003,
+      "title": "Daily Report Generator",
+      "status": "off",
+      "nodes": {
+        "node8": {
+          "id": "node8",
+          "title": "Daily Schedule",
+          "action": "schedule",
+          "selected_api": "ScheduleAPI"
+        },
+        "node9": {
+          "id": "node9",
+          "title": "Fetch Analytics",
+          "action": "get_analytics",
+          "selected_api": "GoogleAnalyticsAPI"
+        },
+        "node10": {
+          "id": "node10",
+          "title": "Generate Report",
+          "action": "create_document",
+          "selected_api": "GoogleDocsAPI"
+        },
+        "node11": {
+          "id": "node11",
+          "title": "Send to Team",
+          "action": "send_message",
+          "selected_api": "SlackAPI"
+        },
+        "node12": {
+          "id": "node12",
+          "title": "Archive Report",
+          "action": "upload_file",
+          "selected_api": "DropboxAPI"
+        }
+      }
+    },
+    {
+      "id": 1004,
+      "title": "Support Ticket Router",
+      "status": "on",
+      "nodes": {
+        "node13": {
+          "id": "node13",
+          "title": "New Ticket",
+          "action": "ticket_created",
+          "selected_api": "ZendeskAPI"
+        },
+        "node14": {
+          "id": "node14",
+          "title": "Categorize Ticket",
+          "action": "categorize",
+          "selected_api": "OpenAIAPI"
+        },
+        "node15": {
+          "id": "node15",
+          "title": "Assign to Team",
+          "action": "assign_ticket",
+          "selected_api": "JiraAPI"
+        }
+      }
+    },
+    {
+      "id": 1005,
+      "title": "Social Media Scheduler",
+      "status": "off",
+      "nodes": {
+        "node16": {
+          "id": "node16",
+          "title": "Content Calendar",
+          "action": "get_scheduled_posts",
+          "selected_api": "AirtableAPI"
+        },
+        "node17": {
+          "id": "node17",
+          "title": "Post to Twitter",
+          "action": "create_tweet",
+          "selected_api": "TwitterAPI"
+        }
+      }
+    }
+  ]
+}

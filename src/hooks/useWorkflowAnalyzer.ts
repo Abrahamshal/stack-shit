@@ -59,14 +59,23 @@ export const useWorkflowAnalyzer = () => {
   const countNodesInWorkflow = (workflow: unknown, platform: 'make' | 'zapier' | 'unknown'): { nodes: Node[], count: number } => {
     let nodes: Node[] = [];
     if (platform === 'make' && (workflow as any).flow) {
-      nodes = (workflow as any).flow.map((n: any) => ({ name: n.label, type: n.module }));
+      nodes = (workflow as any).flow.map((n: any) => ({ name: n.label || n.name || 'Unknown', type: n.module }));
     } else if (platform === 'zapier' && (workflow as any).zaps) {
-      nodes = (workflow as any).zaps.flatMap((zap: any) => zap.steps.map((s: any) => ({ name: s.name, type: s.app })));
+      // Zapier format has nodes as an object with node IDs as keys
+      nodes = (workflow as any).zaps.flatMap((zap: any) => {
+        if (zap.nodes && typeof zap.nodes === 'object') {
+          return Object.values(zap.nodes).map((node: any) => ({
+            name: node.title || node.action || `Step ${node.id}`,
+            type: node.selected_api || node.action || 'unknown'
+          }));
+        }
+        return [];
+      });
     }
     return { nodes, count: nodes.length };
   };
 
-  const analyzeFile = async (file: File): Promise<Workflow | null> => {
+  const analyzeFile = async (file: File): Promise<Workflow[] | null> => {
     const validation = validateFile(file);
     if (!validation.isValid) {
       toast({ title: "File validation failed", description: validation.error, variant: "destructive" });
@@ -83,6 +92,37 @@ export const useWorkflowAnalyzer = () => {
 
       const parsed = JSON.parse(content);
       const platform = getPlatform(parsed);
+      
+      // Handle Zapier files with multiple workflows
+      if (platform === 'zapier' && parsed.zaps && Array.isArray(parsed.zaps)) {
+        const workflows: Workflow[] = [];
+        
+        for (const zap of parsed.zaps) {
+          const nodeCount = zap.nodes ? Object.keys(zap.nodes).length : 0;
+          const nodes = zap.nodes ? Object.values(zap.nodes).map((node: any) => ({
+            name: node.title || node.action || `Step ${node.id}`,
+            type: node.selected_api || node.action || 'unknown'
+          })) : [];
+          
+          if ((analysisResults?.summary.totalNodes || 0) + nodeCount > MAX_NODE_COUNT) {
+            toast({ title: "Node limit exceeded", description: `Total nodes would exceed the maximum limit of ${MAX_NODE_COUNT}`, variant: "destructive" });
+            break;
+          }
+          
+          workflows.push({
+            fileName: file.name,
+            workflowName: zap.title || `Zap ${zap.id}`,
+            totalNodes: nodeCount,
+            totalPrice: nodeCount * 20,
+            nodes,
+            platform: 'zapier',
+          });
+        }
+        
+        return workflows.length > 0 ? workflows : null;
+      }
+      
+      // Handle Make.com and other single workflow files
       const { nodes, count } = countNodesInWorkflow(parsed, platform);
 
       if ((analysisResults?.summary.totalNodes || 0) + count > MAX_NODE_COUNT) {
@@ -90,14 +130,14 @@ export const useWorkflowAnalyzer = () => {
         return null;
       }
       
-      return {
+      return [{
         fileName: file.name,
         workflowName: parsed.name || file.name,
         totalNodes: count,
         totalPrice: count * 20,
         nodes,
         platform,
-      };
+      }];
     } catch (error) {
       toast({ title: "Error analyzing file", description: "Failed to parse workflow file", variant: "destructive" });
       return null;
@@ -111,12 +151,14 @@ export const useWorkflowAnalyzer = () => {
     const newFiles: WorkflowFile[] = [];
 
     for (const file of fileArray) {
-      const workflow = await analyzeFile(file);
-      if (workflow) {
-        newWorkflows.push(workflow);
+      const workflows = await analyzeFile(file);
+      if (workflows && workflows.length > 0) {
+        newWorkflows.push(...workflows);
+        // For file tracking, sum up the nodes from all workflows in the file
+        const totalFileNodes = workflows.reduce((sum, wf) => sum + wf.totalNodes, 0);
         newFiles.push({
           file,
-          nodeCount: workflow.totalNodes
+          nodeCount: totalFileNodes
         });
       }
     }

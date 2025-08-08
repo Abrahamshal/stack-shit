@@ -1,0 +1,48 @@
+{
+  "zaps": [
+    {
+      "id": 1,
+      "title": "Test Zap 1",
+      "status": "on",
+      "nodes": {
+        "node1": {
+          "id": "node1",
+          "title": "Trigger",
+          "action": "email",
+          "selected_api": "GmailAPI"
+        },
+        "node2": {
+          "id": "node2",
+          "title": "Action",
+          "action": "add_row",
+          "selected_api": "GoogleSheetsAPI"
+        }
+      }
+    },
+    {
+      "id": 2,
+      "title": "Test Zap 2",
+      "status": "off",
+      "nodes": {
+        "node3": {
+          "id": "node3",
+          "title": "Schedule",
+          "action": "schedule",
+          "selected_api": "ScheduleAPI"
+        },
+        "node4": {
+          "id": "node4",
+          "title": "Send Email",
+          "action": "send",
+          "selected_api": "MailchimpAPI"
+        },
+        "node5": {
+          "id": "node5",
+          "title": "Update Database",
+          "action": "update",
+          "selected_api": "MySQLAPI"
+        }
+      }
+    }
+  ]
+}

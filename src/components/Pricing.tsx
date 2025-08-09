@@ -13,9 +13,10 @@ const Pricing = () => {
         "Complete migration & testing", 
         "Data validation & optimization",
         "Documentation & training",
-        "30-day post-migration support"
+        "30-day post-migration support",
+        "FREE n8n setup on orders $1,000+"
       ],
-      footnote: "Minimum order varies",
+      footnote: "🎁 Orders over $1,000 include FREE setup",
       cta: "Get Started",
       popular: false
     },

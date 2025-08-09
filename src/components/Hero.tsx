@@ -85,6 +85,15 @@ const Hero = () => {
             </Button>
           </div>
 
+          {/* Special Offer Banner */}
+          <div className="mb-8 animate-premium-entrance" style={{ animationDelay: '0.55s' }}>
+            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-green-500/20 to-gold/20 backdrop-blur-sm border border-gold/40 rounded-full px-6 py-3">
+              <span className="text-gold font-bold text-sm sm:text-base animate-pulse">
+                🎁 LIMITED OFFER: Free n8n Setup ($500 value) on migrations over $1,000
+              </span>
+            </div>
+          </div>
+
           {/* Risk Reversal - Mobile responsive */}
           <div className="mt-8 sm:mt-16 animate-premium-entrance px-4" style={{ animationDelay: '0.6s' }}>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 max-w-4xl mx-auto">

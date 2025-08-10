@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -22,6 +22,7 @@ interface ZapierWorkflowSelectorProps {
   workflows: ZapierWorkflow[];
   onSelectionChange: (selectedWorkflows: ZapierWorkflow[]) => void;
   onCalculate: () => void;
+  initialSelections?: ZapierWorkflow[];
 }
 
 type FilterStatus = 'all' | 'active' | 'inactive';
@@ -30,12 +31,15 @@ type SortBy = 'name' | 'nodes' | 'status' | 'price';
 export default function ZapierWorkflowSelector({ 
   workflows, 
   onSelectionChange, 
-  onCalculate 
+  onCalculate,
+  initialSelections = [] 
 }: ZapierWorkflowSelectorProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState<FilterStatus>('all');
   const [sortBy, setSortBy] = useState<SortBy>('name');
-  const [selectedIds, setSelectedIds] = useState<Set<string | number>>(new Set());
+  const [selectedIds, setSelectedIds] = useState<Set<string | number>>(
+    new Set(initialSelections.map(w => w.id))
+  );
   const [selectAll, setSelectAll] = useState(false);
 
   // Filter and sort workflows
@@ -71,6 +75,13 @@ export default function ZapierWorkflowSelector({
 
     return filtered;
   }, [workflows, searchQuery, filterStatus, sortBy]);
+
+  // Initialize selections on mount or when initialSelections change
+  React.useEffect(() => {
+    if (initialSelections.length > 0) {
+      setSelectedIds(new Set(initialSelections.map(w => w.id)));
+    }
+  }, [initialSelections]);
 
   // Handle selection changes
   const handleWorkflowToggle = (workflowId: string | number) => {

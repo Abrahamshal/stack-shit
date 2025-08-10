@@ -7,7 +7,6 @@ import Process from '@/components/Process';
 
 // Lazy load below-fold components
 const Pricing = lazy(() => import('@/components/Pricing'));
-const FileUpload = lazy(() => import('@/components/FileUpload'));
 const CalendlyEmbed = lazy(() => import('@/components/CalendlyEmbed'));
 const Testimonials = lazy(() => import('@/components/Testimonials'));
 const FAQ = lazy(() => import('@/components/FAQ'));
@@ -40,9 +39,6 @@ const Index = () => {
       </Suspense>
       <Suspense fallback={<LoadingSpinner />}>
         <QuoteCalculator />
-      </Suspense>
-      <Suspense fallback={<LoadingSpinner />}>
-        <FileUpload />
       </Suspense>
       <Suspense fallback={<LoadingSpinner />}>
         <CalendlyEmbed />

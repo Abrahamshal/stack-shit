@@ -14,8 +14,10 @@ const EnhancedQuoteCalculator = () => {
   const navigate = useNavigate();
   const [showSavings, setShowSavings] = useState(false);
   const [showNodeBreakdown, setShowNodeBreakdown] = useState(false);
+  const [showZapierSelectorOverride, setShowZapierSelectorOverride] = useState(false);
   const [selectedZapierWorkflows, setSelectedZapierWorkflows] = useState<any[]>([]);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  const [hasProcessedZapier, setHasProcessedZapier] = useState(false);
   
   const {
     analysisResults,
@@ -25,16 +27,19 @@ const EnhancedQuoteCalculator = () => {
     handleFileUpload,
     processSelectedZapierWorkflows,
     resetAnalysis,
+    clearZapierWorkflows,
     totalNodeCount,
     estimatedPrice,
   } = useEnhancedWorkflowAnalyzer();
 
   const handleContinueFromZapier = () => {
     // Process selected Zapier workflows and show node breakdown
-    if (selectedZapierWorkflows.length > 0) {
+    if (selectedZapierWorkflows.length > 0 && !hasProcessedZapier) {
       processSelectedZapierWorkflows(selectedZapierWorkflows);
+      setHasProcessedZapier(true);
     }
     setShowNodeBreakdown(true);
+    setShowZapierSelectorOverride(false);
   };
 
   const handleCalculateSavings = () => {
@@ -43,7 +48,18 @@ const EnhancedQuoteCalculator = () => {
 
   const handleBackToZapierSelection = () => {
     setShowNodeBreakdown(false);
+    setShowZapierSelectorOverride(true);
     // Keep the selected workflows so user can edit
+  };
+
+  const handleEditZapierSelections = () => {
+    // Clear existing Zapier workflows from results to allow re-selection
+    clearZapierWorkflows();
+    setHasProcessedZapier(false);
+    // Show Zapier selector with current selections
+    setShowNodeBreakdown(false);
+    setShowSavings(false);
+    setShowZapierSelectorOverride(true);
   };
 
   const handleFilesSelected = (files: FileList | File[]) => {
@@ -61,8 +77,10 @@ const EnhancedQuoteCalculator = () => {
     resetAnalysis();
     setShowSavings(false);
     setShowNodeBreakdown(false);
+    setShowZapierSelectorOverride(false);
     setSelectedZapierWorkflows([]);
     setUploadedFiles([]);
+    setHasProcessedZapier(false);
   };
 
   const handleContinueToCheckout = () => {
@@ -109,7 +127,7 @@ const EnhancedQuoteCalculator = () => {
 
         <div className="max-w-6xl mx-auto space-y-6">
           {/* File Upload Section */}
-          {!showZapierSelector && !showNodeBreakdown && !showSavings && (
+          {!showZapierSelector && !showZapierSelectorOverride && !showNodeBreakdown && !showSavings && (
             <>
               <Card>
                 <CardHeader>
@@ -190,12 +208,28 @@ const EnhancedQuoteCalculator = () => {
           )}
 
           {/* Zapier Workflow Selector */}
-          {showZapierSelector && !showNodeBreakdown && !showSavings && (
-            <ZapierWorkflowSelector
-              workflows={pendingZapierWorkflows}
-              onSelectionChange={setSelectedZapierWorkflows}
-              onCalculate={handleContinueFromZapier}
-            />
+          {(showZapierSelector || showZapierSelectorOverride) && !showNodeBreakdown && !showSavings && (
+            <>
+              <ZapierWorkflowSelector
+                workflows={pendingZapierWorkflows}
+                onSelectionChange={setSelectedZapierWorkflows}
+                onCalculate={handleContinueFromZapier}
+                initialSelections={selectedZapierWorkflows}
+              />
+              {showZapierSelectorOverride && (
+                <div className="mt-4 flex justify-center">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setShowZapierSelectorOverride(false);
+                      setShowNodeBreakdown(true);
+                    }}
+                  >
+                    Cancel Edit
+                  </Button>
+                </div>
+              )}
+            </>
           )}
 
           {/* Node Breakdown Display */}
@@ -208,14 +242,16 @@ const EnhancedQuoteCalculator = () => {
                       <FileJson className="h-5 w-5" />
                       Node Breakdown
                     </span>
-                    <Button
-                      onClick={handleBackToZapierSelection}
-                      variant="outline"
-                      size="sm"
-                    >
-                      <ArrowRight className="h-4 w-4 mr-2 rotate-180" />
-                      Back to Selection
-                    </Button>
+                    {pendingZapierWorkflows.length > 0 && (
+                      <Button
+                        onClick={handleEditZapierSelections}
+                        variant="outline"
+                        size="sm"
+                      >
+                        <ArrowRight className="h-4 w-4 mr-2 rotate-180" />
+                        Edit Zapier Selections
+                      </Button>
+                    )}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -251,6 +287,7 @@ const EnhancedQuoteCalculator = () => {
                           if (files) {
                             handleFilesSelected(files);
                             setShowNodeBreakdown(false);
+                            setHasProcessedZapier(false); // Reset so new Zapier files can be processed
                           }
                         };
                         input.click();
@@ -292,6 +329,15 @@ const EnhancedQuoteCalculator = () => {
                   <RefreshCw className="h-4 w-4 mr-2" />
                   Start Over
                 </Button>
+                {pendingZapierWorkflows.length > 0 && (
+                  <Button 
+                    onClick={handleEditZapierSelections} 
+                    variant="outline" 
+                    size="lg"
+                  >
+                    Edit Zapier Selections
+                  </Button>
+                )}
                 <Button 
                   onClick={handleContinueToCheckout}
                   size="lg"

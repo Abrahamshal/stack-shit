@@ -332,24 +332,57 @@ export const useEnhancedWorkflowAnalyzer = () => {
 
   // Process selected Zapier workflows
   const processSelectedZapierWorkflows = useCallback((selectedWorkflows: ZapierWorkflow[]) => {
-    const workflows: Workflow[] = selectedWorkflows.map(zw => ({
-      fileName: zw.fileName,
-      workflowName: zw.title,
-      totalNodes: zw.nodeCount,
-      totalPrice: zw.price,
-      nodes: [], // We don't have detailed node info at this point
-      platform: 'zapier' as const,
-    }));
+    // First, remove any existing Zapier workflows from the same files
+    setAnalysisResults(prevResults => {
+      if (!prevResults) return null;
+      const filteredWorkflows = prevResults.workflows.filter(
+        w => w.platform !== 'zapier'
+      );
+      
+      // Now create new workflows from selections
+      const newZapierWorkflows: Workflow[] = selectedWorkflows.map(zw => ({
+        fileName: zw.fileName,
+        workflowName: zw.title,
+        totalNodes: zw.nodeCount,
+        totalPrice: zw.price,
+        nodes: [], // We don't have detailed node info at this point
+        platform: 'zapier' as const,
+      }));
+      
+      // Combine and recalculate
+      const allWorkflows = [...filteredWorkflows, ...newZapierWorkflows];
+      const totalWorkflows = allWorkflows.length;
+      const totalNodes = allWorkflows.reduce((sum, wf) => sum + wf.totalNodes, 0);
+      const totalPrice = allWorkflows.reduce((sum, wf) => sum + wf.totalPrice, 0);
+      const makeCount = allWorkflows.filter(wf => wf.platform === 'make').length;
+      const zapierCount = allWorkflows.filter(wf => wf.platform === 'zapier').length;
+      const n8nCount = allWorkflows.filter(wf => wf.platform === 'n8n').length;
+
+      const groupedWorkflows: GroupedWorkflows = {
+        make: allWorkflows.filter(wf => wf.platform === 'make'),
+        zapier: allWorkflows.filter(wf => wf.platform === 'zapier'),
+        n8n: allWorkflows.filter(wf => wf.platform === 'n8n'),
+      };
+      
+      const summary: AnalysisSummary = {
+        totalNodes,
+        totalPrice,
+        totalWorkflows,
+        pricePerNode: 20,
+        makeCount,
+        zapierCount,
+        n8nCount,
+      };
+      
+      return { workflows: allWorkflows, groupedWorkflows, summary };
+    });
     
-    addWorkflowsToResults(workflows);
-    
-    // Clear pending Zapier files
-    setPendingZapierFiles([]);
+    // Don't clear pending Zapier files - keep them for editing
     setShowZapierSelector(false);
     
     toast({
-      title: "Zapier workflows added",
-      description: `Added ${workflows.length} Zapier workflows to the analysis`,
+      title: "Zapier workflows updated",
+      description: `Selected ${selectedWorkflows.length} Zapier workflows`,
     });
   }, []);
 
@@ -359,6 +392,43 @@ export const useEnhancedWorkflowAnalyzer = () => {
     setPendingZapierFiles([]);
     setShowZapierSelector(false);
     setIsAnalyzing(false);
+  }, []);
+  
+  // Remove Zapier workflows from results (for re-selection)
+  const clearZapierWorkflows = useCallback(() => {
+    setAnalysisResults(prevResults => {
+      if (!prevResults) return null;
+      const filteredWorkflows = prevResults.workflows.filter(
+        w => w.platform !== 'zapier'
+      );
+      
+      if (filteredWorkflows.length === 0) return null;
+      
+      const totalWorkflows = filteredWorkflows.length;
+      const totalNodes = filteredWorkflows.reduce((sum, wf) => sum + wf.totalNodes, 0);
+      const totalPrice = filteredWorkflows.reduce((sum, wf) => sum + wf.totalPrice, 0);
+      const makeCount = filteredWorkflows.filter(wf => wf.platform === 'make').length;
+      const zapierCount = 0;
+      const n8nCount = filteredWorkflows.filter(wf => wf.platform === 'n8n').length;
+
+      const groupedWorkflows: GroupedWorkflows = {
+        make: filteredWorkflows.filter(wf => wf.platform === 'make'),
+        zapier: [],
+        n8n: filteredWorkflows.filter(wf => wf.platform === 'n8n'),
+      };
+      
+      const summary: AnalysisSummary = {
+        totalNodes,
+        totalPrice,
+        totalWorkflows,
+        pricePerNode: 20,
+        makeCount,
+        zapierCount,
+        n8nCount,
+      };
+      
+      return { workflows: filteredWorkflows, groupedWorkflows, summary };
+    });
   }, []);
   
   // Get all pending Zapier workflows
@@ -372,6 +442,7 @@ export const useEnhancedWorkflowAnalyzer = () => {
     handleFileUpload,
     processSelectedZapierWorkflows,
     resetAnalysis,
+    clearZapierWorkflows,
     totalNodeCount: analysisResults?.summary.totalNodes || 0,
     estimatedPrice: analysisResults?.summary.totalPrice || 0,
   };

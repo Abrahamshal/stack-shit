@@ -49,9 +49,10 @@ export default function Checkout() {
       const data = JSON.parse(storedData);
       setCheckoutData(data);
       
-      // Check if migration cost is over $1000 for free setup
-      if (data.migrationCost >= 1000) {
+      // Check if migration cost is over $500 for free setup
+      if (data.migrationCost >= 500) {
         setIncludesFreeSetup(true);
+        setAddSetup(true); // Auto-select but allow deselection
       }
     } else {
       // Redirect back if no data
@@ -68,7 +69,7 @@ export default function Checkout() {
   }
 
   const managementCost = addManagement ? 200 : 0;
-  const setupCost = addSetup && !includesFreeSetup ? 500 : 0;
+  const setupCost = addSetup ? (includesFreeSetup ? 0 : 500) : 0;
   const subtotal = checkoutData.migrationCost;
   const totalCost = subtotal + setupCost;
   const monthlyRecurring = managementCost;
@@ -173,110 +174,6 @@ export default function Checkout() {
                 </CardContent>
               </Card>
 
-              {/* Add-on Services */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Package className="h-5 w-5" />
-                    Enhance Your Migration
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {/* Setup Service */}
-                  <div className={`p-4 rounded-lg border-2 ${includesFreeSetup ? 'border-green-500 bg-green-50' : 'border-gray-200'}`}>
-                    <div className="flex items-start gap-3">
-                      <Checkbox
-                        id="setup"
-                        checked={addSetup || includesFreeSetup}
-                        onCheckedChange={(checked) => setAddSetup(checked as boolean)}
-                        disabled={includesFreeSetup}
-                      />
-                      <div className="flex-1">
-                        <label 
-                          htmlFor="setup" 
-                          className="font-semibold cursor-pointer flex items-center gap-2"
-                        >
-                          <Settings className="h-4 w-4" />
-                          n8n Personal Environment Setup
-                          {includesFreeSetup && (
-                            <Badge variant="default" className="ml-2">
-                              <Gift className="h-3 w-3 mr-1" />
-                              FREE (Order over $1000)
-                            </Badge>
-                          )}
-                        </label>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          Complete end-to-end setup of your personal n8n environment, including:
-                        </p>
-                        <ul className="text-sm text-muted-foreground mt-2 space-y-1">
-                          <li className="flex items-center gap-2">
-                            <CheckCircle className="h-3 w-3 text-green-600" />
-                            Server configuration and optimization
-                          </li>
-                          <li className="flex items-center gap-2">
-                            <CheckCircle className="h-3 w-3 text-green-600" />
-                            Security hardening and SSL setup
-                          </li>
-                          <li className="flex items-center gap-2">
-                            <CheckCircle className="h-3 w-3 text-green-600" />
-                            Database configuration
-                          </li>
-                          <li className="flex items-center gap-2">
-                            <CheckCircle className="h-3 w-3 text-green-600" />
-                            Initial workflow deployment
-                          </li>
-                        </ul>
-                        {!includesFreeSetup && (
-                          <p className="font-semibold mt-2">$500 one-time</p>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Management Service */}
-                  <div className="p-4 rounded-lg border-2 border-gray-200">
-                    <div className="flex items-start gap-3">
-                      <Checkbox
-                        id="management"
-                        checked={addManagement}
-                        onCheckedChange={(checked) => setAddManagement(checked as boolean)}
-                      />
-                      <div className="flex-1">
-                        <label 
-                          htmlFor="management" 
-                          className="font-semibold cursor-pointer flex items-center gap-2"
-                        >
-                          <Shield className="h-4 w-4" />
-                          Ongoing Management & Maintenance
-                        </label>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          Keep your workflows running smoothly with our management service:
-                        </p>
-                        <ul className="text-sm text-muted-foreground mt-2 space-y-1">
-                          <li className="flex items-center gap-2">
-                            <CheckCircle className="h-3 w-3 text-green-600" />
-                            24/7 monitoring and alerts
-                          </li>
-                          <li className="flex items-center gap-2">
-                            <CheckCircle className="h-3 w-3 text-green-600" />
-                            Regular updates and security patches
-                          </li>
-                          <li className="flex items-center gap-2">
-                            <CheckCircle className="h-3 w-3 text-green-600" />
-                            Performance optimization
-                          </li>
-                          <li className="flex items-center gap-2">
-                            <CheckCircle className="h-3 w-3 text-green-600" />
-                            Priority support
-                          </li>
-                        </ul>
-                        <p className="font-semibold mt-2">$200/month</p>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
               {/* Benefits */}
               <Card>
                 <CardHeader>
@@ -349,8 +246,78 @@ export default function Checkout() {
                     </p>
                   </div>
 
+                  <Separator />
+
+                  {/* Subtotal */}
+                  <div className="flex justify-between font-medium">
+                    <span>Subtotal</span>
+                    <span>${subtotal}</span>
+                  </div>
+
+                  {/* Add-on Services */}
+                  <div className="space-y-4 pt-2">
+                    <h4 className="font-semibold text-sm">Add-on Services</h4>
+                    
+                    {/* Setup Service */}
+                    <div className={`p-3 rounded-lg border ${includesFreeSetup ? 'border-green-500 bg-green-50' : 'border-gray-200'}`}>
+                      <div className="flex items-start gap-2">
+                        <Checkbox
+                          id="setup"
+                          checked={addSetup}
+                          onCheckedChange={(checked) => setAddSetup(checked as boolean)}
+                          className="mt-1"
+                        />
+                        <div className="flex-1">
+                          <label 
+                            htmlFor="setup" 
+                            className="font-medium cursor-pointer flex items-center gap-2 text-sm"
+                          >
+                            <Settings className="h-3 w-3" />
+                            n8n Environment Setup
+                            {includesFreeSetup && (
+                              <Badge variant="default" className="ml-1 text-xs">
+                                FREE
+                              </Badge>
+                            )}
+                          </label>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            Complete server setup & configuration
+                          </p>
+                          {!includesFreeSetup && (
+                            <p className="font-medium text-xs mt-1">$500</p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Management Service */}
+                    <div className="p-3 rounded-lg border border-gray-200">
+                      <div className="flex items-start gap-2">
+                        <Checkbox
+                          id="management"
+                          checked={addManagement}
+                          onCheckedChange={(checked) => setAddManagement(checked as boolean)}
+                          className="mt-1"
+                        />
+                        <div className="flex-1">
+                          <label 
+                            htmlFor="management" 
+                            className="font-medium cursor-pointer flex items-center gap-2 text-sm"
+                          >
+                            <Shield className="h-3 w-3" />
+                            Ongoing Management
+                          </label>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            24/7 monitoring & maintenance
+                          </p>
+                          <p className="font-medium text-xs mt-1">$200/mo</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
                   {/* Setup Cost */}
-                  {(addSetup || includesFreeSetup) && (
+                  {addSetup && (
                     <div>
                       <div className="flex justify-between text-sm">
                         <span>Environment Setup</span>
@@ -358,13 +325,13 @@ export default function Checkout() {
                           {includesFreeSetup ? (
                             <span className="text-green-600">FREE</span>
                           ) : (
-                            `$${setupCost}`
+                            `$500`
                           )}
                         </span>
                       </div>
                       {includesFreeSetup && (
                         <p className="text-xs text-green-600 mt-1">
-                          Included with orders over $1000
+                          Included with orders over $500
                         </p>
                       )}
                     </div>
@@ -398,8 +365,8 @@ export default function Checkout() {
                   {includesFreeSetup && (
                     <Alert className="bg-green-50 border-green-200">
                       <Gift className="h-4 w-4 text-green-600" />
-                      <AlertDescription className="text-green-700">
-                        You qualify for FREE environment setup ($500 value)!
+                      <AlertDescription className="text-green-700 text-xs">
+                        You qualify for FREE environment setup! Uncheck if you already have one.
                       </AlertDescription>
                     </Alert>
                   )}

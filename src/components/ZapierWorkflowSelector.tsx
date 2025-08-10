@@ -254,7 +254,7 @@ export default function ZapierWorkflowSelector({
               onClick={onCalculate}
               disabled={totalSelected === 0}
             >
-              Calculate Savings
+              Continue
             </Button>
           </div>
         </CardContent>

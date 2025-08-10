@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router-dom';
 const EnhancedQuoteCalculator = () => {
   const navigate = useNavigate();
   const [showSavings, setShowSavings] = useState(false);
+  const [showNodeBreakdown, setShowNodeBreakdown] = useState(false);
   const [selectedZapierWorkflows, setSelectedZapierWorkflows] = useState<any[]>([]);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   
@@ -28,12 +29,21 @@ const EnhancedQuoteCalculator = () => {
     estimatedPrice,
   } = useEnhancedWorkflowAnalyzer();
 
-  const handleCalculateSavings = () => {
-    // Process selected Zapier workflows first
+  const handleContinueFromZapier = () => {
+    // Process selected Zapier workflows and show node breakdown
     if (selectedZapierWorkflows.length > 0) {
       processSelectedZapierWorkflows(selectedZapierWorkflows);
     }
+    setShowNodeBreakdown(true);
+  };
+
+  const handleCalculateSavings = () => {
     setShowSavings(true);
+  };
+
+  const handleBackToZapierSelection = () => {
+    setShowNodeBreakdown(false);
+    // Keep the selected workflows so user can edit
   };
 
   const handleFilesSelected = (files: FileList | File[]) => {
@@ -50,6 +60,7 @@ const EnhancedQuoteCalculator = () => {
   const handleFullReset = () => {
     resetAnalysis();
     setShowSavings(false);
+    setShowNodeBreakdown(false);
     setSelectedZapierWorkflows([]);
     setUploadedFiles([]);
   };
@@ -73,6 +84,19 @@ const EnhancedQuoteCalculator = () => {
     <section id="enhanced-quote-calculator" className="py-20 bg-muted/50">
       <div className="container mx-auto px-4 lg:px-8">
         <div className="text-center mb-12">
+          <div className="flex justify-center mb-6">
+            {(uploadedFiles.length > 0 || showZapierSelector || showNodeBreakdown || showSavings) && (
+              <Button 
+                onClick={handleFullReset} 
+                variant="outline"
+                size="lg"
+                className="gap-2"
+              >
+                <RefreshCw className="h-4 w-4" />
+                Reset Calculator
+              </Button>
+            )}
+          </div>
           <h2 className="font-sora font-bold text-3xl lg:text-5xl mb-6">
             Instant Migration
             <span className="text-gradient"> Cost & Savings Calculator</span>
@@ -85,7 +109,7 @@ const EnhancedQuoteCalculator = () => {
 
         <div className="max-w-6xl mx-auto space-y-6">
           {/* File Upload Section */}
-          {!showZapierSelector && !showSavings && (
+          {!showZapierSelector && !showNodeBreakdown && !showSavings && (
             <>
               <Card>
                 <CardHeader>
@@ -94,17 +118,6 @@ const EnhancedQuoteCalculator = () => {
                       <FileJson className="h-5 w-5" />
                       Upload Workflow Files
                     </CardTitle>
-                    {uploadedFiles.length > 0 && (
-                      <Button 
-                        onClick={handleFullReset} 
-                        variant="outline"
-                        size="sm"
-                        className="gap-2"
-                      >
-                        <RefreshCw className="h-4 w-4" />
-                        Reset All
-                      </Button>
-                    )}
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -177,12 +190,87 @@ const EnhancedQuoteCalculator = () => {
           )}
 
           {/* Zapier Workflow Selector */}
-          {showZapierSelector && !showSavings && (
+          {showZapierSelector && !showNodeBreakdown && !showSavings && (
             <ZapierWorkflowSelector
               workflows={pendingZapierWorkflows}
               onSelectionChange={setSelectedZapierWorkflows}
-              onCalculate={handleCalculateSavings}
+              onCalculate={handleContinueFromZapier}
             />
+          )}
+
+          {/* Node Breakdown Display */}
+          {showNodeBreakdown && !showSavings && analysisResults && (
+            <>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center justify-between">
+                    <span className="flex items-center gap-2">
+                      <FileJson className="h-5 w-5" />
+                      Node Breakdown
+                    </span>
+                    <Button
+                      onClick={handleBackToZapierSelection}
+                      variant="outline"
+                      size="sm"
+                    >
+                      <ArrowRight className="h-4 w-4 mr-2 rotate-180" />
+                      Back to Selection
+                    </Button>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <PricingResults analysisResults={analysisResults} />
+                  
+                  <div className="mt-6 p-4 bg-muted rounded-lg">
+                    <div className="flex items-center justify-between mb-4">
+                      <div>
+                        <h3 className="font-semibold text-lg">Total Migration Summary</h3>
+                        <p className="text-muted-foreground">
+                          {analysisResults.workflows.length} workflows • {totalNodeCount} total nodes
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-2xl font-bold text-primary">${estimatedPrice}</p>
+                        <p className="text-sm text-muted-foreground">Migration Cost</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-4 mt-6">
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      className="flex-1"
+                      onClick={() => {
+                        const input = document.createElement('input');
+                        input.type = 'file';
+                        input.multiple = true;
+                        input.accept = '.json';
+                        input.onchange = (e) => {
+                          const files = (e.target as HTMLInputElement).files;
+                          if (files) {
+                            handleFilesSelected(files);
+                            setShowNodeBreakdown(false);
+                          }
+                        };
+                        input.click();
+                      }}
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add More Automations
+                    </Button>
+                    <Button 
+                      onClick={handleCalculateSavings} 
+                      size="lg"
+                      className="flex-1"
+                    >
+                      <TrendingUp className="h-4 w-4 mr-2" />
+                      Calculate Savings
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </>
           )}
 
           {/* Savings Display */}

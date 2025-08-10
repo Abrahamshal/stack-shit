@@ -35,12 +35,21 @@ const EnhancedQuoteCalculator = () => {
   } = useEnhancedWorkflowAnalyzer();
 
   const handleContinueFromZapier = () => {
-    // Process selected Zapier workflows and show node breakdown
+    // Process selected Zapier workflows
     if (selectedZapierWorkflows.length > 0) {
+      // Clear existing Zapier workflows before adding new selections
+      clearZapierWorkflows();
       processSelectedZapierWorkflows(selectedZapierWorkflows);
       setHasProcessedZapier(true);
-      setShowNodeBreakdown(true);
       setShowZapierSelectorOverride(false);
+      
+      // If we already have other workflows (Make.com), go back to main view
+      // Otherwise show node breakdown
+      if (analysisResults && analysisResults.workflows.some(w => w.platform !== 'zapier')) {
+        setShowNodeBreakdown(false);
+      } else {
+        setShowNodeBreakdown(true);
+      }
     } else {
       // No workflows selected, show a message
       toast({
@@ -62,9 +71,7 @@ const EnhancedQuoteCalculator = () => {
   };
 
   const handleEditZapierSelections = () => {
-    // Clear existing Zapier workflows from results to allow re-selection
-    clearZapierWorkflows();
-    setHasProcessedZapier(false);
+    // Don't clear workflows yet - let user make changes first
     // Show Zapier selector with current selections
     setShowNodeBreakdown(false);
     setShowSavings(false);
@@ -171,6 +178,22 @@ const EnhancedQuoteCalculator = () => {
                   {analysisResults && analysisResults.workflows.length > 0 && (
                     <div className="mt-6">
                       <PricingResults analysisResults={analysisResults} />
+                      
+                      {/* Edit Zapier Workflows Button */}
+                      {pendingZapierWorkflows.length > 0 && (
+                        <div className="mt-4 flex justify-center">
+                          <Button
+                            onClick={handleEditZapierSelections}
+                            variant="outline"
+                            size="default"
+                            className="gap-2"
+                          >
+                            <FileJson className="h-4 w-4" />
+                            Edit Zapier Workflow Selections
+                          </Button>
+                        </div>
+                      )}
+                      
                       <div className="flex gap-4 mt-6">
                         <Button 
                           onClick={() => setShowSavings(true)} 
@@ -196,9 +219,9 @@ const EnhancedQuoteCalculator = () => {
                 </CardContent>
               </Card>
 
-              {/* Add More Files Button */}
+              {/* Add More Files Button and Edit Zapier if not in results yet */}
               {uploadedFiles.length > 0 && (
-                <div className="flex justify-center">
+                <div className="flex justify-center gap-4">
                   <Button
                     variant="outline"
                     size="lg"
@@ -218,6 +241,18 @@ const EnhancedQuoteCalculator = () => {
                     <Plus className="h-4 w-4" />
                     Add More Files
                   </Button>
+                  {/* Show Edit Zapier button here too if no results yet */}
+                  {pendingZapierWorkflows.length > 0 && !analysisResults && (
+                    <Button
+                      onClick={() => setShowZapierSelectorOverride(true)}
+                      variant="outline"
+                      size="lg"
+                      className="gap-2"
+                    >
+                      <FileJson className="h-4 w-4" />
+                      Select Zapier Workflows
+                    </Button>
+                  )}
                 </div>
               )}
             </>
@@ -238,7 +273,14 @@ const EnhancedQuoteCalculator = () => {
                     variant="outline"
                     onClick={() => {
                       setShowZapierSelectorOverride(false);
-                      setShowNodeBreakdown(true);
+                      // Return to wherever we came from
+                      if (hasProcessedZapier && analysisResults) {
+                        // If we have results, go back to main view
+                        setShowNodeBreakdown(false);
+                      } else {
+                        // Otherwise go to node breakdown
+                        setShowNodeBreakdown(true);
+                      }
                     }}
                   >
                     Cancel Edit
@@ -345,7 +387,7 @@ const EnhancedQuoteCalculator = () => {
                 totalNodes={totalNodeCount}
                 workflowCount={analysisResults.workflows.length}
                 migrationCost={estimatedPrice}
-                onContactSales={() => {}}
+                onContactSales={handleContinueToCheckout}
               />
               <div className="flex justify-center gap-4">
                 <Button 

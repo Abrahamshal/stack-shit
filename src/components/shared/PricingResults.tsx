@@ -1,5 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Button } from '@/components/ui/button';
+import { Edit2 } from 'lucide-react';
 
 interface Node {
   name: string;
@@ -36,9 +38,10 @@ interface AnalysisResults {
 
 interface PricingResultsProps {
   analysisResults: AnalysisResults | null;
+  onEditZapier?: () => void;
 }
 
-export default function PricingResults({ analysisResults }: PricingResultsProps) {
+export default function PricingResults({ analysisResults, onEditZapier }: PricingResultsProps) {
   if (!analysisResults) return null;
 
   const { workflows, groupedWorkflows, summary } = analysisResults;
@@ -52,7 +55,20 @@ export default function PricingResults({ analysisResults }: PricingResultsProps)
 
     return (
       <div key={platformName}>
-        <h4 className="text-lg font-semibold capitalize mb-2">{platformName} Workflows</h4>
+        <div className="flex items-center justify-between mb-2">
+          <h4 className="text-lg font-semibold capitalize">{platformName} Workflows</h4>
+          {platformName.toLowerCase() === 'zapier' && onEditZapier && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onEditZapier}
+              className="gap-2"
+            >
+              <Edit2 className="h-3 w-3" />
+              Edit Selection
+            </Button>
+          )}
+        </div>
         <div className="text-sm text-muted-foreground mb-3">
           {platformWorkflows.length} workflow{platformWorkflows.length !== 1 ? 's' : ''} &bull; {platformNodes} nodes &bull; ${platformPrice}
         </div>

@@ -126,7 +126,7 @@ const Pricing = () => {
               <Button 
                 variant={plan.popular ? "cta" : "outline-light"}
                 className="w-full"
-                onClick={() => scrollToSection(plan.name === "Migration Package" ? "quote-calculator" : "calendly")}
+                onClick={() => scrollToSection(plan.name === "Migration Package" ? "enhanced-quote-calculator" : "calendly")}
               >
                 {plan.cta}
                 <ArrowRight size={16} className="ml-2" />

@@ -435,6 +435,56 @@ export const useEnhancedWorkflowAnalyzer = () => {
     });
   }, []);
   
+  // Remove workflows by filename
+  const removeWorkflowsByFileName = useCallback((fileName: string) => {
+    // Remove from pending Zapier files
+    setPendingZapierFiles(prev => prev.filter(f => f.fileName !== fileName));
+    
+    // Remove from analysis results
+    setAnalysisResults(prevResults => {
+      if (!prevResults) return null;
+      
+      const filteredWorkflows = prevResults.workflows.filter(
+        w => w.fileName !== fileName
+      );
+      
+      if (filteredWorkflows.length === 0) return null;
+      
+      const totalWorkflows = filteredWorkflows.length;
+      const totalNodes = filteredWorkflows.reduce((sum, wf) => sum + wf.totalNodes, 0);
+      const totalPrice = filteredWorkflows.reduce((sum, wf) => sum + wf.totalPrice, 0);
+      const makeCount = filteredWorkflows.filter(wf => wf.platform === 'make').length;
+      const zapierCount = filteredWorkflows.filter(wf => wf.platform === 'zapier').length;
+      const n8nCount = filteredWorkflows.filter(wf => wf.platform === 'n8n').length;
+
+      const groupedWorkflows: GroupedWorkflows = {
+        make: filteredWorkflows.filter(wf => wf.platform === 'make'),
+        zapier: filteredWorkflows.filter(wf => wf.platform === 'zapier'),
+        n8n: filteredWorkflows.filter(wf => wf.platform === 'n8n'),
+      };
+      
+      const summary: AnalysisSummary = {
+        totalNodes,
+        totalPrice,
+        totalWorkflows,
+        pricePerNode: 20,
+        makeCount,
+        zapierCount,
+        n8nCount,
+      };
+      
+      return { workflows: filteredWorkflows, groupedWorkflows, summary };
+    });
+    
+    // If this was the last Zapier file and selector is showing, hide it
+    setPendingZapierFiles(prev => {
+      if (prev.filter(f => f.fileName !== fileName).length === 0) {
+        setShowZapierSelector(false);
+      }
+      return prev;
+    });
+  }, []);
+  
   // Get all pending Zapier workflows
   const allPendingZapierWorkflows = pendingZapierFiles.flatMap(f => f.workflows);
   
@@ -447,6 +497,7 @@ export const useEnhancedWorkflowAnalyzer = () => {
     processSelectedZapierWorkflows,
     resetAnalysis,
     clearZapierWorkflows,
+    removeWorkflowsByFileName,
     totalNodeCount: analysisResults?.summary.totalNodes || 0,
     estimatedPrice: analysisResults?.summary.totalPrice || 0,
   };

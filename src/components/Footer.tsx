@@ -41,7 +41,7 @@ const Footer = () => {
             <ul className="space-y-3 text-muted-foreground">
               <li>
                 <button 
-                  onClick={() => scrollToSection('services')}
+                  onClick={() => scrollToSection('pricing')}
                   className="hover:text-primary transition-colors"
                 >
                   Workflow Migration
@@ -49,7 +49,7 @@ const Footer = () => {
               </li>
               <li>
                 <button 
-                  onClick={() => scrollToSection('services')}
+                  onClick={() => scrollToSection('pricing')}
                   className="hover:text-primary transition-colors"
                 >
                   Strategy Consulting
@@ -57,7 +57,7 @@ const Footer = () => {
               </li>
               <li>
                 <button 
-                  onClick={() => scrollToSection('services')}
+                  onClick={() => scrollToSection('pricing')}
                   className="hover:text-primary transition-colors"
                 >
                   Managed Hosting

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useEnhancedWorkflowAnalyzer } from '@/hooks/useEnhancedWorkflowAnalyzer';
 import PricingResults from '@/components/shared/PricingResults';
 import ZapierWorkflowSelector from '@/components/ZapierWorkflowSelector';
@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router-dom';
 const EnhancedQuoteCalculator = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const sectionRef = useRef<HTMLDivElement>(null);
   const [showSavings, setShowSavings] = useState(false);
   const [showNodeBreakdown, setShowNodeBreakdown] = useState(false);
   const [showZapierSelectorOverride, setShowZapierSelectorOverride] = useState(false);
@@ -30,6 +31,7 @@ const EnhancedQuoteCalculator = () => {
     processSelectedZapierWorkflows,
     resetAnalysis,
     clearZapierWorkflows,
+    removeWorkflowsByFileName,
     totalNodeCount,
     estimatedPrice,
   } = useEnhancedWorkflowAnalyzer();
@@ -85,8 +87,12 @@ const EnhancedQuoteCalculator = () => {
   };
 
   const handleRemoveFile = (index: number) => {
+    const fileToRemove = uploadedFiles[index];
+    if (fileToRemove) {
+      // Remove workflows associated with this file
+      removeWorkflowsByFileName(fileToRemove.name);
+    }
     setUploadedFiles(prev => prev.filter((_, i) => i !== index));
-    // Note: You may want to also remove associated workflows from analysis
   };
 
   const handleFullReset = () => {
@@ -97,6 +103,16 @@ const EnhancedQuoteCalculator = () => {
     setSelectedZapierWorkflows([]);
     setUploadedFiles([]);
     setHasProcessedZapier(false);
+    
+    // Scroll to top of calculator section after reset
+    setTimeout(() => {
+      if (sectionRef.current) {
+        const yOffset = -100;
+        const element = sectionRef.current;
+        const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    }, 100);
   };
 
   const handleContinueToCheckout = () => {
@@ -114,6 +130,17 @@ const EnhancedQuoteCalculator = () => {
 
   const canContinue = analysisResults && analysisResults.workflows.length > 0;
 
+  // Scroll to section when state changes
+  useEffect(() => {
+    if (sectionRef.current) {
+      const yOffset = -100; // Offset for fixed header
+      const element = sectionRef.current;
+      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+  }, [showSavings, showNodeBreakdown, showZapierSelectorOverride, analysisResults]);
+
   // Debug effect to log state changes
   useEffect(() => {
     if (showNodeBreakdown && !analysisResults) {
@@ -122,7 +149,7 @@ const EnhancedQuoteCalculator = () => {
   }, [showNodeBreakdown, analysisResults]);
 
   return (
-    <section id="enhanced-quote-calculator" className="py-20 bg-muted/50">
+    <section id="enhanced-quote-calculator" className="py-20 bg-muted/50" ref={sectionRef}>
       <div className="container mx-auto px-4 lg:px-8">
         <div className="text-center mb-12">
           <div className="flex justify-center mb-6">
@@ -177,7 +204,10 @@ const EnhancedQuoteCalculator = () => {
 
                   {analysisResults && analysisResults.workflows.length > 0 && (
                     <div className="mt-6">
-                      <PricingResults analysisResults={analysisResults} />
+                      <PricingResults 
+                        analysisResults={analysisResults} 
+                        onEditZapier={pendingZapierWorkflows.length > 0 ? handleEditZapierSelections : undefined}
+                      />
                       
                       {/* Edit Zapier Workflows Button */}
                       {pendingZapierWorkflows.length > 0 && (
@@ -194,25 +224,38 @@ const EnhancedQuoteCalculator = () => {
                         </div>
                       )}
                       
-                      <div className="flex gap-4 mt-6">
-                        <Button 
-                          onClick={() => setShowSavings(true)} 
-                          size="lg"
-                          className="flex-1"
-                        >
-                          <TrendingUp className="h-4 w-4 mr-2" />
-                          Calculate Savings
-                        </Button>
-                        <Button 
-                          onClick={handleContinueToCheckout}
-                          size="lg"
-                          variant="default"
-                          className="flex-1"
-                          disabled={!canContinue}
-                        >
-                          Continue to Checkout
-                          <ArrowRight className="h-4 w-4 ml-2" />
-                        </Button>
+                      <div className="space-y-4 mt-6">
+                        <div className="flex gap-4">
+                          <Button 
+                            onClick={() => setShowSavings(true)} 
+                            size="lg"
+                            className="flex-1"
+                          >
+                            <TrendingUp className="h-4 w-4 mr-2" />
+                            Calculate Savings
+                          </Button>
+                          <Button 
+                            onClick={handleContinueToCheckout}
+                            size="lg"
+                            variant="default"
+                            className="flex-1"
+                            disabled={!canContinue}
+                          >
+                            Continue to Checkout
+                            <ArrowRight className="h-4 w-4 ml-2" />
+                          </Button>
+                        </div>
+                        <div className="flex justify-center">
+                          <Button
+                            onClick={handleFullReset}
+                            variant="outline"
+                            size="default"
+                            className="gap-2"
+                          >
+                            <RefreshCw className="h-4 w-4" />
+                            Reset Calculator
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   )}
@@ -315,7 +358,10 @@ const EnhancedQuoteCalculator = () => {
                 <CardContent>
                   {analysisResults ? (
                     <>
-                      <PricingResults analysisResults={analysisResults} />
+                      <PricingResults 
+                        analysisResults={analysisResults} 
+                        onEditZapier={pendingZapierWorkflows.length > 0 ? handleEditZapierSelections : undefined}
+                      />
                       
                       <div className="mt-6 p-4 bg-muted rounded-lg">
                         <div className="flex items-center justify-between mb-4">

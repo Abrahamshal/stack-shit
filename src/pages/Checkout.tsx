@@ -16,7 +16,8 @@ import {
   FileJson,
   DollarSign,
   Shield,
-  Zap
+  Zap,
+  Trash2
 } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -38,6 +39,7 @@ interface CheckoutData {
 export default function Checkout() {
   const navigate = useNavigate();
   const [checkoutData, setCheckoutData] = useState<CheckoutData | null>(null);
+  const [editableWorkflows, setEditableWorkflows] = useState<Workflow[]>([]);
   const [addManagement, setAddManagement] = useState(false);
   const [addSetup, setAddSetup] = useState(false);
   const [includesFreeSetup, setIncludesFreeSetup] = useState(false);
@@ -48,6 +50,7 @@ export default function Checkout() {
     if (storedData) {
       const data = JSON.parse(storedData);
       setCheckoutData(data);
+      setEditableWorkflows(data.workflows || []);
       
       // Check if migration cost is over $500 for free setup
       if (data.migrationCost >= 500) {
@@ -68,16 +71,54 @@ export default function Checkout() {
     );
   }
 
+  // Calculate costs based on current workflows
+  const recalculatedTotalNodes = editableWorkflows.reduce((sum, w) => sum + w.totalNodes, 0);
+  const recalculatedMigrationCost = recalculatedTotalNodes * 20;
+  
   const managementCost = addManagement ? 200 : 0;
   const setupCost = addSetup ? (includesFreeSetup ? 0 : 500) : 0;
-  const subtotal = checkoutData.migrationCost;
+  const subtotal = recalculatedMigrationCost;
   const totalCost = subtotal + setupCost;
   const monthlyRecurring = managementCost;
+
+  const handleDeleteWorkflow = (platform: string, workflowIndex: number) => {
+    setEditableWorkflows(prev => {
+      // Find and remove the specific workflow
+      const platformWorkflows = prev.filter(w => w.platform === platform);
+      const otherWorkflows = prev.filter(w => w.platform !== platform);
+      
+      // Remove the workflow at the specified index
+      const updatedPlatformWorkflows = platformWorkflows.filter((_, idx) => idx !== workflowIndex);
+      
+      const newWorkflows = [...otherWorkflows, ...updatedPlatformWorkflows];
+      
+      // Update checkout data in sessionStorage
+      const updatedData = {
+        ...checkoutData,
+        workflows: newWorkflows,
+        totalNodes: newWorkflows.reduce((sum, w) => sum + w.totalNodes, 0),
+        migrationCost: newWorkflows.reduce((sum, w) => sum + w.totalPrice, 0)
+      };
+      sessionStorage.setItem('checkoutData', JSON.stringify(updatedData));
+      
+      // Check if still qualifies for free setup
+      if (updatedData.migrationCost < 500 && includesFreeSetup) {
+        setIncludesFreeSetup(false);
+      } else if (updatedData.migrationCost >= 500 && !includesFreeSetup) {
+        setIncludesFreeSetup(true);
+        setAddSetup(true);
+      }
+      
+      return newWorkflows;
+    });
+  };
 
   const handleProceedToPayment = () => {
     // Store final order details
     const orderDetails = {
-      ...checkoutData,
+      workflows: editableWorkflows,
+      totalNodes: recalculatedTotalNodes,
+      migrationCost: recalculatedMigrationCost,
       addManagement,
       addSetup: addSetup || includesFreeSetup,
       setupCost,
@@ -95,7 +136,7 @@ export default function Checkout() {
   };
 
   // Group workflows by platform
-  const groupedWorkflows = checkoutData.workflows.reduce((acc, workflow) => {
+  const groupedWorkflows = editableWorkflows.reduce((acc, workflow) => {
     if (!acc[workflow.platform]) {
       acc[workflow.platform] = [];
     }
@@ -137,40 +178,61 @@ export default function Checkout() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <FileJson className="h-5 w-5" />
-                    Selected Workflows ({checkoutData.workflows.length})
+                    Selected Workflows ({editableWorkflows.length})
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
-                    {Object.entries(groupedWorkflows).map(([platform, workflows]) => (
-                      <div key={platform}>
-                        <div className="flex items-center justify-between mb-2">
-                          <h3 className="font-semibold capitalize">{platform} Workflows</h3>
-                          <Badge variant="secondary">
-                            {workflows.length} workflow{workflows.length !== 1 ? 's' : ''}
-                          </Badge>
-                        </div>
-                        <div className="space-y-2">
-                          {workflows.map((workflow, index) => (
-                            <div 
-                              key={`${platform}-${index}`}
-                              className="flex items-center justify-between p-3 rounded-lg bg-muted/50"
-                            >
-                              <div>
-                                <p className="font-medium">{workflow.workflowName}</p>
-                                <p className="text-sm text-muted-foreground">
-                                  {workflow.totalNodes} nodes • {workflow.fileName}
-                                </p>
+                  {editableWorkflows.length === 0 ? (
+                    <div className="text-center py-8">
+                      <p className="text-muted-foreground mb-4">No workflows remaining</p>
+                      <Button onClick={() => navigate('/')}>
+                        Return to Calculator
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {Object.entries(groupedWorkflows).map(([platform, workflows]) => (
+                        <div key={platform}>
+                          <div className="flex items-center justify-between mb-2">
+                            <h3 className="font-semibold capitalize">{platform} Workflows</h3>
+                            <Badge variant="secondary">
+                              {workflows.length} workflow{workflows.length !== 1 ? 's' : ''}
+                            </Badge>
+                          </div>
+                          <div className="space-y-2">
+                            {workflows.map((workflow, index) => (
+                              <div 
+                                key={`${platform}-${index}`}
+                                className="flex items-center justify-between p-3 rounded-lg bg-muted/50 group hover:bg-muted/70 transition-colors"
+                              >
+                                <div className="flex-1">
+                                  <p className="font-medium">{workflow.workflowName}</p>
+                                  <p className="text-sm text-muted-foreground">
+                                    {workflow.totalNodes} nodes • {workflow.fileName}
+                                  </p>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                  <div className="text-right">
+                                    <p className="font-semibold">${workflow.totalPrice}</p>
+                                  </div>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => handleDeleteWorkflow(platform, index)}
+                                    className="opacity-0 group-hover:opacity-100 transition-opacity"
+                                    disabled={editableWorkflows.length === 1}
+                                    title={editableWorkflows.length === 1 ? "Cannot delete last workflow" : "Delete workflow"}
+                                  >
+                                    <Trash2 className="h-4 w-4 text-destructive" />
+                                  </Button>
+                                </div>
                               </div>
-                              <div className="text-right">
-                                <p className="font-semibold">${workflow.totalPrice}</p>
-                              </div>
-                            </div>
-                          ))}
+                            ))}
+                          </div>
                         </div>
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
+                  )}
                 </CardContent>
               </Card>
 
@@ -189,7 +251,7 @@ export default function Checkout() {
                       <div>
                         <p className="font-medium">Full Workflow Migration</p>
                         <p className="text-sm text-muted-foreground">
-                          All {checkoutData.totalNodes} nodes converted to n8n
+                          All {recalculatedTotalNodes} nodes converted to n8n
                         </p>
                       </div>
                     </div>
@@ -242,7 +304,7 @@ export default function Checkout() {
                       <span>${subtotal}</span>
                     </div>
                     <p className="text-xs text-muted-foreground mt-1">
-                      {checkoutData.totalNodes} nodes × $20/node
+                      {recalculatedTotalNodes} nodes × $20/node
                     </p>
                   </div>
 
@@ -376,6 +438,7 @@ export default function Checkout() {
                     onClick={handleProceedToPayment}
                     size="lg"
                     className="w-full"
+                    disabled={editableWorkflows.length === 0}
                   >
                     <DollarSign className="h-4 w-4 mr-2" />
                     Proceed to Payment

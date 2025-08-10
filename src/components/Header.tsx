@@ -60,7 +60,7 @@ const Header = () => {
             <Button 
               variant="cta" 
               size="lg"
-              onClick={() => scrollToSection('contact')}
+              onClick={() => scrollToSection('enhanced-quote-calculator')}
               className="font-bold"
               aria-label="Navigate to contact section and claim savings"
             >
@@ -101,7 +101,7 @@ const Header = () => {
               variant="cta" 
               size="lg" 
               className="w-full mt-4 font-bold"
-              onClick={() => scrollToSection('contact')}
+              onClick={() => scrollToSection('enhanced-quote-calculator')}
               aria-label="Navigate to contact section and claim savings"
             >
               Migrate to n8n → Get Started

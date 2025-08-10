@@ -42,7 +42,7 @@ const CTABanner = () => {
             <Button 
               variant="cta" 
               size="xl"
-              onClick={() => scrollToSection('contact')}
+              onClick={() => scrollToSection('enhanced-quote-calculator')}
               className="group min-w-[200px]"
             >
               <Upload className="mr-2 group-hover:scale-110 transition-transform" size={20} />

@@ -60,19 +60,8 @@ const Hero = () => {
           </p>
 
 
-          {/* CTA Buttons - Mobile optimized */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center animate-premium-entrance mb-6 sm:mb-8 px-4" style={{ animationDelay: '0.5s' }}>
-            <Button 
-              variant="cta" 
-              size="lg"
-              onClick={() => scrollToSection('quote-calculator')}
-              className="group text-base sm:text-lg px-8 sm:px-12 py-3 sm:py-4 shadow-2xl hover:shadow-amber-500/50 transform hover:scale-105 transition-all duration-300"
-            >
-              <DollarSign className="mr-2" size={20} />
-              Calculate My Exact Savings
-              <ArrowRight className="ml-2 group-hover:translate-x-2 transition-transform" size={18} />
-            </Button>
-            
+          {/* CTA Button - Mobile optimized */}
+          <div className="flex justify-center animate-premium-entrance mb-6 sm:mb-8 px-4" style={{ animationDelay: '0.5s' }}>
             <Button 
               variant="cta" 
               size="lg"

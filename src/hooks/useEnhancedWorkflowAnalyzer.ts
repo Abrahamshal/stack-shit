@@ -334,10 +334,10 @@ export const useEnhancedWorkflowAnalyzer = () => {
   const processSelectedZapierWorkflows = useCallback((selectedWorkflows: ZapierWorkflow[]) => {
     // First, remove any existing Zapier workflows from the same files
     setAnalysisResults(prevResults => {
-      if (!prevResults) return null;
-      const filteredWorkflows = prevResults.workflows.filter(
-        w => w.platform !== 'zapier'
-      );
+      // Get existing non-Zapier workflows or empty array if no previous results
+      const filteredWorkflows = prevResults 
+        ? prevResults.workflows.filter(w => w.platform !== 'zapier')
+        : [];
       
       // Now create new workflows from selections
       const newZapierWorkflows: Workflow[] = selectedWorkflows.map(zw => ({
@@ -351,6 +351,10 @@ export const useEnhancedWorkflowAnalyzer = () => {
       
       // Combine and recalculate
       const allWorkflows = [...filteredWorkflows, ...newZapierWorkflows];
+      
+      // If no workflows selected, return null
+      if (allWorkflows.length === 0) return null;
+      
       const totalWorkflows = allWorkflows.length;
       const totalNodes = allWorkflows.reduce((sum, wf) => sum + wf.totalNodes, 0);
       const totalPrice = allWorkflows.reduce((sum, wf) => sum + wf.totalPrice, 0);

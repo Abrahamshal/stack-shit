@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useEnhancedWorkflowAnalyzer } from '@/hooks/useEnhancedWorkflowAnalyzer';
 import PricingResults from '@/components/shared/PricingResults';
 import ZapierWorkflowSelector from '@/components/ZapierWorkflowSelector';
@@ -7,11 +7,13 @@ import FileManager from '@/components/FileManager';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { FileJson, TrendingUp, RefreshCw, ArrowRight, Plus } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useNavigate } from 'react-router-dom';
 
 const EnhancedQuoteCalculator = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [showSavings, setShowSavings] = useState(false);
   const [showNodeBreakdown, setShowNodeBreakdown] = useState(false);
   const [showZapierSelectorOverride, setShowZapierSelectorOverride] = useState(false);
@@ -34,12 +36,19 @@ const EnhancedQuoteCalculator = () => {
 
   const handleContinueFromZapier = () => {
     // Process selected Zapier workflows and show node breakdown
-    if (selectedZapierWorkflows.length > 0 && !hasProcessedZapier) {
+    if (selectedZapierWorkflows.length > 0) {
       processSelectedZapierWorkflows(selectedZapierWorkflows);
       setHasProcessedZapier(true);
+      setShowNodeBreakdown(true);
+      setShowZapierSelectorOverride(false);
+    } else {
+      // No workflows selected, show a message
+      toast({
+        title: "No workflows selected",
+        description: "Please select at least one workflow to continue",
+        variant: "destructive"
+      });
     }
-    setShowNodeBreakdown(true);
-    setShowZapierSelectorOverride(false);
   };
 
   const handleCalculateSavings = () => {
@@ -97,6 +106,13 @@ const EnhancedQuoteCalculator = () => {
   };
 
   const canContinue = analysisResults && analysisResults.workflows.length > 0;
+
+  // Debug effect to log state changes
+  useEffect(() => {
+    if (showNodeBreakdown && !analysisResults) {
+      console.log('Warning: showNodeBreakdown is true but analysisResults is null');
+    }
+  }, [showNodeBreakdown, analysisResults]);
 
   return (
     <section id="enhanced-quote-calculator" className="py-20 bg-muted/50">
@@ -233,7 +249,7 @@ const EnhancedQuoteCalculator = () => {
           )}
 
           {/* Node Breakdown Display */}
-          {showNodeBreakdown && !showSavings && analysisResults && (
+          {showNodeBreakdown && !showSavings && (
             <>
               <Card>
                 <CardHeader>
@@ -255,56 +271,67 @@ const EnhancedQuoteCalculator = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <PricingResults analysisResults={analysisResults} />
-                  
-                  <div className="mt-6 p-4 bg-muted rounded-lg">
-                    <div className="flex items-center justify-between mb-4">
-                      <div>
-                        <h3 className="font-semibold text-lg">Total Migration Summary</h3>
-                        <p className="text-muted-foreground">
-                          {analysisResults.workflows.length} workflows • {totalNodeCount} total nodes
-                        </p>
+                  {analysisResults ? (
+                    <>
+                      <PricingResults analysisResults={analysisResults} />
+                      
+                      <div className="mt-6 p-4 bg-muted rounded-lg">
+                        <div className="flex items-center justify-between mb-4">
+                          <div>
+                            <h3 className="font-semibold text-lg">Total Migration Summary</h3>
+                            <p className="text-muted-foreground">
+                              {analysisResults.workflows.length} workflows • {totalNodeCount} total nodes
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-2xl font-bold text-primary">${estimatedPrice}</p>
+                            <p className="text-sm text-muted-foreground">Migration Cost</p>
+                          </div>
+                        </div>
                       </div>
-                      <div className="text-right">
-                        <p className="text-2xl font-bold text-primary">${estimatedPrice}</p>
-                        <p className="text-sm text-muted-foreground">Migration Cost</p>
-                      </div>
+                    </>
+                  ) : (
+                    <div className="text-center py-8">
+                      <p className="text-muted-foreground mb-4">Processing your selections...</p>
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
                     </div>
-                  </div>
+                  )}
 
-                  <div className="flex gap-4 mt-6">
-                    <Button
-                      variant="outline"
-                      size="lg"
-                      className="flex-1"
-                      onClick={() => {
-                        const input = document.createElement('input');
-                        input.type = 'file';
-                        input.multiple = true;
-                        input.accept = '.json';
-                        input.onchange = (e) => {
-                          const files = (e.target as HTMLInputElement).files;
-                          if (files) {
-                            handleFilesSelected(files);
-                            setShowNodeBreakdown(false);
-                            setHasProcessedZapier(false); // Reset so new Zapier files can be processed
-                          }
-                        };
-                        input.click();
-                      }}
-                    >
-                      <Plus className="h-4 w-4 mr-2" />
-                      Add More Automations
-                    </Button>
-                    <Button 
-                      onClick={handleCalculateSavings} 
-                      size="lg"
-                      className="flex-1"
-                    >
-                      <TrendingUp className="h-4 w-4 mr-2" />
-                      Calculate Savings
-                    </Button>
-                  </div>
+                  {analysisResults && (
+                    <div className="flex gap-4 mt-6">
+                      <Button
+                        variant="outline"
+                        size="lg"
+                        className="flex-1"
+                        onClick={() => {
+                          const input = document.createElement('input');
+                          input.type = 'file';
+                          input.multiple = true;
+                          input.accept = '.json';
+                          input.onchange = (e) => {
+                            const files = (e.target as HTMLInputElement).files;
+                            if (files) {
+                              handleFilesSelected(files);
+                              setShowNodeBreakdown(false);
+                              setHasProcessedZapier(false); // Reset so new Zapier files can be processed
+                            }
+                          };
+                          input.click();
+                        }}
+                      >
+                        <Plus className="h-4 w-4 mr-2" />
+                        Add More Automations
+                      </Button>
+                      <Button 
+                        onClick={handleCalculateSavings} 
+                        size="lg"
+                        className="flex-1"
+                      >
+                        <TrendingUp className="h-4 w-4 mr-2" />
+                        Calculate Savings
+                      </Button>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </>

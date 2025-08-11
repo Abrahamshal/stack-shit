@@ -1,44 +1,64 @@
-// This is a simple API endpoint for creating Stripe checkout sessions
-// For production, you should use a proper backend framework like Express, Next.js API routes, or serverless functions
+// Vercel Serverless Function for creating Stripe checkout sessions
+// This file should be placed in /api directory for Vercel deployment
 
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+export default async function handler(req, res) {
+  // Enable CORS
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+  );
 
-// CORS headers for development
-const headers = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'Content-Type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS'
-};
-
-exports.handler = async (event, context) => {
   // Handle preflight requests
-  if (event.httpMethod === 'OPTIONS') {
-    return {
-      statusCode: 200,
-      headers,
-      body: ''
-    };
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
   }
 
-  if (event.httpMethod !== 'POST') {
-    return {
-      statusCode: 405,
-      headers,
-      body: JSON.stringify({ error: 'Method not allowed' })
-    };
+  // Only allow POST requests
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  // Lazy load stripe to improve cold start performance
+  const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+
+  // Check if Stripe key is configured
+  if (!process.env.STRIPE_SECRET_KEY) {
+    console.error('STRIPE_SECRET_KEY is not configured');
+    return res.status(500).json({ 
+      error: 'Payment system not configured. Please contact support.' 
+    });
   }
 
   try {
-    const { amount, customerEmail, metadata } = JSON.parse(event.body);
+    const { amount, customerEmail, metadata } = req.body;
 
     // Validate required fields
     if (!amount || !customerEmail) {
-      return {
-        statusCode: 400,
-        headers,
-        body: JSON.stringify({ error: 'Missing required fields' })
-      };
+      return res.status(400).json({ 
+        error: 'Missing required fields: amount and customerEmail are required' 
+      });
     }
+
+    // Validate amount is a positive number
+    if (typeof amount !== 'number' || amount <= 0) {
+      return res.status(400).json({ 
+        error: 'Invalid amount: must be a positive number' 
+      });
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(customerEmail)) {
+      return res.status(400).json({ 
+        error: 'Invalid email format' 
+      });
+    }
+
+    console.log('Creating checkout session for:', customerEmail, 'Amount:', amount);
 
     // Create Stripe checkout session
     const session = await stripe.checkout.sessions.create({
@@ -49,17 +69,19 @@ exports.handler = async (event, context) => {
             currency: 'usd',
             product_data: {
               name: 'Workflow Migration Service',
-              description: `Migration of ${metadata.workflowCount} workflows (${metadata.totalNodes} total nodes)`,
+              description: metadata?.workflowCount 
+                ? `Migration of ${metadata.workflowCount} workflows (${metadata.totalNodes} total nodes)`
+                : 'Workflow Migration Service',
               images: ['https://flowstrate.com/logo.png'], // Replace with your actual logo URL
             },
-            unit_amount: amount, // Amount is already in cents
+            unit_amount: amount, // Amount should already be in cents
           },
           quantity: 1,
         },
       ],
       mode: 'payment',
-      success_url: `${process.env.DOMAIN || 'http://localhost:8080'}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.DOMAIN || 'http://localhost:8080'}/calculator`,
+      success_url: `${process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:8080'}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:8080'}/calculator`,
       customer_email: customerEmail,
       metadata: {
         ...metadata,
@@ -83,43 +105,52 @@ exports.handler = async (event, context) => {
             ]
           }
         }
-      ]
+      ],
+      // Add optional configuration
+      billing_address_collection: 'auto',
+      shipping_address_collection: {
+        allowed_countries: ['US', 'CA', 'GB', 'AU', 'DE', 'FR'] // Add countries as needed
+      }
     });
 
-    return {
-      statusCode: 200,
-      headers,
-      body: JSON.stringify({ url: session.url })
-    };
+    console.log('Checkout session created:', session.id);
+
+    // Return the session URL
+    return res.status(200).json({ 
+      url: session.url,
+      sessionId: session.id 
+    });
+
   } catch (error) {
     console.error('Stripe error:', error);
-    return {
-      statusCode: 500,
-      headers,
-      body: JSON.stringify({ error: 'Failed to create checkout session' })
-    };
+    
+    // Handle specific Stripe errors
+    if (error.type === 'StripeCardError') {
+      return res.status(400).json({ 
+        error: 'Card error: ' + error.message 
+      });
+    } else if (error.type === 'StripeInvalidRequestError') {
+      return res.status(400).json({ 
+        error: 'Invalid request: ' + error.message 
+      });
+    } else if (error.type === 'StripeAPIError') {
+      return res.status(500).json({ 
+        error: 'Stripe API error. Please try again later.' 
+      });
+    } else if (error.type === 'StripeConnectionError') {
+      return res.status(500).json({ 
+        error: 'Network error. Please check your connection and try again.' 
+      });
+    } else if (error.type === 'StripeAuthenticationError') {
+      console.error('Stripe authentication error - check your API keys');
+      return res.status(500).json({ 
+        error: 'Payment configuration error. Please contact support.' 
+      });
+    } else {
+      // Generic error
+      return res.status(500).json({ 
+        error: 'Failed to create checkout session. Please try again.' 
+      });
+    }
   }
-};
-
-// For local development with Express
-if (process.env.NODE_ENV === 'development') {
-  const express = require('express');
-  const cors = require('cors');
-  const app = express();
-  
-  app.use(cors());
-  app.use(express.json());
-  
-  app.post('/api/create-checkout-session', async (req, res) => {
-    const result = await exports.handler(
-      { httpMethod: 'POST', body: JSON.stringify(req.body) },
-      {}
-    );
-    res.status(result.statusCode).json(JSON.parse(result.body));
-  });
-  
-  const PORT = process.env.PORT || 3001;
-  app.listen(PORT, () => {
-    console.log(`API server running on port ${PORT}`);
-  });
 }

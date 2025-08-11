@@ -12,7 +12,7 @@ import { FileJson, TrendingUp, RefreshCw, ArrowRight, Plus, User, Mail, Phone, B
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useNavigate } from 'react-router-dom';
-import { createCheckoutSession, CustomerInfo } from '@/lib/stripe';
+// Removed Stripe imports - navigation only now
 
 const EnhancedQuoteCalculator = () => {
   const navigate = useNavigate();
@@ -127,48 +127,24 @@ const EnhancedQuoteCalculator = () => {
     }, 100);
   };
 
-  const handleContinueToCheckout = async () => {
-    // Validate customer info
-    if (!customerInfo.name || !customerInfo.email) {
-      toast({
-        title: "Missing Information",
-        description: "Please provide your name and email to continue.",
-        variant: "destructive"
-      });
-      return;
-    }
+  // Removed handleContinueToCheckout - no longer needed
 
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(customerInfo.email)) {
-      toast({
-        title: "Invalid Email",
-        description: "Please enter a valid email address.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    try {
-      // Create Stripe checkout session with dynamic pricing
-      await createCheckoutSession({
-        amount: estimatedPrice,
-        customerInfo,
-        workflows: analysisResults?.workflows || [],
-        totalNodes: totalNodeCount,
-        files: uploadedFiles
-      }, navigate);
-    } catch (error) {
-      toast({
-        title: "Checkout Error",
-        description: "Failed to initialize checkout. Please try again.",
-        variant: "destructive"
-      });
-    }
-  };
-
-  const handleProceedToCustomerForm = () => {
-    setShowCustomerForm(true);
+  const handleProceedToCheckout = () => {
+    if (!analysisResults) return;
+    
+    // Store workflow data for Stripe checkout (no customer info needed)
+    const checkoutData = {
+      amount: estimatedPrice,
+      totalNodes: totalNodeCount,
+      workflows: analysisResults.workflows,
+      files: uploadedFiles,
+      timestamp: Date.now()
+    };
+    
+    sessionStorage.setItem('checkoutData', JSON.stringify(checkoutData));
+    
+    // Navigate directly to embedded checkout
+    navigate('/checkout-payment');
   };
 
   const canContinue = analysisResults && analysisResults.workflows.length > 0;

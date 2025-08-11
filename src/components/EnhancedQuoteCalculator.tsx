@@ -6,10 +6,13 @@ import MigrationSavingsDisplay from '@/components/MigrationSavingsDisplay';
 import FileManager from '@/components/FileManager';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { FileJson, TrendingUp, RefreshCw, ArrowRight, Plus } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { FileJson, TrendingUp, RefreshCw, ArrowRight, Plus, User, Mail, Phone, Building } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useNavigate } from 'react-router-dom';
+import { createCheckoutSession, CustomerInfo } from '@/lib/stripe';
 
 const EnhancedQuoteCalculator = () => {
   const navigate = useNavigate();
@@ -21,6 +24,13 @@ const EnhancedQuoteCalculator = () => {
   const [selectedZapierWorkflows, setSelectedZapierWorkflows] = useState<any[]>([]);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [hasProcessedZapier, setHasProcessedZapier] = useState(false);
+  const [showCustomerForm, setShowCustomerForm] = useState(false);
+  const [customerInfo, setCustomerInfo] = useState<CustomerInfo>({
+    name: '',
+    email: '',
+    phone: '',
+    company: ''
+  });
   
   const {
     analysisResults,
@@ -103,6 +113,8 @@ const EnhancedQuoteCalculator = () => {
     setSelectedZapierWorkflows([]);
     setUploadedFiles([]);
     setHasProcessedZapier(false);
+    setShowCustomerForm(false);
+    setCustomerInfo({ name: '', email: '', phone: '', company: '' });
     
     // Scroll to top of calculator section after reset
     setTimeout(() => {
@@ -115,17 +127,48 @@ const EnhancedQuoteCalculator = () => {
     }, 100);
   };
 
-  const handleContinueToCheckout = () => {
-    // Store the current state in sessionStorage or context
-    const checkoutData = {
-      workflows: analysisResults?.workflows || [],
-      totalNodes: totalNodeCount,
-      migrationCost: estimatedPrice,
-      selectedZapierWorkflows,
-    };
-    
-    sessionStorage.setItem('checkoutData', JSON.stringify(checkoutData));
-    navigate('/checkout');
+  const handleContinueToCheckout = async () => {
+    // Validate customer info
+    if (!customerInfo.name || !customerInfo.email) {
+      toast({
+        title: "Missing Information",
+        description: "Please provide your name and email to continue.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(customerInfo.email)) {
+      toast({
+        title: "Invalid Email",
+        description: "Please enter a valid email address.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      // Create Stripe checkout session with dynamic pricing
+      await createCheckoutSession({
+        amount: estimatedPrice,
+        customerInfo,
+        workflows: analysisResults?.workflows || [],
+        totalNodes: totalNodeCount,
+        files: uploadedFiles
+      });
+    } catch (error) {
+      toast({
+        title: "Checkout Error",
+        description: "Failed to initialize checkout. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleProceedToCustomerForm = () => {
+    setShowCustomerForm(true);
   };
 
   const canContinue = analysisResults && analysisResults.workflows.length > 0;
@@ -235,7 +278,7 @@ const EnhancedQuoteCalculator = () => {
                             Calculate Savings
                           </Button>
                           <Button 
-                            onClick={handleContinueToCheckout}
+                            onClick={handleProceedToCustomerForm}
                             size="lg"
                             variant="default"
                             className="flex-1"
@@ -433,7 +476,7 @@ const EnhancedQuoteCalculator = () => {
                 totalNodes={totalNodeCount}
                 workflowCount={analysisResults.workflows.length}
                 migrationCost={estimatedPrice}
-                onContactSales={handleContinueToCheckout}
+                onContactSales={handleProceedToCustomerForm}
               />
               <div className="flex justify-center gap-4">
                 <Button 
@@ -454,7 +497,7 @@ const EnhancedQuoteCalculator = () => {
                   </Button>
                 )}
                 <Button 
-                  onClick={handleContinueToCheckout}
+                  onClick={handleProceedToCustomerForm}
                   size="lg"
                   variant="default"
                   disabled={!canContinue}
@@ -473,6 +516,102 @@ const EnhancedQuoteCalculator = () => {
                 <div className="text-center">
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
                   <p className="text-muted-foreground">Analyzing workflow files...</p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Customer Information Form */}
+          {showCustomerForm && (
+            <Card className="border-2 border-primary/20">
+              <CardHeader className="bg-gradient-to-br from-primary/10 to-primary/5">
+                <CardTitle className="flex items-center gap-2">
+                  <User className="h-5 w-5 text-primary" />
+                  Customer Information
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-6 space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="name" className="flex items-center gap-2">
+                      <User className="h-4 w-4" />
+                      Full Name *
+                    </Label>
+                    <Input
+                      id="name"
+                      placeholder="John Doe"
+                      value={customerInfo.name}
+                      onChange={(e) => setCustomerInfo({ ...customerInfo, name: e.target.value })}
+                      required
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="email" className="flex items-center gap-2">
+                      <Mail className="h-4 w-4" />
+                      Email Address *
+                    </Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="john@company.com"
+                      value={customerInfo.email}
+                      onChange={(e) => setCustomerInfo({ ...customerInfo, email: e.target.value })}
+                      required
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="phone" className="flex items-center gap-2">
+                      <Phone className="h-4 w-4" />
+                      Phone Number
+                    </Label>
+                    <Input
+                      id="phone"
+                      type="tel"
+                      placeholder="+1 (555) 123-4567"
+                      value={customerInfo.phone}
+                      onChange={(e) => setCustomerInfo({ ...customerInfo, phone: e.target.value })}
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="company" className="flex items-center gap-2">
+                      <Building className="h-4 w-4" />
+                      Company
+                    </Label>
+                    <Input
+                      id="company"
+                      placeholder="Acme Inc."
+                      value={customerInfo.company}
+                      onChange={(e) => setCustomerInfo({ ...customerInfo, company: e.target.value })}
+                    />
+                  </div>
+                </div>
+
+                <Alert>
+                  <AlertDescription>
+                    Your information will be used to create your account and process your payment securely through Stripe.
+                  </AlertDescription>
+                </Alert>
+
+                <div className="flex justify-between gap-4 pt-4">
+                  <Button
+                    onClick={() => setShowCustomerForm(false)}
+                    variant="outline"
+                    size="lg"
+                  >
+                    Back
+                  </Button>
+                  <Button
+                    onClick={handleContinueToCheckout}
+                    size="lg"
+                    variant="default"
+                    className="bg-primary hover:bg-primary/90"
+                  >
+                    Proceed to Payment
+                    <ArrowRight className="h-4 w-4 ml-2" />
+                  </Button>
                 </div>
               </CardContent>
             </Card>

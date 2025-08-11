@@ -157,7 +157,7 @@ const EnhancedQuoteCalculator = () => {
         workflows: analysisResults?.workflows || [],
         totalNodes: totalNodeCount,
         files: uploadedFiles
-      });
+      }, navigate);
     } catch (error) {
       toast({
         title: "Checkout Error",

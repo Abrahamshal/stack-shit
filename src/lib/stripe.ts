@@ -21,44 +21,19 @@ export interface CheckoutData {
 /**
  * Creates a Stripe checkout session with dynamic pricing
  */
-export const createCheckoutSession = async (checkoutData: CheckoutData) => {
+export const createCheckoutSession = async (checkoutData: CheckoutData, navigate?: any) => {
   try {
-    console.log('Creating checkout session with data:', {
+    console.log('Preparing checkout with data:', {
       amount: checkoutData.amount,
       email: checkoutData.customerInfo.email,
       totalNodes: checkoutData.totalNodes
     });
 
-    const response = await fetch('/api/create-checkout-session', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        amount: Math.round(checkoutData.amount * 100), // Convert to cents
-        customerEmail: checkoutData.customerInfo.email,
-        metadata: {
-          customerName: checkoutData.customerInfo.name,
-          customerPhone: checkoutData.customerInfo.phone || '',
-          customerCompany: checkoutData.customerInfo.company || '',
-          totalNodes: checkoutData.totalNodes.toString(),
-          workflowCount: checkoutData.workflows.length.toString(),
-        }
-      }),
-    });
-
-    console.log('API Response status:', response.status);
-    
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('API Error response:', errorText);
-      throw new Error(`Failed to create checkout session: ${response.status} - ${errorText}`);
-    }
-
-    const { url } = await response.json();
-    
-    // Store checkout data in sessionStorage for retrieval after payment
-    sessionStorage.setItem('checkoutData', JSON.stringify(checkoutData));
+    // Store checkout data in sessionStorage for the embedded checkout page
+    sessionStorage.setItem('checkoutData', JSON.stringify({
+      ...checkoutData,
+      migrationCost: checkoutData.amount // Ensure migrationCost is set
+    }));
     sessionStorage.setItem('customerInfo', JSON.stringify(checkoutData.customerInfo));
     
     // Store files as base64 strings to persist them across page navigation
@@ -82,10 +57,15 @@ export const createCheckoutSession = async (checkoutData: CheckoutData) => {
       sessionStorage.setItem('uploadedFiles', JSON.stringify(fileData));
     }
     
-    // Redirect to Stripe Checkout
-    window.location.href = url;
+    // Navigate to embedded checkout page instead of redirecting to Stripe
+    if (navigate) {
+      navigate('/checkout-payment');
+    } else {
+      // Fallback for cases where navigate is not provided
+      window.location.href = '/checkout-payment';
+    }
   } catch (error) {
-    console.error('Error creating checkout session:', error);
+    console.error('Error preparing checkout:', error);
     throw error;
   }
 };

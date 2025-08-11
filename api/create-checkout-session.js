@@ -36,12 +36,12 @@ export default async function handler(req, res) {
       apiVersion: '2023-10-16'
     });
     
-    const { amount, customerEmail, metadata } = req.body;
+    const { amount, metadata } = req.body;
 
     // Validate required fields
-    if (!amount || !customerEmail) {
+    if (!amount) {
       return res.status(400).json({ 
-        error: 'Missing required fields: amount and customerEmail are required' 
+        error: 'Missing required field: amount is required' 
       });
     }
 
@@ -52,15 +52,7 @@ export default async function handler(req, res) {
       });
     }
 
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(customerEmail)) {
-      return res.status(400).json({ 
-        error: 'Invalid email format' 
-      });
-    }
-
-    console.log('Creating embedded checkout session for:', customerEmail, 'Amount (cents):', amount);
+    console.log('Creating embedded checkout session. Amount (cents):', amount);
 
     // Create Stripe checkout session for embedded mode
     const session = await stripe.checkout.sessions.create({
@@ -83,11 +75,12 @@ export default async function handler(req, res) {
       ],
       mode: 'payment',
       return_url: `${process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:8080'}/success?session_id={CHECKOUT_SESSION_ID}`,
-      customer_email: customerEmail,
+      // Stripe will collect customer email in checkout
+      billing_address_collection: 'required',
+      phone_number_collection: {
+        enabled: true
+      },
       metadata: {
-        customerName: metadata?.customerName || '',
-        customerPhone: metadata?.customerPhone || '',
-        customerCompany: metadata?.customerCompany || '',
         totalNodes: metadata?.totalNodes || '0',
         workflowCount: metadata?.workflowCount || '0',
         timestamp: new Date().toISOString()

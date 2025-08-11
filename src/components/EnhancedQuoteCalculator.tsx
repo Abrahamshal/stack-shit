@@ -278,7 +278,7 @@ const EnhancedQuoteCalculator = () => {
                             Calculate Savings
                           </Button>
                           <Button 
-                            onClick={handleProceedToCustomerForm}
+                            onClick={handleProceedToCheckout}
                             size="lg"
                             variant="default"
                             className="flex-1"
@@ -497,7 +497,7 @@ const EnhancedQuoteCalculator = () => {
                   </Button>
                 )}
                 <Button 
-                  onClick={handleProceedToCustomerForm}
+                  onClick={handleProceedToCheckout}
                   size="lg"
                   variant="default"
                   disabled={!canContinue}
@@ -521,101 +521,6 @@ const EnhancedQuoteCalculator = () => {
             </Card>
           )}
 
-          {/* Customer Information Form */}
-          {showCustomerForm && (
-            <Card className="border-2 border-primary/20">
-              <CardHeader className="bg-gradient-to-br from-primary/10 to-primary/5">
-                <CardTitle className="flex items-center gap-2">
-                  <User className="h-5 w-5 text-primary" />
-                  Customer Information
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="pt-6 space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="name" className="flex items-center gap-2">
-                      <User className="h-4 w-4" />
-                      Full Name *
-                    </Label>
-                    <Input
-                      id="name"
-                      placeholder="John Doe"
-                      value={customerInfo.name}
-                      onChange={(e) => setCustomerInfo({ ...customerInfo, name: e.target.value })}
-                      required
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="email" className="flex items-center gap-2">
-                      <Mail className="h-4 w-4" />
-                      Email Address *
-                    </Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="john@company.com"
-                      value={customerInfo.email}
-                      onChange={(e) => setCustomerInfo({ ...customerInfo, email: e.target.value })}
-                      required
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="phone" className="flex items-center gap-2">
-                      <Phone className="h-4 w-4" />
-                      Phone Number
-                    </Label>
-                    <Input
-                      id="phone"
-                      type="tel"
-                      placeholder="+1 (555) 123-4567"
-                      value={customerInfo.phone}
-                      onChange={(e) => setCustomerInfo({ ...customerInfo, phone: e.target.value })}
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="company" className="flex items-center gap-2">
-                      <Building className="h-4 w-4" />
-                      Company
-                    </Label>
-                    <Input
-                      id="company"
-                      placeholder="Acme Inc."
-                      value={customerInfo.company}
-                      onChange={(e) => setCustomerInfo({ ...customerInfo, company: e.target.value })}
-                    />
-                  </div>
-                </div>
-
-                <Alert>
-                  <AlertDescription>
-                    Your information will be used to create your account and process your payment securely through Stripe.
-                  </AlertDescription>
-                </Alert>
-
-                <div className="flex justify-between gap-4 pt-4">
-                  <Button
-                    onClick={() => setShowCustomerForm(false)}
-                    variant="outline"
-                    size="lg"
-                  >
-                    Back
-                  </Button>
-                  <Button
-                    onClick={handleContinueToCheckout}
-                    size="lg"
-                    variant="default"
-                    className="bg-primary hover:bg-primary/90"
-                  >
-                    Proceed to Payment
-                    <ArrowRight className="h-4 w-4 ml-2" />
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          )}
         </div>
       </div>
     </section>

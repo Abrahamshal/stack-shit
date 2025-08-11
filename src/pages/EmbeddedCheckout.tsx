@@ -29,14 +29,12 @@ const EmbeddedCheckoutPage = () => {
 
       // Get checkout data from sessionStorage
       const checkoutDataStr = sessionStorage.getItem('checkoutData');
-      const customerInfoStr = sessionStorage.getItem('customerInfo');
 
-      if (!checkoutDataStr || !customerInfoStr) {
+      if (!checkoutDataStr) {
         throw new Error('Missing checkout information. Please start from the calculator.');
       }
 
       const checkoutData = JSON.parse(checkoutDataStr);
-      const customerInfo = JSON.parse(customerInfoStr);
 
       console.log('Creating checkout session with amount:', checkoutData.migrationCost);
 
@@ -52,11 +50,7 @@ const EmbeddedCheckoutPage = () => {
         },
         body: JSON.stringify({
           amount: Math.round((checkoutData.migrationCost || checkoutData.amount) * 100), // Convert to cents
-          customerEmail: customerInfo.email,
           metadata: {
-            customerName: customerInfo.name,
-            customerPhone: customerInfo.phone || '',
-            customerCompany: customerInfo.company || '',
             totalNodes: (checkoutData.totalNodes || 0).toString(),
             workflowCount: (checkoutData.workflows?.length || 0).toString(),
           }

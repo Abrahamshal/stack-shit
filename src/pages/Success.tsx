@@ -30,18 +30,33 @@ const Success = () => {
       setIsUploading(true);
 
       try {
-        // Retrieve data from sessionStorage
+        // First, retrieve session details from Stripe to get customer info
+        const sessionResponse = await fetch(`/api/retrieve-session?session_id=${sessionId}`);
+        if (!sessionResponse.ok) {
+          throw new Error('Failed to retrieve payment details.');
+        }
+        
+        const sessionData = await sessionResponse.json();
+        console.log('Session data:', sessionData);
+        
+        // Retrieve checkout data from sessionStorage
         const checkoutDataStr = sessionStorage.getItem('checkoutData');
-        const customerInfoStr = sessionStorage.getItem('customerInfo');
         const uploadedFilesStr = sessionStorage.getItem('uploadedFiles');
 
-        if (!checkoutDataStr || !customerInfoStr) {
+        if (!checkoutDataStr) {
           throw new Error('Missing checkout data. Please try the process again.');
         }
 
         const checkoutData = JSON.parse(checkoutDataStr);
-        const customerInfo = JSON.parse(customerInfoStr);
         const uploadedFiles = uploadedFilesStr ? JSON.parse(uploadedFilesStr) : [];
+        
+        // Extract customer info from Stripe session
+        const customerInfo = {
+          email: sessionData.customer_email || 'unknown@example.com',
+          name: sessionData.customer_name || 'Customer',
+          phone: sessionData.customer_phone || '',
+          company: '' // Can be collected later if needed
+        };
 
         // Upload files to Firebase Storage
         const uploadedFileRefs = [];
@@ -94,7 +109,6 @@ const Success = () => {
 
         // Clear sessionStorage
         sessionStorage.removeItem('checkoutData');
-        sessionStorage.removeItem('customerInfo');
         sessionStorage.removeItem('uploadedFiles');
 
         setUploadComplete(true);

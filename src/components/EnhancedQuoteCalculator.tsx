@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { FileJson, TrendingUp, RefreshCw, ArrowRight, Plus, User, Mail, Phone, Building } from 'lucide-react';
+import { FileJson, TrendingUp, RefreshCw, ArrowRight, Plus } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useNavigate } from 'react-router-dom';
@@ -24,13 +24,6 @@ const EnhancedQuoteCalculator = () => {
   const [selectedZapierWorkflows, setSelectedZapierWorkflows] = useState<any[]>([]);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [hasProcessedZapier, setHasProcessedZapier] = useState(false);
-  const [showCustomerForm, setShowCustomerForm] = useState(false);
-  const [customerInfo, setCustomerInfo] = useState<CustomerInfo>({
-    name: '',
-    email: '',
-    phone: '',
-    company: ''
-  });
   
   const {
     analysisResults,
@@ -113,8 +106,6 @@ const EnhancedQuoteCalculator = () => {
     setSelectedZapierWorkflows([]);
     setUploadedFiles([]);
     setHasProcessedZapier(false);
-    setShowCustomerForm(false);
-    setCustomerInfo({ name: '', email: '', phone: '', company: '' });
     
     // Scroll to top of calculator section after reset
     setTimeout(() => {
@@ -452,7 +443,6 @@ const EnhancedQuoteCalculator = () => {
                 totalNodes={totalNodeCount}
                 workflowCount={analysisResults.workflows.length}
                 migrationCost={estimatedPrice}
-                onContactSales={handleProceedToCustomerForm}
               />
               <div className="flex justify-center gap-4">
                 <Button 

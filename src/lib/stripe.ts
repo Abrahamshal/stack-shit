@@ -23,6 +23,12 @@ export interface CheckoutData {
  */
 export const createCheckoutSession = async (checkoutData: CheckoutData) => {
   try {
+    console.log('Creating checkout session with data:', {
+      amount: checkoutData.amount,
+      email: checkoutData.customerInfo.email,
+      totalNodes: checkoutData.totalNodes
+    });
+
     const response = await fetch('/api/create-checkout-session', {
       method: 'POST',
       headers: {
@@ -41,8 +47,12 @@ export const createCheckoutSession = async (checkoutData: CheckoutData) => {
       }),
     });
 
+    console.log('API Response status:', response.status);
+    
     if (!response.ok) {
-      throw new Error('Failed to create checkout session');
+      const errorText = await response.text();
+      console.error('API Error response:', errorText);
+      throw new Error(`Failed to create checkout session: ${response.status} - ${errorText}`);
     }
 
     const { url } = await response.json();

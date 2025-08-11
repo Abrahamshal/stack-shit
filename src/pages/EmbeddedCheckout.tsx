@@ -40,8 +40,12 @@ const EmbeddedCheckoutPage = () => {
 
       console.log('Creating checkout session with amount:', checkoutData.migrationCost);
 
+      // Build the full API URL
+      const apiUrl = '/api/create-checkout-session';
+      console.log('Calling API at:', apiUrl);
+
       // Create checkout session
-      const response = await fetch('/api/create-checkout-session', {
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -58,6 +62,8 @@ const EmbeddedCheckoutPage = () => {
           }
         }),
       });
+
+      console.log('API Response received:', response.status, response.statusText);
 
       if (!response.ok) {
         const errorData = await response.json();

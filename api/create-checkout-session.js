@@ -103,31 +103,48 @@ export default async function handler(req, res) {
       message: error.message,
       type: error.type,
       code: error.code,
-      statusCode: error.statusCode
+      statusCode: error.statusCode,
+      raw: error.raw,
+      requestId: error.requestId,
+      stack: error.stack
     });
     
     // Handle specific Stripe errors
     if (error.type === 'StripeAuthenticationError') {
       return res.status(500).json({ 
-        error: 'Authentication failed. Please check Stripe API key configuration.' 
+        error: 'Authentication failed. Please check Stripe API key configuration.',
+        details: error.message,
+        code: error.code
       });
     } else if (error.type === 'StripeInvalidRequestError') {
       return res.status(400).json({ 
-        error: `Invalid request: ${error.message}` 
+        error: `Invalid request: ${error.message}`,
+        code: error.code,
+        param: error.param
       });
     } else if (error.type === 'StripeAPIError') {
       return res.status(500).json({ 
-        error: 'Stripe API error. Please try again later.' 
+        error: 'Stripe API error. Please try again later.',
+        details: error.message,
+        code: error.code
       });
     } else if (error.type === 'StripeConnectionError') {
       return res.status(500).json({ 
-        error: 'Network error. Please check your connection and try again.' 
+        error: 'Network error. Please check your connection and try again.',
+        details: error.message
       });
     } else {
-      // Generic error
+      // Generic error - provide more details for debugging
       return res.status(500).json({ 
-        error: 'Failed to create checkout session. Please try again.',
-        details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        error: error.message || 'Failed to create checkout session',
+        type: error.type || 'Unknown',
+        code: error.code || 'unknown_error',
+        // Include debug info
+        debug: {
+          hasStripeKey: !!process.env.STRIPE_SECRET_KEY,
+          keyLength: process.env.STRIPE_SECRET_KEY ? process.env.STRIPE_SECRET_KEY.length : 0,
+          keyPrefix: process.env.STRIPE_SECRET_KEY ? process.env.STRIPE_SECRET_KEY.substring(0, 7) : 'not_set'
+        }
       });
     }
   }

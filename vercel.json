@@ -1,0 +1,20 @@
+{
+  "functions": {
+    "api/create-checkout-session.js": {
+      "maxDuration": 10
+    },
+    "api/retrieve-session.js": {
+      "maxDuration": 10
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "/api/:path*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/"
+    }
+  ]
+}

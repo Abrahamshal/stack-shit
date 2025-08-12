@@ -72,7 +72,6 @@ export default function FileManager({
         className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer transition-colors hover:border-primary/50 bg-white"
         onDragOver={handleDragOver}
         onDrop={handleDrop}
-        onClick={handleClick}
       >
         <input
           type="file"
@@ -97,10 +96,7 @@ export default function FileManager({
             type="button" 
             variant="outline" 
             size="sm"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleClick();
-            }}
+            onClick={handleClick}
           >
             Select Files
           </Button>

@@ -165,6 +165,8 @@ export default async function handler(req, res) {
           totalNodes: metadata?.totalNodes || '0',
           workflowCount: metadata?.workflowCount || '0',
           selectedPlan: metadata?.selectedPlan || 'none',
+          checkoutAmount: metadata?.checkoutAmount || '0',
+          hasFiles: metadata?.hasFiles || 'false',
           timestamp: new Date().toISOString()
         },
       };
@@ -184,6 +186,8 @@ export default async function handler(req, res) {
           totalNodes: metadata?.totalNodes || '0',
           workflowCount: metadata?.workflowCount || '0',
           selectedPlan: 'none',
+          checkoutAmount: metadata?.checkoutAmount || '0',
+          hasFiles: metadata?.hasFiles || 'false',
           timestamp: new Date().toISOString()
         },
       };

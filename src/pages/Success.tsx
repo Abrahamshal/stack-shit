@@ -21,6 +21,11 @@ const Success = () => {
     const handleSuccessfulPayment = async () => {
       const sessionId = searchParams.get('session_id');
       
+      console.log('Success page loaded with session_id:', sessionId);
+      console.log('Current URL:', window.location.href);
+      console.log('SessionStorage keys:', Object.keys(sessionStorage));
+      console.log('LocalStorage keys:', Object.keys(localStorage));
+      
       if (!sessionId) {
         setUploadError('No session ID found. Please contact support.');
         return;
@@ -60,7 +65,26 @@ const Success = () => {
         console.log('Final uploadedFiles source:', uploadedFilesStr ? 'Found' : 'Not found');
 
         if (!checkoutDataStr) {
-          throw new Error('Missing checkout data. Please try the process again.');
+          console.error('No checkout data found in any storage');
+          // Try to create minimal checkout data from session metadata
+          const fallbackCheckoutData = {
+            amount: sessionData.amount_total ? sessionData.amount_total / 100 : 0,
+            totalNodes: parseInt(sessionData.metadata?.totalNodes || '0'),
+            workflows: [],
+            files: [],
+            migrationCost: sessionData.metadata?.checkoutAmount ? parseFloat(sessionData.metadata.checkoutAmount) : sessionData.amount_total / 100,
+            timestamp: Date.now()
+          };
+          
+          // Check if we at least have the session data to proceed
+          if (sessionData.amount_total) {
+            console.log('Using fallback checkout data from Stripe session metadata:', sessionData.metadata);
+            checkoutDataStr = JSON.stringify(fallbackCheckoutData);
+            // Note: Files won't be available in this fallback scenario
+            uploadedFilesStr = uploadedFilesStr || '[]';
+          } else {
+            throw new Error('Missing checkout data. Please try the process again.');
+          }
         }
 
         const checkoutData = JSON.parse(checkoutDataStr);

@@ -54,14 +54,21 @@ const EmbeddedCheckoutPage = () => {
       setIsLoading(true);
       setError(null);
 
-      // Get checkout data from sessionStorage
-      const checkoutDataStr = sessionStorage.getItem('checkoutData');
+      // Get checkout data from sessionStorage with localStorage fallback
+      let checkoutDataStr = sessionStorage.getItem('checkoutData');
+      if (!checkoutDataStr) {
+        console.log('No checkout data in sessionStorage, checking localStorage...');
+        checkoutDataStr = localStorage.getItem('checkoutData');
+      }
 
       if (!checkoutDataStr) {
+        console.log('No checkout data found in either storage');
         // Redirect to home if no checkout data
         navigate('/#enhanced-quote-calculator');
         return null;
       }
+      
+      console.log('Checkout data found:', checkoutDataStr ? 'Yes' : 'No');
 
       const checkoutData = JSON.parse(checkoutDataStr);
       
@@ -91,6 +98,9 @@ const EmbeddedCheckoutPage = () => {
             totalNodes: (checkoutData.totalNodes || 0).toString(),
             workflowCount: (checkoutData.workflows?.length || 0).toString(),
             selectedPlan: selectedPlan || 'none',
+            // Store minimal checkout data in metadata as backup
+            checkoutAmount: finalAmount.toString(),
+            hasFiles: (checkoutData.files?.length > 0).toString()
           }
         }),
       });

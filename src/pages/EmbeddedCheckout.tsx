@@ -31,7 +31,9 @@ const EmbeddedCheckoutPage = () => {
       const checkoutDataStr = sessionStorage.getItem('checkoutData');
 
       if (!checkoutDataStr) {
-        throw new Error('Missing checkout information. Please start from the calculator.');
+        // Redirect to home if no checkout data
+        navigate('/#enhanced-quote-calculator');
+        return null;
       }
 
       const checkoutData = JSON.parse(checkoutDataStr);
@@ -83,16 +85,28 @@ const EmbeddedCheckoutPage = () => {
       setIsLoading(false);
       return null;
     }
-  }, [toast]);
+  }, [toast, navigate]);
 
   useEffect(() => {
+    // Check if we have checkout data first
+    const checkoutDataStr = sessionStorage.getItem('checkoutData');
+    if (!checkoutDataStr) {
+      // Show message briefly then redirect
+      setError('No checkout session found. Redirecting to calculator...');
+      setTimeout(() => {
+        navigate('/#enhanced-quote-calculator');
+      }, 2000);
+      setIsLoading(false);
+      return;
+    }
+
     fetchClientSecret().then(secret => {
       if (secret) {
         setClientSecret(secret);
         setIsLoading(false);
       }
     });
-  }, [fetchClientSecret]);
+  }, [fetchClientSecret, navigate]);
 
   const handleBackToCalculator = () => {
     navigate('/');

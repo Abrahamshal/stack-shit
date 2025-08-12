@@ -93,7 +93,15 @@ export default function FileManager({
               Support for multiple files • JSON format only
             </p>
           </div>
-          <Button type="button" variant="outline" size="sm">
+          <Button 
+            type="button" 
+            variant="outline" 
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleClick();
+            }}
+          >
             Select Files
           </Button>
         </div>

@@ -65,9 +65,23 @@ const Success = () => {
         console.log('Parsed checkout data:', checkoutData);
         console.log('Parsed uploaded files count:', uploadedFiles.length);
         
+        // Log first file details if available
+        if (uploadedFiles.length > 0) {
+          const firstFile = uploadedFiles[0];
+          console.log('First file details:', {
+            name: firstFile.name,
+            size: firstFile.size,
+            type: firstFile.type,
+            hasData: !!firstFile.data,
+            dataLength: firstFile.data ? firstFile.data.length : 0,
+            dataPreview: firstFile.data ? firstFile.data.substring(0, 100) : 'no data'
+          });
+        }
+        
         // If no uploadedFiles in sessionStorage, check if they're in checkoutData
         if (uploadedFiles.length === 0 && checkoutData.files && checkoutData.files.length > 0) {
-          console.log('No uploadedFiles in sessionStorage, but found files in checkoutData');
+          console.log('No uploadedFiles in sessionStorage/localStorage, but found files in checkoutData');
+          console.log('Files in checkoutData:', checkoutData.files);
           // Files might be File objects, not base64, so we can't upload them
           console.warn('Files in checkoutData are not in uploadable format (need base64)');
         }
@@ -105,23 +119,44 @@ const Success = () => {
               continue;
             }
             
-            // Convert base64 back to blob
-            const response = await fetch(file.data);
-            const blob = await response.blob();
+            console.log('File data type:', typeof file.data);
+            console.log('File data starts with:', file.data.substring(0, 50));
             
-            console.log('Blob created, size:', blob.size, 'type:', blob.type);
+            // Convert base64 back to blob
+            let blob;
+            try {
+              const response = await fetch(file.data);
+              blob = await response.blob();
+              console.log('Blob created successfully, size:', blob.size, 'type:', blob.type);
+            } catch (blobError) {
+              console.error('Failed to create blob from data:', blobError);
+              throw blobError;
+            }
             
             // Upload to Firebase Storage
-            const snapshot = await uploadBytes(storageRef, blob, {
-              contentType: file.type || 'application/json',
-              customMetadata: {
-                originalName: file.name,
-                customerEmail: customerInfo.email,
-                uploadedAt: new Date().toISOString()
-              }
-            });
+            console.log('Attempting Firebase upload for:', fileName);
+            console.log('Storage path:', `customers/${customerInfo.email}/${fileName}`);
             
-            console.log('File uploaded successfully:', snapshot.ref.fullPath);
+            let snapshot;
+            try {
+              snapshot = await uploadBytes(storageRef, blob, {
+                contentType: file.type || 'application/json',
+                customMetadata: {
+                  originalName: file.name,
+                  customerEmail: customerInfo.email,
+                  uploadedAt: new Date().toISOString()
+                }
+              });
+              console.log('File uploaded successfully to Firebase:', snapshot.ref.fullPath);
+            } catch (uploadError) {
+              console.error('Firebase upload failed:', uploadError);
+              console.error('Error details:', {
+                code: uploadError.code,
+                message: uploadError.message,
+                serverResponse: uploadError.serverResponse
+              });
+              throw uploadError;
+            }
             
             const downloadURL = await getDownloadURL(snapshot.ref);
             

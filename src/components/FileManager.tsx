@@ -21,24 +21,6 @@ export default function FileManager({
   uploadedFiles, 
   onRemoveFile 
 }: FileManagerProps) {
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  
-  // Create a direct file input trigger function
-  const triggerFileInput = () => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.multiple = true;
-    input.accept = '.json';
-    input.onchange = (e) => {
-      const target = e.target as HTMLInputElement;
-      if (target.files && target.files.length > 0) {
-        console.log('Files selected via created input:', target.files.length);
-        onFilesSelected(target.files);
-      }
-    };
-    input.click();
-  };
-
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
@@ -61,23 +43,22 @@ export default function FileManager({
     }
   };
 
-  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('File input changed:', e.target.files);
-    if (e.target.files && e.target.files.length > 0) {
-      console.log('Files selected:', e.target.files.length);
-      onFilesSelected(e.target.files);
-    }
-  };
-
-  const handleClick = () => {
-    console.log('Button clicked');
-    console.log('FileInputRef:', fileInputRef.current);
-    if (fileInputRef.current) {
-      console.log('Triggering file input click');
-      fileInputRef.current.click();
-    } else {
-      console.log('File input ref is null');
-    }
+  const handleFileSelect = () => {
+    // Create input element programmatically
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.multiple = true;
+    input.accept = '.json';
+    
+    input.addEventListener('change', (event) => {
+      const target = event.target as HTMLInputElement;
+      if (target.files && target.files.length > 0) {
+        onFilesSelected(target.files);
+      }
+    });
+    
+    // Trigger click
+    input.click();
   };
 
   const formatFileSize = (bytes: number): string => {
@@ -92,35 +73,11 @@ export default function FileManager({
     <div className="space-y-4">
       {/* Drop Zone */}
       <div
-        className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center transition-colors hover:border-primary/50 bg-white relative"
+        className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center transition-colors hover:border-primary/50 bg-white"
         onDragOver={handleDragOver}
         onDrop={handleDrop}
       >
-        {/* Hidden file input */}
-        <input
-          type="file"
-          ref={fileInputRef}
-          onChange={handleFileInput}
-          accept=".json"
-          multiple
-          style={{ display: 'none' }}
-          id="file-upload-input"
-        />
-        
-        {/* Make entire area clickable */}
-        <div 
-          className="absolute inset-0 cursor-pointer"
-          onClick={(e) => {
-            // Only trigger if clicking on the background, not on children
-            if (e.target === e.currentTarget) {
-              console.log('Background clicked - using triggerFileInput');
-              triggerFileInput();
-            }
-          }}
-          aria-label="Upload files"
-        />
-        
-        <div className="flex flex-col items-center gap-4 relative pointer-events-none">
+        <div className="flex flex-col items-center gap-4">
           <UploadCloud className="h-12 w-12 text-muted-foreground/50" />
           <div>
             <p className="font-semibold text-lg">
@@ -130,21 +87,14 @@ export default function FileManager({
               Support for multiple files • JSON format only
             </p>
           </div>
-          <div className="pointer-events-auto">
-            <Button 
-              type="button" 
-              variant="outline" 
-              size="sm"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                console.log('Button clicked - using triggerFileInput');
-                triggerFileInput();
-              }}
-            >
-              Select Files
-            </Button>
-          </div>
+          <Button 
+            type="button" 
+            variant="outline" 
+            size="sm"
+            onClick={handleFileSelect}
+          >
+            Select Files
+          </Button>
         </div>
       </div>
 

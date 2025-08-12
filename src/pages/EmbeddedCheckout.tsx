@@ -180,8 +180,9 @@ const EmbeddedCheckoutPage = () => {
     const secret = await fetchClientSecret(true);
     if (secret) {
       setClientSecret(secret);
-      setIsLoading(false);
     }
+    // Always set loading to false, even if secret is null (error will be shown)
+    setIsLoading(false);
   };
 
   // Show error state
@@ -490,11 +491,23 @@ const EmbeddedCheckoutPage = () => {
                     <ArrowLeft className="h-4 w-4 ml-2 rotate-180" />
                   </Button>
                   
-                  {!selectedPlan && (
-                    <p className="text-xs text-center text-muted-foreground">
-                      You can add a support plan later if needed
-                    </p>
-                  )}
+                  <Button
+                    onClick={async () => {
+                      setShowUpsells(false);
+                      setIsLoading(true);
+                      setSelectedPlan(null); // Ensure no plan is selected
+                      const secret = await fetchClientSecret(false);
+                      if (secret) {
+                        setClientSecret(secret);
+                      }
+                      setIsLoading(false);
+                    }}
+                    variant="ghost"
+                    size="sm"
+                    className="w-full"
+                  >
+                    Skip & Continue Without Support Plan
+                  </Button>
                 </CardContent>
               </Card>
             </div>

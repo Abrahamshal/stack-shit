@@ -75,6 +75,13 @@ const Success = () => {
         const uploadedFileRefs = [];
         
         console.log('Starting file uploads. Files to upload:', uploadedFiles.length);
+        console.log('Firebase Storage bucket:', import.meta.env.VITE_FIREBASE_STORAGE_BUCKET);
+        
+        // Check if Firebase Storage is properly configured
+        if (!import.meta.env.VITE_FIREBASE_STORAGE_BUCKET) {
+          console.error('Firebase Storage bucket is not configured!');
+          throw new Error('Storage configuration missing. Please contact support.');
+        }
         
         for (const file of uploadedFiles) {
           try {

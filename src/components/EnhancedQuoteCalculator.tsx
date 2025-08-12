@@ -24,6 +24,7 @@ const EnhancedQuoteCalculator = () => {
   const [selectedZapierWorkflows, setSelectedZapierWorkflows] = useState<any[]>([]);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [hasProcessedZapier, setHasProcessedZapier] = useState(false);
+  const [isPreparingCheckout, setIsPreparingCheckout] = useState(false);
   
   const {
     analysisResults,
@@ -121,51 +122,68 @@ const EnhancedQuoteCalculator = () => {
   // Removed handleContinueToCheckout - no longer needed
 
   const handleProceedToCheckout = async () => {
-    if (!analysisResults) return;
+    if (!analysisResults || isPreparingCheckout) return;
     
-    // Store workflow data for Stripe checkout (no customer info needed)
-    const checkoutData = {
-      amount: estimatedPrice,
-      totalNodes: totalNodeCount,
-      workflows: analysisResults.workflows,
-      files: uploadedFiles.map(f => ({ name: f.name, size: f.size, type: f.type })), // Don't store File objects
-      timestamp: Date.now()
-    };
+    setIsPreparingCheckout(true);
     
-    sessionStorage.setItem('checkoutData', JSON.stringify(checkoutData));
-    
-    // Read files and convert to base64 BEFORE navigating
-    if (uploadedFiles.length > 0) {
-      try {
-        const filesWithData = await Promise.all(uploadedFiles.map(file => {
-          return new Promise<any>((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-              resolve({
-                name: file.name,
-                size: file.size,
-                type: file.type || 'application/json',
-                data: reader.result
-              });
-            };
-            reader.onerror = reject;
-            reader.readAsDataURL(file);
-          });
-        }));
+    try {
+      // Store workflow data for Stripe checkout (no customer info needed)
+      const checkoutData = {
+        amount: estimatedPrice,
+        totalNodes: totalNodeCount,
+        workflows: analysisResults.workflows,
+        files: uploadedFiles.map(f => ({ name: f.name, size: f.size, type: f.type })), // Don't store File objects
+        timestamp: Date.now()
+      };
+      
+      sessionStorage.setItem('checkoutData', JSON.stringify(checkoutData));
+      
+      // Read files and convert to base64 BEFORE navigating
+      if (uploadedFiles.length > 0) {
+        console.log('Converting files to base64. File count:', uploadedFiles.length);
         
-        console.log('Files converted to base64:', filesWithData.length);
-        sessionStorage.setItem('uploadedFiles', JSON.stringify(filesWithData));
-      } catch (error) {
-        console.error('Error converting files to base64:', error);
-        // Still navigate even if file conversion fails
+        try {
+          const filesWithData = await Promise.all(uploadedFiles.map((file, index) => {
+            return new Promise<any>((resolve, reject) => {
+              console.log(`Converting file ${index + 1}/${uploadedFiles.length}: ${file.name}`);
+              const reader = new FileReader();
+              reader.onloadend = () => {
+                console.log(`File converted: ${file.name}, size: ${file.size}`);
+                resolve({
+                  name: file.name,
+                  size: file.size,
+                  type: file.type || 'application/json',
+                  data: reader.result
+                });
+              };
+              reader.onerror = (error) => {
+                console.error(`Error reading file ${file.name}:`, error);
+                reject(error);
+              };
+              reader.readAsDataURL(file);
+            });
+          }));
+          
+          console.log('All files converted to base64:', filesWithData.length);
+          console.log('Storing files in sessionStorage...');
+          sessionStorage.setItem('uploadedFiles', JSON.stringify(filesWithData));
+          console.log('Files stored successfully');
+        } catch (error) {
+          console.error('Error converting files to base64:', error);
+          // Still navigate even if file conversion fails
+          sessionStorage.setItem('uploadedFiles', JSON.stringify([]));
+        }
+      } else {
+        console.log('No files to upload');
+        sessionStorage.setItem('uploadedFiles', JSON.stringify([]));
       }
-    } else {
-      // No files to upload
-      sessionStorage.setItem('uploadedFiles', JSON.stringify([]));
+      
+      // Navigate directly to embedded checkout
+      console.log('Navigating to checkout...');
+      navigate('/checkout-payment');
+    } finally {
+      setIsPreparingCheckout(false);
     }
-    
-    // Navigate directly to embedded checkout
-    navigate('/checkout-payment');
   };
 
   const canContinue = analysisResults && analysisResults.workflows.length > 0;
@@ -279,10 +297,19 @@ const EnhancedQuoteCalculator = () => {
                             size="lg"
                             variant="default"
                             className="flex-1"
-                            disabled={!canContinue}
+                            disabled={!canContinue || isPreparingCheckout}
                           >
-                            Continue to Checkout
-                            <ArrowRight className="h-4 w-4 ml-2" />
+                            {isPreparingCheckout ? (
+                              <>
+                                <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                                Preparing Checkout...
+                              </>
+                            ) : (
+                              <>
+                                Continue to Checkout
+                                <ArrowRight className="h-4 w-4 ml-2" />
+                              </>
+                            )}
                           </Button>
                         </div>
                         <div className="flex justify-center">

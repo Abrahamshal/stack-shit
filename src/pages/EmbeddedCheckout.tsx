@@ -166,42 +166,53 @@ const EmbeddedCheckoutPage = () => {
 
   // Show embedded checkout
   return (
-    <div className="min-h-screen bg-white">
-      <div className="container mx-auto px-4 max-w-4xl py-8">
+    <div className="min-h-screen bg-gray-50">
+      <div className="container mx-auto px-4 max-w-2xl py-12">
         {/* Header with back button */}
         <Button
           onClick={handleBackToCalculator}
           variant="ghost"
-          className="mb-6"
+          className="mb-8"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Calculator
         </Button>
         
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold mb-2">Complete Your Purchase</h1>
-          <p className="text-muted-foreground">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold mb-3">Complete Your Purchase</h1>
+          <p className="text-muted-foreground text-lg">
             Secure payment processing powered by Stripe
           </p>
         </div>
 
-        {/* Embedded Checkout - Direct, no card wrapper */}
-        <div className="mb-8">
-          <EmbeddedCheckoutProvider
-            stripe={stripePromise}
-            options={{ clientSecret }}
-          >
-            <EmbeddedCheckout />
-          </EmbeddedCheckoutProvider>
+        {/* Embedded Checkout with custom styling */}
+        <div className="bg-white rounded-xl shadow-lg p-1 mb-12">
+          <style>{`
+            #checkout iframe {
+              border-radius: 12px;
+            }
+            /* Override Stripe's dark theme */
+            .StripeElement {
+              background: white !important;
+            }
+          `}</style>
+          <div id="checkout">
+            <EmbeddedCheckoutProvider
+              stripe={stripePromise}
+              options={{ clientSecret }}
+            >
+              <EmbeddedCheckout />
+            </EmbeddedCheckoutProvider>
+          </div>
         </div>
 
         {/* Security badges */}
         <div className="text-center text-sm text-muted-foreground">
-          <p className="flex items-center justify-center gap-2">
+          <p className="flex items-center justify-center gap-2 mb-2">
             <span>🔒</span>
             <span>Your payment information is encrypted and secure</span>
           </p>
-          <p className="mt-2">
+          <p>
             Powered by Stripe • PCI Compliant • 256-bit SSL Encryption
           </p>
         </div>

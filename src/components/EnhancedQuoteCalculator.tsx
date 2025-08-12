@@ -134,6 +134,34 @@ const EnhancedQuoteCalculator = () => {
     
     sessionStorage.setItem('checkoutData', JSON.stringify(checkoutData));
     
+    // Also store uploaded files separately with their content as base64
+    const filesForStorage = uploadedFiles.map(file => ({
+      name: file.name,
+      size: file.size,
+      type: file.type,
+      lastModified: file.lastModified,
+      // Convert file to data URL for storage
+      data: '' // Will be populated if needed
+    }));
+    
+    // Read files and convert to base64
+    Promise.all(uploadedFiles.map(file => {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          resolve({
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            data: reader.result
+          });
+        };
+        reader.readAsDataURL(file);
+      });
+    })).then(filesWithData => {
+      sessionStorage.setItem('uploadedFiles', JSON.stringify(filesWithData));
+    });
+    
     // Navigate directly to embedded checkout
     navigate('/checkout-payment');
   };

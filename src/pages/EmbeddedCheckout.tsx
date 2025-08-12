@@ -62,7 +62,17 @@ const EmbeddedCheckoutPage = () => {
       console.log('API Response received:', response.status, response.statusText);
 
       if (!response.ok) {
-        const errorData = await response.json();
+        // Check if this is a dev environment 404
+        if (response.status === 404 && window.location.hostname === 'localhost') {
+          throw new Error('Stripe checkout is not available in development mode. The API endpoint requires deployment to Vercel.');
+        }
+        
+        let errorData;
+        try {
+          errorData = await response.json();
+        } catch {
+          errorData = { error: `Server error (${response.status})` };
+        }
         throw new Error(errorData.error || `Failed to create checkout session (${response.status})`);
       }
 

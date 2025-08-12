@@ -46,14 +46,21 @@ export default function FileManager({
   };
 
   const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('File input changed:', e.target.files);
     if (e.target.files && e.target.files.length > 0) {
+      console.log('Files selected:', e.target.files.length);
       onFilesSelected(e.target.files);
     }
   };
 
   const handleClick = () => {
+    console.log('Button clicked');
+    console.log('FileInputRef:', fileInputRef.current);
     if (fileInputRef.current) {
+      console.log('Triggering file input click');
       fileInputRef.current.click();
+    } else {
+      console.log('File input ref is null');
     }
   };
 
@@ -69,20 +76,29 @@ export default function FileManager({
     <div className="space-y-4">
       {/* Drop Zone */}
       <div
-        className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer transition-colors hover:border-primary/50 bg-white"
+        className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center transition-colors hover:border-primary/50 bg-white relative"
         onDragOver={handleDragOver}
         onDrop={handleDrop}
       >
+        {/* Hidden file input */}
         <input
           type="file"
           ref={fileInputRef}
           onChange={handleFileInput}
-          accept=".json,application/json"
+          accept=".json"
           multiple
-          className="hidden"
+          style={{ display: 'none' }}
+          id="file-upload-input"
         />
         
-        <div className="flex flex-col items-center gap-4">
+        {/* Make entire area clickable with label */}
+        <label 
+          htmlFor="file-upload-input" 
+          className="absolute inset-0 cursor-pointer"
+          aria-label="Upload files"
+        />
+        
+        <div className="flex flex-col items-center gap-4 relative pointer-events-none">
           <UploadCloud className="h-12 w-12 text-muted-foreground/50" />
           <div>
             <p className="font-semibold text-lg">
@@ -92,14 +108,20 @@ export default function FileManager({
               Support for multiple files • JSON format only
             </p>
           </div>
-          <Button 
-            type="button" 
-            variant="outline" 
-            size="sm"
-            onClick={handleClick}
-          >
-            Select Files
-          </Button>
+          <div className="pointer-events-auto">
+            <Button 
+              type="button" 
+              variant="outline" 
+              size="sm"
+              onClick={(e) => {
+                e.preventDefault();
+                console.log('Button clicked - triggering file input');
+                document.getElementById('file-upload-input')?.click();
+              }}
+            >
+              Select Files
+            </Button>
+          </div>
         </div>
       </div>
 

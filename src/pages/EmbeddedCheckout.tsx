@@ -108,7 +108,7 @@ const EmbeddedCheckoutPage = () => {
   // Show error state
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background to-muted/20 py-20">
+      <div className="min-h-screen bg-gradient-to-br from-background to-muted/20 py-24">
         <div className="container mx-auto px-4 max-w-4xl">
           <Card className="border-2 border-red-500/20">
             <CardHeader>
@@ -149,7 +149,7 @@ const EmbeddedCheckoutPage = () => {
   // Show loading state
   if (isLoading || !clientSecret) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background to-muted/20 py-20">
+      <div className="min-h-screen bg-gradient-to-br from-background to-muted/20 py-24">
         <div className="container mx-auto px-4 max-w-4xl">
           <Card>
             <CardContent className="py-20">
@@ -166,21 +166,21 @@ const EmbeddedCheckoutPage = () => {
 
   // Show embedded checkout
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted/20 py-10">
+    <div className="min-h-screen bg-gradient-to-br from-background to-muted/20 py-20">
       <div className="container mx-auto px-4 max-w-5xl">
         {/* Header with back button */}
-        <div className="mb-6">
+        <div className="mb-8">
           <Button
             onClick={handleBackToCalculator}
             variant="ghost"
-            className="mb-4"
+            className="mb-6"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Calculator
           </Button>
           
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold mb-2">Complete Your Purchase</h1>
+          <div className="text-center mb-10">
+            <h1 className="text-3xl font-bold mb-3">Complete Your Purchase</h1>
             <p className="text-muted-foreground">
               Secure payment processing powered by Stripe
             </p>
@@ -188,8 +188,8 @@ const EmbeddedCheckoutPage = () => {
         </div>
 
         {/* Embedded Checkout */}
-        <Card className="shadow-xl">
-          <CardContent className="p-0">
+        <Card className="shadow-xl mb-12">
+          <CardContent className="p-6">
             <div id="checkout" className="min-h-[600px]">
               <EmbeddedCheckoutProvider
                 stripe={stripePromise}
@@ -202,7 +202,7 @@ const EmbeddedCheckoutPage = () => {
         </Card>
 
         {/* Security badges */}
-        <div className="mt-8 text-center text-sm text-muted-foreground">
+        <div className="mb-12 text-center text-sm text-muted-foreground">
           <p className="flex items-center justify-center gap-2">
             <span>🔒</span>
             <span>Your payment information is encrypted and secure</span>

@@ -22,6 +22,22 @@ export default function FileManager({
   onRemoveFile 
 }: FileManagerProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  // Create a direct file input trigger function
+  const triggerFileInput = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.multiple = true;
+    input.accept = '.json';
+    input.onchange = (e) => {
+      const target = e.target as HTMLInputElement;
+      if (target.files && target.files.length > 0) {
+        console.log('Files selected via created input:', target.files.length);
+        onFilesSelected(target.files);
+      }
+    };
+    input.click();
+  };
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -91,10 +107,16 @@ export default function FileManager({
           id="file-upload-input"
         />
         
-        {/* Make entire area clickable with label */}
-        <label 
-          htmlFor="file-upload-input" 
+        {/* Make entire area clickable */}
+        <div 
           className="absolute inset-0 cursor-pointer"
+          onClick={(e) => {
+            // Only trigger if clicking on the background, not on children
+            if (e.target === e.currentTarget) {
+              console.log('Background clicked - using triggerFileInput');
+              triggerFileInput();
+            }
+          }}
           aria-label="Upload files"
         />
         
@@ -115,8 +137,9 @@ export default function FileManager({
               size="sm"
               onClick={(e) => {
                 e.preventDefault();
-                console.log('Button clicked - triggering file input');
-                document.getElementById('file-upload-input')?.click();
+                e.stopPropagation();
+                console.log('Button clicked - using triggerFileInput');
+                triggerFileInput();
               }}
             >
               Select Files

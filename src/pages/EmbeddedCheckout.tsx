@@ -166,43 +166,37 @@ const EmbeddedCheckoutPage = () => {
 
   // Show embedded checkout
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted/20 py-20">
-      <div className="container mx-auto px-4 max-w-5xl">
+    <div className="min-h-screen bg-white">
+      <div className="container mx-auto px-4 max-w-4xl py-8">
         {/* Header with back button */}
-        <div className="mb-8">
-          <Button
-            onClick={handleBackToCalculator}
-            variant="ghost"
-            className="mb-6"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Calculator
-          </Button>
-          
-          <div className="text-center mb-10">
-            <h1 className="text-3xl font-bold mb-3">Complete Your Purchase</h1>
-            <p className="text-muted-foreground">
-              Secure payment processing powered by Stripe
-            </p>
-          </div>
+        <Button
+          onClick={handleBackToCalculator}
+          variant="ghost"
+          className="mb-6"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back to Calculator
+        </Button>
+        
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold mb-2">Complete Your Purchase</h1>
+          <p className="text-muted-foreground">
+            Secure payment processing powered by Stripe
+          </p>
         </div>
 
-        {/* Embedded Checkout */}
-        <Card className="shadow-xl mb-12">
-          <CardContent className="p-0">
-            <div id="checkout" className="min-h-[600px] p-8">
-              <EmbeddedCheckoutProvider
-                stripe={stripePromise}
-                options={{ clientSecret }}
-              >
-                <EmbeddedCheckout />
-              </EmbeddedCheckoutProvider>
-            </div>
-          </CardContent>
-        </Card>
+        {/* Embedded Checkout - Direct, no card wrapper */}
+        <div className="mb-8">
+          <EmbeddedCheckoutProvider
+            stripe={stripePromise}
+            options={{ clientSecret }}
+          >
+            <EmbeddedCheckout />
+          </EmbeddedCheckoutProvider>
+        </div>
 
         {/* Security badges */}
-        <div className="mb-12 text-center text-sm text-muted-foreground">
+        <div className="text-center text-sm text-muted-foreground">
           <p className="flex items-center justify-center gap-2">
             <span>🔒</span>
             <span>Your payment information is encrypted and secure</span>

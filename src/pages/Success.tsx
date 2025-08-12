@@ -4,9 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { CheckCircle, Upload, Loader2, Home, FileJson } from 'lucide-react';
-import { db, storage } from '@/lib/firebase';
+import { db } from '@/lib/firebase';
 import { collection, addDoc } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useToast } from '@/hooks/use-toast';
 
 const Success = () => {
@@ -94,85 +93,55 @@ const Success = () => {
           company: '' // Can be collected later if needed
         };
 
-        // Upload files to Firebase Storage
-        const uploadedFileRefs = [];
+        // Upload files to Firebase Storage via server-side API
+        let uploadedFileRefs = [];
         
-        console.log('Starting file uploads. Files to upload:', uploadedFiles.length);
-        console.log('Firebase Storage bucket:', import.meta.env.VITE_FIREBASE_STORAGE_BUCKET);
+        console.log('Starting server-side file uploads. Files to upload:', uploadedFiles.length);
         
-        // Check if Firebase Storage is properly configured
-        if (!import.meta.env.VITE_FIREBASE_STORAGE_BUCKET) {
-          console.error('Firebase Storage bucket is not configured!');
-          throw new Error('Storage configuration missing. Please contact support.');
-        }
-        
-        for (const file of uploadedFiles) {
+        if (uploadedFiles.length > 0) {
           try {
-            console.log('Uploading file:', file.name, 'Size:', file.size);
+            console.log('Preparing files for server upload...');
             
-            const fileName = `${Date.now()}_${file.name}`;
-            const storageRef = ref(storage, `customers/${customerInfo.email}/${fileName}`);
+            // Create order ID first for reference
+            const tempOrderId = `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
             
-            // Check if file.data exists and is valid
-            if (!file.data) {
-              console.warn('File data is missing for:', file.name);
-              continue;
-            }
-            
-            console.log('File data type:', typeof file.data);
-            console.log('File data starts with:', file.data.substring(0, 50));
-            
-            // Convert base64 back to blob
-            let blob;
-            try {
-              const response = await fetch(file.data);
-              blob = await response.blob();
-              console.log('Blob created successfully, size:', blob.size, 'type:', blob.type);
-            } catch (blobError) {
-              console.error('Failed to create blob from data:', blobError);
-              throw blobError;
-            }
-            
-            // Upload to Firebase Storage
-            console.log('Attempting Firebase upload for:', fileName);
-            console.log('Storage path:', `customers/${customerInfo.email}/${fileName}`);
-            
-            let snapshot;
-            try {
-              snapshot = await uploadBytes(storageRef, blob, {
-                contentType: file.type || 'application/json',
-                customMetadata: {
-                  originalName: file.name,
-                  customerEmail: customerInfo.email,
-                  uploadedAt: new Date().toISOString()
-                }
-              });
-              console.log('File uploaded successfully to Firebase:', snapshot.ref.fullPath);
-            } catch (uploadError) {
-              console.error('Firebase upload failed:', uploadError);
-              console.error('Error details:', {
-                code: uploadError.code,
-                message: uploadError.message,
-                serverResponse: uploadError.serverResponse
-              });
-              throw uploadError;
-            }
-            
-            const downloadURL = await getDownloadURL(snapshot.ref);
-            
-            console.log('Download URL obtained:', downloadURL);
-            
-            uploadedFileRefs.push({
-              name: file.name,
-              size: file.size,
-              type: file.type || 'application/json',
-              url: downloadURL,
-              path: snapshot.ref.fullPath,
-              uploadedAt: new Date().toISOString()
+            // Call the server-side API to upload files
+            const uploadResponse = await fetch('/api/upload-files', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                files: uploadedFiles,
+                customerEmail: customerInfo.email,
+                orderId: tempOrderId
+              })
             });
-          } catch (fileError) {
-            console.error('Error uploading file:', file.name, fileError);
-            // Continue with other files even if one fails
+            
+            if (!uploadResponse.ok) {
+              const errorData = await uploadResponse.json();
+              console.error('Server upload failed:', errorData);
+              throw new Error(errorData.error || 'Failed to upload files to server');
+            }
+            
+            const uploadResult = await uploadResponse.json();
+            console.log('Server upload successful:', uploadResult);
+            
+            // Extract successfully uploaded files
+            uploadedFileRefs = uploadResult.uploadedFiles.filter(f => !f.error);
+            
+            console.log(`Successfully uploaded ${uploadedFileRefs.length} of ${uploadedFiles.length} files`);
+            
+            // Log any failed uploads
+            const failedUploads = uploadResult.uploadedFiles.filter(f => f.error);
+            if (failedUploads.length > 0) {
+              console.warn('Some files failed to upload:', failedUploads);
+            }
+          } catch (uploadError) {
+            console.error('Error uploading files to server:', uploadError);
+            // Don't throw - continue with order creation even if uploads fail
+            // The order will be created with empty files array
+            uploadedFileRefs = [];
           }
         }
         

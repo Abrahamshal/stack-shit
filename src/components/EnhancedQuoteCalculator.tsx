@@ -523,10 +523,19 @@ const EnhancedQuoteCalculator = () => {
                   onClick={handleProceedToCheckout}
                   size="lg"
                   variant="default"
-                  disabled={!canContinue}
+                  disabled={!canContinue || isPreparingCheckout}
                 >
-                  Continue to Checkout
-                  <ArrowRight className="h-4 w-4 ml-2" />
+                  {isPreparingCheckout ? (
+                    <>
+                      <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                      Preparing Checkout...
+                    </>
+                  ) : (
+                    <>
+                      Continue to Checkout
+                      <ArrowRight className="h-4 w-4 ml-2" />
+                    </>
+                  )}
                 </Button>
               </div>
             </>

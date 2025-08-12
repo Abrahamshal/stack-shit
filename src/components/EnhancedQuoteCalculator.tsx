@@ -120,7 +120,7 @@ const EnhancedQuoteCalculator = () => {
 
   // Removed handleContinueToCheckout - no longer needed
 
-  const handleProceedToCheckout = () => {
+  const handleProceedToCheckout = async () => {
     if (!analysisResults) return;
     
     // Store workflow data for Stripe checkout (no customer info needed)
@@ -128,39 +128,41 @@ const EnhancedQuoteCalculator = () => {
       amount: estimatedPrice,
       totalNodes: totalNodeCount,
       workflows: analysisResults.workflows,
-      files: uploadedFiles,
+      files: uploadedFiles.map(f => ({ name: f.name, size: f.size, type: f.type })), // Don't store File objects
       timestamp: Date.now()
     };
     
     sessionStorage.setItem('checkoutData', JSON.stringify(checkoutData));
     
-    // Also store uploaded files separately with their content as base64
-    const filesForStorage = uploadedFiles.map(file => ({
-      name: file.name,
-      size: file.size,
-      type: file.type,
-      lastModified: file.lastModified,
-      // Convert file to data URL for storage
-      data: '' // Will be populated if needed
-    }));
-    
-    // Read files and convert to base64
-    Promise.all(uploadedFiles.map(file => {
-      return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          resolve({
-            name: file.name,
-            size: file.size,
-            type: file.type,
-            data: reader.result
+    // Read files and convert to base64 BEFORE navigating
+    if (uploadedFiles.length > 0) {
+      try {
+        const filesWithData = await Promise.all(uploadedFiles.map(file => {
+          return new Promise<any>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+              resolve({
+                name: file.name,
+                size: file.size,
+                type: file.type || 'application/json',
+                data: reader.result
+              });
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
           });
-        };
-        reader.readAsDataURL(file);
-      });
-    })).then(filesWithData => {
-      sessionStorage.setItem('uploadedFiles', JSON.stringify(filesWithData));
-    });
+        }));
+        
+        console.log('Files converted to base64:', filesWithData.length);
+        sessionStorage.setItem('uploadedFiles', JSON.stringify(filesWithData));
+      } catch (error) {
+        console.error('Error converting files to base64:', error);
+        // Still navigate even if file conversion fails
+      }
+    } else {
+      // No files to upload
+      sessionStorage.setItem('uploadedFiles', JSON.stringify([]));
+    }
     
     // Navigate directly to embedded checkout
     navigate('/checkout-payment');

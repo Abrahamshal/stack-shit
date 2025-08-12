@@ -43,12 +43,25 @@ const Success = () => {
         const checkoutDataStr = sessionStorage.getItem('checkoutData');
         const uploadedFilesStr = sessionStorage.getItem('uploadedFiles');
 
+        console.log('Session storage - checkoutData exists:', !!checkoutDataStr);
+        console.log('Session storage - uploadedFiles exists:', !!uploadedFilesStr);
+
         if (!checkoutDataStr) {
           throw new Error('Missing checkout data. Please try the process again.');
         }
 
         const checkoutData = JSON.parse(checkoutDataStr);
         const uploadedFiles = uploadedFilesStr ? JSON.parse(uploadedFilesStr) : [];
+        
+        console.log('Parsed checkout data:', checkoutData);
+        console.log('Parsed uploaded files count:', uploadedFiles.length);
+        
+        // If no uploadedFiles in sessionStorage, check if they're in checkoutData
+        if (uploadedFiles.length === 0 && checkoutData.files && checkoutData.files.length > 0) {
+          console.log('No uploadedFiles in sessionStorage, but found files in checkoutData');
+          // Files might be File objects, not base64, so we can't upload them
+          console.warn('Files in checkoutData are not in uploadable format (need base64)');
+        }
         
         // Extract customer info from Stripe session
         const customerInfo = {
@@ -61,27 +74,58 @@ const Success = () => {
         // Upload files to Firebase Storage
         const uploadedFileRefs = [];
         
+        console.log('Starting file uploads. Files to upload:', uploadedFiles.length);
+        
         for (const file of uploadedFiles) {
-          const fileName = `${Date.now()}_${file.name}`;
-          const storageRef = ref(storage, `customers/${customerInfo.email}/${fileName}`);
-          
-          // Convert base64 back to blob
-          const response = await fetch(file.data);
-          const blob = await response.blob();
-          
-          // Upload to Firebase Storage
-          const snapshot = await uploadBytes(storageRef, blob);
-          const downloadURL = await getDownloadURL(snapshot.ref);
-          
-          uploadedFileRefs.push({
-            name: file.name,
-            size: file.size,
-            type: file.type,
-            url: downloadURL,
-            path: snapshot.ref.fullPath,
-            uploadedAt: new Date().toISOString()
-          });
+          try {
+            console.log('Uploading file:', file.name, 'Size:', file.size);
+            
+            const fileName = `${Date.now()}_${file.name}`;
+            const storageRef = ref(storage, `customers/${customerInfo.email}/${fileName}`);
+            
+            // Check if file.data exists and is valid
+            if (!file.data) {
+              console.warn('File data is missing for:', file.name);
+              continue;
+            }
+            
+            // Convert base64 back to blob
+            const response = await fetch(file.data);
+            const blob = await response.blob();
+            
+            console.log('Blob created, size:', blob.size, 'type:', blob.type);
+            
+            // Upload to Firebase Storage
+            const snapshot = await uploadBytes(storageRef, blob, {
+              contentType: file.type || 'application/json',
+              customMetadata: {
+                originalName: file.name,
+                customerEmail: customerInfo.email,
+                uploadedAt: new Date().toISOString()
+              }
+            });
+            
+            console.log('File uploaded successfully:', snapshot.ref.fullPath);
+            
+            const downloadURL = await getDownloadURL(snapshot.ref);
+            
+            console.log('Download URL obtained:', downloadURL);
+            
+            uploadedFileRefs.push({
+              name: file.name,
+              size: file.size,
+              type: file.type || 'application/json',
+              url: downloadURL,
+              path: snapshot.ref.fullPath,
+              uploadedAt: new Date().toISOString()
+            });
+          } catch (fileError) {
+            console.error('Error uploading file:', file.name, fileError);
+            // Continue with other files even if one fails
+          }
         }
+        
+        console.log('All files processed. Uploaded:', uploadedFileRefs.length);
 
         // Save order to Firestore
         const orderData = {

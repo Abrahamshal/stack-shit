@@ -226,8 +226,8 @@ const EmbeddedCheckoutPage = () => {
     );
   }
 
-  // Show loading state
-  if (isLoading || !clientSecret) {
+  // Show loading state - only when actually loading, not when there's an error
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background to-muted/20 py-24">
         <div className="container mx-auto px-4 max-w-4xl">
@@ -236,6 +236,54 @@ const EmbeddedCheckoutPage = () => {
               <div className="flex flex-col items-center justify-center space-y-4">
                 <Loader2 className="h-12 w-12 animate-spin text-primary" />
                 <p className="text-lg text-muted-foreground">Initializing secure checkout...</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error if no client secret and not showing upsells
+  if (!clientSecret && !showUpsells && !isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background to-muted/20 py-24">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <Card className="border-2 border-red-500/20">
+            <CardHeader>
+              <CardTitle className="text-2xl text-red-600 flex items-center gap-2">
+                <AlertCircle className="h-6 w-6" />
+                Checkout Initialization Failed
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <Alert className="border-red-500/20">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>
+                  Unable to initialize checkout session. This might be due to:
+                  <ul className="list-disc list-inside mt-2">
+                    <li>Network connectivity issues</li>
+                    <li>Invalid session data</li>
+                    <li>Server configuration issues</li>
+                  </ul>
+                </AlertDescription>
+              </Alert>
+              
+              <div className="flex gap-4">
+                <Button
+                  onClick={handleBackToCalculator}
+                  variant="outline"
+                  size="lg"
+                >
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  Back to Calculator
+                </Button>
+                <Button
+                  onClick={() => window.location.reload()}
+                  size="lg"
+                >
+                  Try Again
+                </Button>
               </div>
             </CardContent>
           </Card>

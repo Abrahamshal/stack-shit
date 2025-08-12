@@ -48,14 +48,16 @@ export default async function handler(req, res) {
 
     // Retrieve the session from Stripe
     const session = await stripe.checkout.sessions.retrieve(session_id, {
-      expand: ['customer']
+      expand: ['customer', 'payment_intent']
     });
 
     console.log('Session retrieved successfully');
+    console.log('Payment Intent ID:', session.payment_intent);
 
     // Return session details
     return res.status(200).json({ 
       id: session.id,
+      payment_intent: session.payment_intent, // This is the payment transaction ID
       payment_status: session.payment_status,
       customer_email: session.customer_details?.email || session.customer_email,
       customer_name: session.customer_details?.name,

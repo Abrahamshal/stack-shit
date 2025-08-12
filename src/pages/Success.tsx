@@ -38,13 +38,22 @@ const Success = () => {
         
         const sessionData = await sessionResponse.json();
         console.log('Session data:', sessionData);
+        console.log('Payment Intent ID:', sessionData.payment_intent);
         
         // Retrieve checkout data from sessionStorage
         const checkoutDataStr = sessionStorage.getItem('checkoutData');
-        const uploadedFilesStr = sessionStorage.getItem('uploadedFiles');
+        let uploadedFilesStr = sessionStorage.getItem('uploadedFiles');
+        
+        // Fallback to localStorage if sessionStorage doesn't have files
+        if (!uploadedFilesStr) {
+          console.log('No files in sessionStorage, checking localStorage...');
+          uploadedFilesStr = localStorage.getItem('uploadedFiles');
+        }
 
         console.log('Session storage - checkoutData exists:', !!checkoutDataStr);
-        console.log('Session storage - uploadedFiles exists:', !!uploadedFilesStr);
+        console.log('Session storage - uploadedFiles exists:', !!sessionStorage.getItem('uploadedFiles'));
+        console.log('Local storage - uploadedFiles exists:', !!localStorage.getItem('uploadedFiles'));
+        console.log('Final uploadedFiles source:', uploadedFilesStr ? 'Found' : 'Not found');
 
         if (!checkoutDataStr) {
           throw new Error('Missing checkout data. Please try the process again.');
@@ -144,6 +153,7 @@ const Success = () => {
           },
           payment: {
             stripeSessionId: sessionId,
+            paymentIntentId: sessionData.payment_intent || '', // The actual payment transaction ID
             amount: checkoutData.amount || checkoutData.migrationCost,
             currency: 'usd',
             status: 'paid'
@@ -158,9 +168,10 @@ const Success = () => {
         const docRef = await addDoc(collection(db, 'orders'), orderData);
         setOrderId(docRef.id);
 
-        // Clear sessionStorage
+        // Clear both sessionStorage and localStorage
         sessionStorage.removeItem('checkoutData');
         sessionStorage.removeItem('uploadedFiles');
+        localStorage.removeItem('uploadedFiles'); // Clean up localStorage backup
 
         setUploadComplete(true);
         

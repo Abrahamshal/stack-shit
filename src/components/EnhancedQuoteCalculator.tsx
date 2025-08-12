@@ -165,9 +165,24 @@ const EnhancedQuoteCalculator = () => {
           }));
           
           console.log('All files converted to base64:', filesWithData.length);
+          
+          // Store in both sessionStorage and localStorage for redundancy
           console.log('Storing files in sessionStorage...');
-          sessionStorage.setItem('uploadedFiles', JSON.stringify(filesWithData));
-          console.log('Files stored successfully');
+          const filesDataStr = JSON.stringify(filesWithData);
+          sessionStorage.setItem('uploadedFiles', filesDataStr);
+          
+          console.log('Storing files in localStorage as backup...');
+          localStorage.setItem('uploadedFiles', filesDataStr);
+          
+          // Verify storage
+          const verifySession = sessionStorage.getItem('uploadedFiles');
+          const verifyLocal = localStorage.getItem('uploadedFiles');
+          console.log('Files stored - sessionStorage:', !!verifySession, 'localStorage:', !!verifyLocal);
+          
+          if (verifySession) {
+            const parsed = JSON.parse(verifySession);
+            console.log('Verified files in sessionStorage:', parsed.length, 'files');
+          }
         } catch (error) {
           console.error('Error converting files to base64:', error);
           // Still navigate even if file conversion fails

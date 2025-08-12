@@ -97,6 +97,8 @@ const Success = () => {
         let uploadedFileRefs = [];
         
         console.log('Starting server-side file uploads. Files to upload:', uploadedFiles.length);
+        console.log('API endpoint:', '/api/upload-files');
+        console.log('Current URL:', window.location.href);
         
         if (uploadedFiles.length > 0) {
           try {
@@ -106,6 +108,9 @@ const Success = () => {
             const tempOrderId = `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
             
             // Call the server-side API to upload files
+            console.log('Calling server API at /api/upload-files');
+            console.log('Files being sent:', uploadedFiles.map(f => ({ name: f.name, size: f.size, hasData: !!f.data })));
+            
             const uploadResponse = await fetch('/api/upload-files', {
               method: 'POST',
               headers: {
@@ -117,6 +122,8 @@ const Success = () => {
                 orderId: tempOrderId
               })
             });
+            
+            console.log('Server response status:', uploadResponse.status);
             
             if (!uploadResponse.ok) {
               const errorData = await uploadResponse.json();

@@ -137,6 +137,9 @@ const EnhancedQuoteCalculator = () => {
       };
       
       sessionStorage.setItem('checkoutData', JSON.stringify(checkoutData));
+      // Also store in localStorage as backup (sessionStorage might get cleared on redirect)
+      localStorage.setItem('checkoutData', JSON.stringify(checkoutData));
+      console.log('Checkout data stored in both sessionStorage and localStorage');
       
       // Read files and convert to base64 BEFORE navigating
       if (uploadedFiles.length > 0) {

@@ -39,17 +39,22 @@ const Success = () => {
         console.log('Session data:', sessionData);
         console.log('Payment Intent ID:', sessionData.payment_intent);
         
-        // Retrieve checkout data from sessionStorage
-        const checkoutDataStr = sessionStorage.getItem('checkoutData');
-        let uploadedFilesStr = sessionStorage.getItem('uploadedFiles');
+        // Retrieve checkout data from sessionStorage with localStorage fallback
+        let checkoutDataStr = sessionStorage.getItem('checkoutData');
+        if (!checkoutDataStr) {
+          console.log('No checkout data in sessionStorage, checking localStorage...');
+          checkoutDataStr = localStorage.getItem('checkoutData');
+        }
         
-        // Fallback to localStorage if sessionStorage doesn't have files
+        let uploadedFilesStr = sessionStorage.getItem('uploadedFiles');
         if (!uploadedFilesStr) {
           console.log('No files in sessionStorage, checking localStorage...');
           uploadedFilesStr = localStorage.getItem('uploadedFiles');
         }
 
-        console.log('Session storage - checkoutData exists:', !!checkoutDataStr);
+        console.log('Session storage - checkoutData exists:', !!sessionStorage.getItem('checkoutData'));
+        console.log('Local storage - checkoutData exists:', !!localStorage.getItem('checkoutData'));
+        console.log('Final checkoutData source:', checkoutDataStr ? 'Found' : 'Not found');
         console.log('Session storage - uploadedFiles exists:', !!sessionStorage.getItem('uploadedFiles'));
         console.log('Local storage - uploadedFiles exists:', !!localStorage.getItem('uploadedFiles'));
         console.log('Final uploadedFiles source:', uploadedFilesStr ? 'Found' : 'Not found');
@@ -182,6 +187,7 @@ const Success = () => {
         // Clear both sessionStorage and localStorage
         sessionStorage.removeItem('checkoutData');
         sessionStorage.removeItem('uploadedFiles');
+        localStorage.removeItem('checkoutData'); // Clean up localStorage backup
         localStorage.removeItem('uploadedFiles'); // Clean up localStorage backup
 
         setUploadComplete(true);

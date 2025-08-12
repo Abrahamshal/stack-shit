@@ -189,8 +189,8 @@ const EmbeddedCheckoutPage = () => {
 
         {/* Embedded Checkout */}
         <Card className="shadow-xl mb-12">
-          <CardContent className="p-6">
-            <div id="checkout" className="min-h-[600px]">
+          <CardContent className="p-0">
+            <div id="checkout" className="min-h-[600px] p-8">
               <EmbeddedCheckoutProvider
                 stripe={stripePromise}
                 options={{ clientSecret }}

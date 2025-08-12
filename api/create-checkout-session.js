@@ -155,13 +155,7 @@ export default async function handler(req, res) {
             workflowCount: metadata?.workflowCount || '0',
           }
         },
-        payment_intent_data: {
-          metadata: {
-            totalNodes: metadata?.totalNodes || '0',
-            workflowCount: metadata?.workflowCount || '0',
-            selectedPlan: metadata?.selectedPlan || 'none',
-          }
-        },
+        // Remove payment_intent_data - not allowed in subscription mode
         return_url: `${process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:8080'}/success?session_id={CHECKOUT_SESSION_ID}`,
         billing_address_collection: 'required',
         phone_number_collection: {

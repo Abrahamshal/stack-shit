@@ -54,13 +54,34 @@ const StripeCheckout = () => {
       // Pass the selected upsell directly (maintenance or development)
       const selectedPlan = checkoutData.selectedUpsell || 'none';
       
-      const finalAmount = checkoutData.oneTimeTotal || checkoutData.workflowCost || checkoutData.amount;
+      const finalAmount = checkoutData.oneTimeTotal || checkoutData.workflowCost || checkoutData.amount || 0;
+      
+      // Validate amount
+      if (!finalAmount || finalAmount <= 0 || isNaN(finalAmount)) {
+        console.error('Invalid amount:', finalAmount, 'Checkout data:', checkoutData);
+        throw new Error('Invalid checkout amount. Please go back and try again.');
+      }
 
       console.log('Creating Stripe session with:', {
         amount: finalAmount,
         selectedPlan,
-        upsell: checkoutData.selectedUpsell
+        upsell: checkoutData.selectedUpsell,
+        workflowCount: checkoutData.workflows?.length,
+        totalNodes: checkoutData.totalNodes
       });
+      
+      console.log('Request body:', JSON.stringify({
+        amount: Math.round(finalAmount * 100),
+        metadata: {
+          totalNodes: (checkoutData.totalNodes || 0).toString(),
+          workflowCount: (checkoutData.workflows?.length || 0).toString(),
+          selectedPlan: selectedPlan,
+          checkoutAmount: finalAmount.toString(),
+          hasFiles: (checkoutData.files?.length > 0).toString(),
+          environmentSetup: checkoutData.selectedUpsell === 'environment' ? 'true' : 'false',
+          selectedUpsell: checkoutData.selectedUpsell || 'none'
+        }
+      }));
 
       // Create checkout session
       const response = await fetch('/api/create-checkout-session', {
@@ -83,11 +104,29 @@ const StripeCheckout = () => {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to create checkout session');
+        let errorMessage = 'Failed to create checkout session';
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.error || errorMessage;
+        } catch (e) {
+          // If response is not JSON, try to get text
+          try {
+            const errorText = await response.text();
+            errorMessage = errorText || errorMessage;
+          } catch (textError) {
+            console.error('Could not parse error response');
+          }
+        }
+        throw new Error(errorMessage);
       }
 
-      const { clientSecret: secret } = await response.json();
+      const responseData = await response.json();
+      const { clientSecret: secret } = responseData;
+      
+      if (!secret) {
+        console.error('No client secret in response:', responseData);
+        throw new Error('Invalid response from payment server');
+      }
       return secret;
     } catch (error) {
       console.error('Error creating checkout session:', error);

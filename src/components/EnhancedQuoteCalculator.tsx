@@ -18,7 +18,7 @@ const EnhancedQuoteCalculator = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const sectionRef = useRef<HTMLDivElement>(null);
-  const [showSavings, setShowSavings] = useState(false);
+  // const [showSavings, setShowSavings] = useState(false); // Temporarily disabled
   const [showNodeBreakdown, setShowNodeBreakdown] = useState(false);
   const [showZapierSelectorOverride, setShowZapierSelectorOverride] = useState(false);
   const [selectedZapierWorkflows, setSelectedZapierWorkflows] = useState<any[]>([]);
@@ -66,9 +66,10 @@ const EnhancedQuoteCalculator = () => {
     }
   };
 
-  const handleCalculateSavings = () => {
-    setShowSavings(true);
-  };
+  // Calculate Savings feature temporarily disabled
+  // const handleCalculateSavings = () => {
+  //   setShowSavings(true);
+  // };
 
   const handleBackToZapierSelection = () => {
     setShowNodeBreakdown(false);
@@ -234,7 +235,7 @@ const EnhancedQuoteCalculator = () => {
       <div className="container mx-auto px-4 lg:px-8">
         <div className="text-center mb-12">
           <div className="flex justify-center mb-6">
-            {(uploadedFiles.length > 0 || showZapierSelector || showNodeBreakdown || showSavings) && (
+            {(uploadedFiles.length > 0 || showZapierSelector || showNodeBreakdown) && (
               <Button 
                 onClick={handleFullReset} 
                 variant="outline"
@@ -258,7 +259,7 @@ const EnhancedQuoteCalculator = () => {
 
         <div className="max-w-6xl mx-auto space-y-6">
           {/* File Upload Section */}
-          {!showZapierSelector && !showZapierSelectorOverride && !showNodeBreakdown && !showSavings && (
+          {!showZapierSelector && !showZapierSelectorOverride && !showNodeBreakdown && (
             <>
               <Card>
                 <CardHeader>
@@ -307,6 +308,7 @@ const EnhancedQuoteCalculator = () => {
                       
                       <div className="space-y-4 mt-6">
                         <div className="flex gap-4">
+                          {/* Calculate Savings button hidden for now
                           <Button 
                             onClick={() => setShowSavings(true)} 
                             size="lg"
@@ -315,11 +317,12 @@ const EnhancedQuoteCalculator = () => {
                             <TrendingUp className="h-4 w-4 mr-2" />
                             Calculate Savings
                           </Button>
+                          */}
                           <Button 
                             onClick={handleProceedToCheckout}
                             size="lg"
                             variant="default"
-                            className="flex-1"
+                            className="w-full"
                             disabled={!canContinue || isPreparingCheckout}
                           >
                             {isPreparingCheckout ? (
@@ -392,7 +395,7 @@ const EnhancedQuoteCalculator = () => {
           )}
 
           {/* Zapier Workflow Selector */}
-          {(showZapierSelector || showZapierSelectorOverride) && !showNodeBreakdown && !showSavings && (
+          {(showZapierSelector || showZapierSelectorOverride) && !showNodeBreakdown && (
             <>
               <ZapierWorkflowSelector
                 workflows={pendingZapierWorkflows}
@@ -424,7 +427,7 @@ const EnhancedQuoteCalculator = () => {
           )}
 
           {/* Node Breakdown Display */}
-          {showNodeBreakdown && !showSavings && (
+          {showNodeBreakdown && (
             <>
               <Card>
                 <CardHeader>
@@ -501,12 +504,23 @@ const EnhancedQuoteCalculator = () => {
                         Add More Automations
                       </Button>
                       <Button 
-                        onClick={handleCalculateSavings} 
+                        onClick={handleProceedToCheckout}
                         size="lg"
+                        variant="default"
                         className="flex-1"
+                        disabled={isPreparingCheckout}
                       >
-                        <TrendingUp className="h-4 w-4 mr-2" />
-                        Calculate Savings
+                        {isPreparingCheckout ? (
+                          <>
+                            <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                            Preparing Checkout...
+                          </>
+                        ) : (
+                          <>
+                            <ArrowRight className="h-4 w-4 mr-2" />
+                            Continue to Checkout
+                          </>
+                        )}
                       </Button>
                     </div>
                   )}

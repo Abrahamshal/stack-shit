@@ -64,15 +64,23 @@ const OrderReviewFinal = () => {
     
     // Set workflows from the checkout data
     if (parsedData.workflows && parsedData.workflows.length > 0) {
-      setSelectedWorkflows(parsedData.workflows);
+      // Ensure all workflows have required properties
+      const validWorkflows = parsedData.workflows.map(w => ({
+        name: w.name || 'Unnamed Workflow',
+        size: w.size || 0,
+        type: w.type || 'application/json',
+        nodeCount: w.nodeCount || 2
+      }));
+      setSelectedWorkflows(validWorkflows);
     } else if (parsedData.files && parsedData.files.length > 0) {
       // Fallback to files if workflows not available
-      setSelectedWorkflows(parsedData.files.map(f => ({
-        name: f.name,
-        size: f.size,
+      const validFiles = parsedData.files.map(f => ({
+        name: f.name || 'Unnamed File',
+        size: f.size || 0,
         type: f.type || 'application/json',
-        nodeCount: Math.ceil(parsedData.totalNodes / parsedData.files.length)
-      })));
+        nodeCount: Math.ceil(parsedData.totalNodes / parsedData.files.length) || 2
+      }));
+      setSelectedWorkflows(validFiles);
     }
     
     setIsLoading(false);
@@ -97,6 +105,8 @@ const OrderReviewFinal = () => {
   };
 
   const getWorkflowName = (filename: string) => {
+    // Handle undefined or null filenames
+    if (!filename) return 'Unnamed Workflow';
     // Remove file extension and clean up the name
     return filename.replace(/\.(json|blueprint)$/i, '').replace(/[-_]/g, ' ');
   };
@@ -199,15 +209,17 @@ const OrderReviewFinal = () => {
                   </p>
                 ) : (
                   <div className="space-y-4">
-                    <div className="font-medium text-sm text-muted-foreground mb-4">
-                      {selectedWorkflows[0]?.name.includes('zap') ? 'Zapier' : 'Make.com'} Workflows
-                    </div>
+                    {selectedWorkflows.length > 0 && selectedWorkflows[0]?.name && (
+                      <div className="font-medium text-sm text-muted-foreground mb-4">
+                        {selectedWorkflows[0].name.toLowerCase().includes('zap') ? 'Zapier' : 'Make.com'} Workflows
+                      </div>
+                    )}
                     {selectedWorkflows.map((workflow, index) => (
                       <div key={index} className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
                         <div className="flex-1">
                           <div className="font-medium">{getWorkflowName(workflow.name)}</div>
                           <div className="text-sm text-muted-foreground">
-                            {workflow.nodeCount || 2} nodes • {workflow.name}
+                            {workflow.nodeCount || 2} nodes • {workflow.name || 'Unnamed'}
                           </div>
                         </div>
                         <div className="flex items-center gap-4">

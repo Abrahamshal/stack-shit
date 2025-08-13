@@ -18,7 +18,7 @@ const EnhancedQuoteCalculator = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const sectionRef = useRef<HTMLDivElement>(null);
-  // const [showSavings, setShowSavings] = useState(false); // Temporarily disabled
+  const [showSavings, setShowSavings] = useState(false); // Keeping state to avoid errors, but hiding UI
   const [showNodeBreakdown, setShowNodeBreakdown] = useState(false);
   const [showZapierSelectorOverride, setShowZapierSelectorOverride] = useState(false);
   const [selectedZapierWorkflows, setSelectedZapierWorkflows] = useState<any[]>([]);
@@ -81,7 +81,7 @@ const EnhancedQuoteCalculator = () => {
     // Don't clear workflows yet - let user make changes first
     // Show Zapier selector with current selections
     setShowNodeBreakdown(false);
-    setShowSavings(false);
+    // setShowSavings(false);
     setShowZapierSelectorOverride(true);
   };
 
@@ -102,7 +102,7 @@ const EnhancedQuoteCalculator = () => {
 
   const handleFullReset = () => {
     resetAnalysis();
-    setShowSavings(false);
+    // setShowSavings(false);
     setShowNodeBreakdown(false);
     setShowZapierSelectorOverride(false);
     setSelectedZapierWorkflows([]);
@@ -310,7 +310,7 @@ const EnhancedQuoteCalculator = () => {
                         <div className="flex gap-4">
                           {/* Calculate Savings button hidden for now
                           <Button 
-                            onClick={() => setShowSavings(true)} 
+                            onClick={() => {}} 
                             size="lg"
                             className="flex-1"
                           >
@@ -530,7 +530,7 @@ const EnhancedQuoteCalculator = () => {
           )}
 
           {/* Savings Display */}
-          {showSavings && analysisResults && (
+          {false && showSavings && analysisResults && (
             <>
               <PricingResults analysisResults={analysisResults} />
               <MigrationSavingsDisplay

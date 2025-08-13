@@ -132,11 +132,11 @@ const EnhancedQuoteCalculator = () => {
         amount: estimatedPrice,
         totalNodes: totalNodeCount,
         workflows: analysisResults.workflows.map(w => ({
-          name: w.name || 'Unnamed Workflow',
-          nodeCount: w.nodeCount || 2,
+          name: w.workflowName || w.name || 'Unnamed Workflow',  // Use workflowName field
+          nodeCount: w.totalNodes || w.nodeCount || 2,  // Use totalNodes field
           platform: w.platform || 'unknown',
           complexity: w.complexity || 'simple',
-          fileName: w.fileName || w.name || 'unknown.json'
+          fileName: w.fileName || w.workflowName || 'unknown.json'
         })),
         files: uploadedFiles.map(f => ({ 
           name: f.name, 
@@ -147,6 +147,7 @@ const EnhancedQuoteCalculator = () => {
       };
       
       console.log('Storing checkout data with workflows:', checkoutData.workflows);
+      console.log('Original analysisResults.workflows:', analysisResults.workflows);
       
       sessionStorage.setItem('checkoutData', JSON.stringify(checkoutData));
       // Also store in localStorage as backup (sessionStorage might get cleared on redirect)

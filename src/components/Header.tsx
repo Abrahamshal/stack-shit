@@ -1,10 +1,14 @@
 import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Menu, X } from 'lucide-react';
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isHomePage = location.pathname === '/';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -15,10 +19,23 @@ const Header = () => {
   }, []);
 
   const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-      setIsMobileMenuOpen(false);
+    if (!isHomePage) {
+      // If not on home page, navigate to home first
+      navigate('/');
+      // Use setTimeout to wait for navigation to complete
+      setTimeout(() => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+    } else {
+      // If on home page, scroll directly
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+        setIsMobileMenuOpen(false);
+      }
     }
   };
 
@@ -31,7 +48,7 @@ const Header = () => {
   return (
     <header 
       className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 ${
-        isScrolled 
+        isScrolled || !isHomePage
           ? 'bg-white/98 backdrop-blur-xl shadow-premium border-b border-gold/20' 
           : 'bg-transparent'
       }`}
@@ -47,11 +64,11 @@ const Header = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8" aria-label="Main navigation">
-            {!isScrolled && navItems.map((item) => (
+            {(!isScrolled || !isHomePage) && navItems.map((item) => (
               <button
                 key={item.href}
                 onClick={() => scrollToSection(item.href)}
-                className="text-white hover:text-gold transition-colors font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-md px-2 py-1"
+                className={`${isHomePage && !isScrolled ? 'text-white hover:text-gold' : 'text-foreground hover:text-primary'} transition-colors font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-md px-2 py-1`}
                 aria-label={`Navigate to ${item.label} section`}
               >
                 {item.label}

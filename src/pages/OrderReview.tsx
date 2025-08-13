@@ -33,6 +33,7 @@ interface CheckoutData {
 }
 
 const OrderReview = () => {
+  console.log('OrderReview component rendering');
   const navigate = useNavigate();
   const { toast } = useToast();
   const [checkoutData, setCheckoutData] = useState<CheckoutData | null>(null);
@@ -41,13 +42,21 @@ const OrderReview = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    console.log('OrderReview component mounted');
+    console.log('Session storage keys:', Object.keys(sessionStorage));
+    console.log('Local storage keys:', Object.keys(localStorage));
+    
     // Load checkout data from storage
     let data = sessionStorage.getItem('checkoutData');
+    console.log('Session storage checkoutData:', data ? 'Found' : 'Not found');
+    
     if (!data) {
       data = localStorage.getItem('checkoutData');
+      console.log('Local storage checkoutData:', data ? 'Found' : 'Not found');
     }
 
     if (!data) {
+      console.error('No checkout data found in either storage');
       toast({
         title: "No checkout data found",
         description: "Please start from the calculator",

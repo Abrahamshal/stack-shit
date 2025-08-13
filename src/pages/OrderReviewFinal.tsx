@@ -222,31 +222,67 @@ const OrderReviewFinal = () => {
                   </p>
                 ) : (
                   <div className="space-y-4">
-                    {selectedWorkflows.length > 0 && (
-                      <div className="font-medium text-sm text-muted-foreground mb-4">
-                        {selectedWorkflows.some(w => w.platform === 'zapier' || w.fileName?.toLowerCase().includes('zap')) ? 'Zapier' : 'Make.com'} Workflows
-                      </div>
-                    )}
-                    {selectedWorkflows.map((workflow, index) => (
-                      <div key={index} className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
-                        <div className="flex-1">
-                          <div className="font-medium">{getWorkflowName(workflow.name)}</div>
-                          <div className="text-sm text-muted-foreground">
-                            {workflow.nodeCount || 2} nodes • {workflow.fileName || workflow.name || 'Unnamed'} • {workflow.platform || ''}
+                    {/* Group workflows by platform */}
+                    {selectedWorkflows.filter(w => w.platform === 'zapier' || w.fileName?.toLowerCase().includes('zap')).length > 0 && (
+                      <>
+                        <div className="font-medium text-sm text-muted-foreground">
+                          Zapier Workflows
+                        </div>
+                        {selectedWorkflows
+                          .filter(w => w.platform === 'zapier' || w.fileName?.toLowerCase().includes('zap'))
+                          .map((workflow, index) => (
+                          <div key={`zapier-${index}`} className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
+                            <div className="flex-1">
+                              <div className="font-medium">{getWorkflowName(workflow.name)}</div>
+                              <div className="text-sm text-muted-foreground">
+                                {workflow.nodeCount || 2} nodes • {workflow.fileName || workflow.name || 'Unnamed'}
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-4">
+                              <span className="font-semibold">${prices.pricePerWorkflow}</span>
+                              <button
+                                onClick={() => handleRemoveWorkflow(selectedWorkflows.indexOf(workflow))}
+                                className="text-muted-foreground hover:text-destructive transition-colors"
+                                aria-label="Remove workflow"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </button>
+                            </div>
                           </div>
+                        ))}
+                      </>
+                    )}
+                    
+                    {/* Make.com Workflows */}
+                    {selectedWorkflows.filter(w => w.platform === 'make' || (!w.platform && !w.fileName?.toLowerCase().includes('zap'))).length > 0 && (
+                      <>
+                        <div className="font-medium text-sm text-muted-foreground mt-4">
+                          Make.com Workflows
                         </div>
-                        <div className="flex items-center gap-4">
-                          <span className="font-semibold">${prices.pricePerWorkflow}</span>
-                          <button
-                            onClick={() => handleRemoveWorkflow(index)}
-                            className="text-muted-foreground hover:text-destructive transition-colors"
-                            aria-label="Remove workflow"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </button>
-                        </div>
-                      </div>
-                    ))}
+                        {selectedWorkflows
+                          .filter(w => w.platform === 'make' || (!w.platform && !w.fileName?.toLowerCase().includes('zap')))
+                          .map((workflow, index) => (
+                          <div key={`make-${index}`} className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
+                            <div className="flex-1">
+                              <div className="font-medium">{getWorkflowName(workflow.name)}</div>
+                              <div className="text-sm text-muted-foreground">
+                                {workflow.nodeCount || 2} nodes • {workflow.fileName || workflow.name || 'Unnamed'}
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-4">
+                              <span className="font-semibold">${prices.pricePerWorkflow}</span>
+                              <button
+                                onClick={() => handleRemoveWorkflow(selectedWorkflows.indexOf(workflow))}
+                                className="text-muted-foreground hover:text-destructive transition-colors"
+                                aria-label="Remove workflow"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </>
+                    )}
                   </div>
                 )}
               </CardContent>

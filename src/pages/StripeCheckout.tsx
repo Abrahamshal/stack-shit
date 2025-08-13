@@ -51,8 +51,10 @@ const StripeCheckout = () => {
       setOrderSummary(checkoutData);
       
       // Determine the final amount and selected plan
+      // Map 'management' upsell to 'maintenance' plan for Stripe
+      // 'environment' is a one-time charge, not a subscription
       const selectedPlan = checkoutData.selectedUpsell === 'management' ? 'maintenance' : 
-                          checkoutData.selectedUpsell === 'environment' ? null : null;
+                          checkoutData.selectedUpsell === 'development' ? 'development' : 'none';
       
       const finalAmount = checkoutData.oneTimeTotal || checkoutData.workflowCost || checkoutData.amount;
 
@@ -73,10 +75,11 @@ const StripeCheckout = () => {
           metadata: {
             totalNodes: (checkoutData.totalNodes || 0).toString(),
             workflowCount: (checkoutData.workflows?.length || 0).toString(),
-            selectedPlan: selectedPlan || 'none',
+            selectedPlan: selectedPlan,
             checkoutAmount: finalAmount.toString(),
             hasFiles: (checkoutData.files?.length > 0).toString(),
-            environmentSetup: checkoutData.selectedUpsell === 'environment' ? 'true' : 'false'
+            environmentSetup: checkoutData.selectedUpsell === 'environment' ? 'true' : 'false',
+            selectedUpsell: checkoutData.selectedUpsell || 'none'
           }
         }),
       });

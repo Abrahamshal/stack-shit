@@ -73,64 +73,87 @@ export default async function handler(req, res) {
       quantity: 1,
     });
 
+    // Add environment setup as one-time charge if selected
+    if (metadata?.environmentSetup === 'true' || metadata?.selectedUpsell === 'environment') {
+      // Add $500 environment setup as a one-time charge
+      const envPriceId = process.env.STRIPE_ENVIRONMENT_PRICE_ID;
+      if (envPriceId) {
+        lineItems.push({
+          price: envPriceId,
+          quantity: 1,
+        });
+      } else {
+        lineItems.push({
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: 'n8n Environment Setup',
+              description: 'Complete server setup & configuration',
+            },
+            unit_amount: 50000, // $500 in cents
+          },
+          quantity: 1,
+        });
+      }
+    }
+    
     // Add subscription plan if selected
     let hasSubscription = false;
-    if (metadata?.selectedPlan && metadata.selectedPlan !== 'none') {
+    if (metadata?.selectedPlan === 'maintenance' || metadata?.selectedUpsell === 'management') {
       hasSubscription = true;
       
-      // Determine which price ID to use
-      let priceId;
-      if (metadata.selectedPlan === 'maintenance') {
-        priceId = process.env.STRIPE_MAINTENANCE_PRICE_ID;
-        if (!priceId) {
-          console.warn('STRIPE_MAINTENANCE_PRICE_ID not configured, using price_data fallback');
-          // Fallback to price_data if environment variable not set
-          lineItems.push({
-            price_data: {
-              currency: 'usd',
-              product_data: {
-                name: 'Maintenance Plan',
-                description: '24/7 monitoring, error recovery, and support',
-              },
-              unit_amount: 20000, // $200 in cents
-              recurring: {
-                interval: 'month'
-              }
+      // Use Maintenance Plan price ID
+      const priceId = process.env.STRIPE_MAINTENANCE_PRICE_ID;
+      if (!priceId) {
+        console.warn('STRIPE_MAINTENANCE_PRICE_ID not configured, using price_data fallback');
+        // Fallback to price_data if environment variable not set
+        lineItems.push({
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: 'Ongoing Management',
+              description: '24/7 monitoring & maintenance',
             },
-            quantity: 1,
-          });
-        } else {
-          lineItems.push({
-            price: priceId,
-            quantity: 1,
-          });
-        }
-      } else if (metadata.selectedPlan === 'development') {
-        priceId = process.env.STRIPE_DEVELOPMENT_PRICE_ID;
-        if (!priceId) {
-          console.warn('STRIPE_DEVELOPMENT_PRICE_ID not configured, using price_data fallback');
-          // Fallback to price_data if environment variable not set
-          lineItems.push({
-            price_data: {
-              currency: 'usd',
-              product_data: {
-                name: 'Development Plan',
-                description: 'Everything in Maintenance plus 10 hours monthly development',
-              },
-              unit_amount: 49900, // $499 in cents
-              recurring: {
-                interval: 'month'
-              }
-            },
-            quantity: 1,
-          });
-        } else {
-          lineItems.push({
-            price: priceId,
-            quantity: 1,
-          });
-        }
+            unit_amount: 20000, // $200 in cents
+            recurring: {
+              interval: 'month'
+            }
+          },
+          quantity: 1,
+        });
+      } else {
+        lineItems.push({
+          price: priceId,
+          quantity: 1,
+        });
       }
+    } else if (metadata?.selectedPlan === 'development') {
+      hasSubscription = true;
+      const priceId = process.env.STRIPE_DEVELOPMENT_PRICE_ID;
+      if (!priceId) {
+        console.warn('STRIPE_DEVELOPMENT_PRICE_ID not configured, using price_data fallback');
+        // Fallback to price_data if environment variable not set
+        lineItems.push({
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: 'Development Plan',
+              description: 'Everything in Maintenance plus 10 hours monthly development',
+            },
+            unit_amount: 49900, // $499 in cents
+            recurring: {
+              interval: 'month'
+            }
+          },
+          quantity: 1,
+        });
+      } else {
+        lineItems.push({
+          price: priceId,
+          quantity: 1,
+        });
+      }
+    }
     }
 
     // Determine checkout mode based on whether there's a subscription

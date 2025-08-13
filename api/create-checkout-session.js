@@ -23,6 +23,12 @@ export default async function handler(req, res) {
   }
 
   try {
+    console.log('Received checkout request:', {
+      method: req.method,
+      body: req.body,
+      hasStripeKey: !!process.env.STRIPE_SECRET_KEY
+    });
+
     // Check if Stripe key is configured
     if (!process.env.STRIPE_SECRET_KEY) {
       console.error('STRIPE_SECRET_KEY is not configured');
@@ -130,9 +136,6 @@ export default async function handler(req, res) {
         });
       }
     }
-    }
-
-    // Determine checkout mode based on whether there's a subscription
     // For mixed cart (one-time + subscription), we need to use subscription mode
     // and add the one-time payment as an invoice item
     let sessionConfig;

@@ -18,9 +18,12 @@ import HeaderFixed from '@/components/HeaderFixed';
 
 interface Workflow {
   name: string;
-  size: number;
-  type: string;
+  size?: number;
+  type?: string;
   nodeCount?: number;
+  platform?: string;
+  fileName?: string;
+  complexity?: string;
 }
 
 interface CheckoutData {
@@ -63,22 +66,32 @@ const OrderReviewFinal = () => {
     setCheckoutData(parsedData);
     
     // Set workflows from the checkout data
+    console.log('Parsed checkout data workflows:', parsedData.workflows);
+    console.log('Parsed checkout data files:', parsedData.files);
+    
     if (parsedData.workflows && parsedData.workflows.length > 0) {
-      // Ensure all workflows have required properties
+      // Use the workflows data which should have all the details
       const validWorkflows = parsedData.workflows.map(w => ({
         name: w.name || 'Unnamed Workflow',
         size: w.size || 0,
         type: w.type || 'application/json',
-        nodeCount: w.nodeCount || 2
+        nodeCount: w.nodeCount || 2,
+        platform: w.platform || 'unknown',
+        fileName: w.fileName || w.name || 'unknown.json',
+        complexity: w.complexity || 'simple'
       }));
+      console.log('Setting workflows:', validWorkflows);
       setSelectedWorkflows(validWorkflows);
     } else if (parsedData.files && parsedData.files.length > 0) {
       // Fallback to files if workflows not available
+      console.log('Falling back to files data');
       const validFiles = parsedData.files.map(f => ({
         name: f.name || 'Unnamed File',
         size: f.size || 0,
         type: f.type || 'application/json',
-        nodeCount: Math.ceil(parsedData.totalNodes / parsedData.files.length) || 2
+        nodeCount: Math.ceil(parsedData.totalNodes / parsedData.files.length) || 2,
+        platform: f.name?.toLowerCase().includes('zap') ? 'zapier' : 'make',
+        fileName: f.name || 'unknown.json'
       }));
       setSelectedWorkflows(validFiles);
     }
@@ -209,9 +222,9 @@ const OrderReviewFinal = () => {
                   </p>
                 ) : (
                   <div className="space-y-4">
-                    {selectedWorkflows.length > 0 && selectedWorkflows[0]?.name && (
+                    {selectedWorkflows.length > 0 && (
                       <div className="font-medium text-sm text-muted-foreground mb-4">
-                        {selectedWorkflows[0].name.toLowerCase().includes('zap') ? 'Zapier' : 'Make.com'} Workflows
+                        {selectedWorkflows.some(w => w.platform === 'zapier' || w.fileName?.toLowerCase().includes('zap')) ? 'Zapier' : 'Make.com'} Workflows
                       </div>
                     )}
                     {selectedWorkflows.map((workflow, index) => (
@@ -219,7 +232,7 @@ const OrderReviewFinal = () => {
                         <div className="flex-1">
                           <div className="font-medium">{getWorkflowName(workflow.name)}</div>
                           <div className="text-sm text-muted-foreground">
-                            {workflow.nodeCount || 2} nodes • {workflow.name || 'Unnamed'}
+                            {workflow.nodeCount || 2} nodes • {workflow.fileName || workflow.name || 'Unnamed'} • {workflow.platform || ''}
                           </div>
                         </div>
                         <div className="flex items-center gap-4">

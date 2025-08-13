@@ -9,7 +9,7 @@ import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import Checkout from "./pages/Checkout";
 import Success from "./pages/Success";
-import CheckoutPayment from "./pages/CheckoutPayment";
+import OrderReviewSimple from "./pages/OrderReviewSimple";
 import StripeCheckout from "./pages/StripeCheckout";
 
 const queryClient = new QueryClient();
@@ -23,7 +23,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/checkout" element={<Checkout />} />
-          <Route path="/checkout-payment" element={<CheckoutPayment />} />
+          <Route path="/checkout-payment" element={<OrderReviewSimple />} />
           <Route path="/checkout-stripe" element={<StripeCheckout />} />
           <Route path="/success" element={<Success />} />
           <Route path="/terms" element={<Terms />} />

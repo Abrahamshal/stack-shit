@@ -1,14 +1,11 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Menu, X } from 'lucide-react';
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const navigate = useNavigate();
-  const location = useLocation();
-  const isHomePage = location.pathname === '/';
+  const isHomePage = window.location.pathname === '/';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -21,14 +18,7 @@ const Header = () => {
   const scrollToSection = (sectionId: string) => {
     if (!isHomePage) {
       // If not on home page, navigate to home first
-      navigate('/');
-      // Use setTimeout to wait for navigation to complete
-      setTimeout(() => {
-        const element = document.getElementById(sectionId);
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth' });
-        }
-      }, 100);
+      window.location.href = `/#${sectionId}`;
     } else {
       // If on home page, scroll directly
       const element = document.getElementById(sectionId);

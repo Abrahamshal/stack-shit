@@ -325,21 +325,13 @@ const Success = () => {
                   </div>
                 )}
 
-                <div className="flex justify-center gap-4 pt-4">
+                <div className="flex justify-center pt-4">
                   <Button
                     onClick={() => navigate('/')}
-                    variant="outline"
                     size="lg"
                   >
                     <Home className="h-4 w-4 mr-2" />
                     Back to Home
-                  </Button>
-                  <Button
-                    onClick={() => navigate('/calculator')}
-                    size="lg"
-                  >
-                    <FileJson className="h-4 w-4 mr-2" />
-                    Upload More Workflows
                   </Button>
                 </div>
               </div>

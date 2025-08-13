@@ -4,6 +4,19 @@ import admin from 'firebase-admin';
 // Initialize Firebase Admin SDK if not already initialized
 if (!admin.apps.length) {
   try {
+    // Check for required environment variables
+    const requiredEnvVars = [
+      'FIREBASE_PROJECT_ID',
+      'FIREBASE_CLIENT_EMAIL', 
+      'FIREBASE_PRIVATE_KEY',
+      'FIREBASE_STORAGE_BUCKET'
+    ];
+    
+    const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
+    if (missingVars.length > 0) {
+      throw new Error(`Missing required environment variables: ${missingVars.join(', ')}`);
+    }
+    
     admin.initializeApp({
       credential: admin.credential.cert({
         projectId: process.env.FIREBASE_PROJECT_ID,
@@ -12,8 +25,10 @@ if (!admin.apps.length) {
       }),
       storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
     });
+    console.log('Firebase Admin SDK initialized successfully');
   } catch (error) {
-    console.error('Firebase admin initialization error:', error);
+    console.error('Firebase admin initialization error:', error.message);
+    console.error('Full error:', error);
   }
 }
 
@@ -38,8 +53,33 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  // Check for Firebase configuration early
+  const requiredEnvVars = [
+    'FIREBASE_PROJECT_ID',
+    'FIREBASE_CLIENT_EMAIL', 
+    'FIREBASE_PRIVATE_KEY',
+    'FIREBASE_STORAGE_BUCKET'
+  ];
+  
+  const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
+  if (missingVars.length > 0) {
+    console.error(`Missing Firebase environment variables: ${missingVars.join(', ')}`);
+    return res.status(500).json({ 
+      error: 'Firebase Storage not configured',
+      details: `Missing environment variables: ${missingVars.join(', ')}. Please configure these in Vercel project settings.`,
+      missingVars
+    });
+  }
+
   try {
     const { files, customerEmail, orderId } = req.body;
+
+    console.log('Upload request received:', {
+      filesCount: files?.length,
+      customerEmail,
+      orderId,
+      hasAdminApp: !!admin.apps.length
+    });
 
     if (!files || !Array.isArray(files) || files.length === 0) {
       return res.status(400).json({ error: 'No files provided' });
@@ -47,6 +87,15 @@ export default async function handler(req, res) {
 
     if (!customerEmail) {
       return res.status(400).json({ error: 'Customer email is required' });
+    }
+
+    // Check if Firebase Admin is properly initialized
+    if (!admin.apps.length) {
+      console.error('Firebase Admin SDK not initialized');
+      return res.status(500).json({ 
+        error: 'Firebase configuration error',
+        details: 'Firebase Admin SDK is not initialized. Check environment variables.'
+      });
     }
 
     console.log(`Uploading ${files.length} files for customer: ${customerEmail}`);

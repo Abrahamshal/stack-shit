@@ -5,6 +5,9 @@
     },
     "api/retrieve-session.js": {
       "maxDuration": 10
+    },
+    "api/upload-files.js": {
+      "maxDuration": 30
     }
   },
   "rewrites": [

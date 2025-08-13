@@ -73,33 +73,9 @@ export default async function handler(req, res) {
       quantity: 1,
     });
 
-    // Add environment setup as one-time charge if selected
-    if (metadata?.environmentSetup === 'true' || metadata?.selectedUpsell === 'environment') {
-      // Add $500 environment setup as a one-time charge
-      const envPriceId = process.env.STRIPE_ENVIRONMENT_PRICE_ID;
-      if (envPriceId) {
-        lineItems.push({
-          price: envPriceId,
-          quantity: 1,
-        });
-      } else {
-        lineItems.push({
-          price_data: {
-            currency: 'usd',
-            product_data: {
-              name: 'n8n Environment Setup',
-              description: 'Complete server setup & configuration',
-            },
-            unit_amount: 50000, // $500 in cents
-          },
-          quantity: 1,
-        });
-      }
-    }
-    
     // Add subscription plan if selected
     let hasSubscription = false;
-    if (metadata?.selectedPlan === 'maintenance' || metadata?.selectedUpsell === 'management') {
+    if (metadata?.selectedPlan === 'maintenance') {
       hasSubscription = true;
       
       // Use Maintenance Plan price ID
@@ -111,8 +87,8 @@ export default async function handler(req, res) {
           price_data: {
             currency: 'usd',
             product_data: {
-              name: 'Ongoing Management',
-              description: '24/7 monitoring & maintenance',
+              name: 'Maintenance Package',
+              description: '24/7 monitoring, updates & support',
             },
             unit_amount: 20000, // $200 in cents
             recurring: {

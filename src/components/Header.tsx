@@ -30,9 +30,8 @@ const Header = () => {
   };
 
   // Simplified navigation for $100M brand focus
-  const navItems = [
-    { label: 'Results', href: 'testimonials' },
-    { label: 'FAQ', href: 'faq' },
+  const navItems: { label: string; href: string }[] = [
+    // Links removed per request
   ];
 
   return (
@@ -54,16 +53,6 @@ const Header = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8" aria-label="Main navigation">
-            {(!isScrolled || !isHomePage) && navItems.map((item) => (
-              <button
-                key={item.href}
-                onClick={() => scrollToSection(item.href)}
-                className={`${isHomePage && !isScrolled ? 'text-white hover:text-gold' : 'text-foreground hover:text-primary'} transition-colors font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-md px-2 py-1`}
-                aria-label={`Navigate to ${item.label} section`}
-              >
-                {item.label}
-              </button>
-            ))}
             <Button 
               variant="cta" 
               size="lg"
@@ -94,16 +83,6 @@ const Header = () => {
             className="md:hidden bg-white/95 backdrop-blur-md rounded-lg mt-2 p-4 shadow-soft"
             aria-label="Mobile navigation"
           >
-            {navItems.map((item) => (
-              <button
-                key={item.href}
-                onClick={() => scrollToSection(item.href)}
-                className="block w-full text-left py-3 text-foreground hover:text-primary transition-colors font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-md px-2"
-                aria-label={`Navigate to ${item.label} section`}
-              >
-                {item.label}
-              </button>
-            ))}
             <Button 
               variant="cta" 
               size="lg" 

@@ -220,15 +220,7 @@ const EnhancedQuoteCalculator = () => {
   const canContinue = analysisResults && analysisResults.workflows.length > 0;
 
   // Scroll to section when state changes
-  useEffect(() => {
-    if (sectionRef.current) {
-      const yOffset = -100; // Offset for fixed header
-      const element = sectionRef.current;
-      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
-      
-      window.scrollTo({ top: y, behavior: 'smooth' });
-    }
-  }, [showSavings, showNodeBreakdown, showZapierSelectorOverride, analysisResults]);
+  // Removed auto-scroll on state change - was causing unwanted scrolling on page load
 
   // Debug effect to log state changes
   useEffect(() => {

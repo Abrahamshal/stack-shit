@@ -131,10 +131,10 @@ const OrderReviewFinal = () => {
     let upsellCost = 0;
     let upsellMonthly = 0;
     
-    if (selectedUpsell === 'environment') {
-      upsellCost = 500;
-    } else if (selectedUpsell === 'management') {
+    if (selectedUpsell === 'maintenance') {
       upsellMonthly = 200;
+    } else if (selectedUpsell === 'development') {
+      upsellMonthly = 499;
     }
     
     const oneTimeTotal = workflowCost + upsellCost;
@@ -381,31 +381,31 @@ const OrderReviewFinal = () => {
                   <h4 className="font-medium mb-4">Add-on Services</h4>
                   <RadioGroup value={selectedUpsell} onValueChange={setSelectedUpsell} className="space-y-3">
                     <div className="flex items-start space-x-2">
-                      <RadioGroupItem value="environment" id="environment" className="mt-1" />
-                      <Label htmlFor="environment" className="flex-1 cursor-pointer">
+                      <RadioGroupItem value="maintenance" id="maintenance" className="mt-1" />
+                      <Label htmlFor="maintenance" className="flex-1 cursor-pointer">
                         <div className="flex justify-between">
                           <div>
-                            <div className="font-medium">n8n Environment Setup</div>
+                            <div className="font-medium">Maintenance Package</div>
                             <div className="text-sm text-muted-foreground">
-                              Complete server setup & configuration
+                              24/7 monitoring, updates & support
                             </div>
                           </div>
-                          <span className="font-semibold text-nowrap ml-2">$500</span>
+                          <span className="font-semibold text-nowrap ml-2">$200/mo</span>
                         </div>
                       </Label>
                     </div>
                     
                     <div className="flex items-start space-x-2">
-                      <RadioGroupItem value="management" id="management" className="mt-1" />
-                      <Label htmlFor="management" className="flex-1 cursor-pointer">
+                      <RadioGroupItem value="development" id="development" className="mt-1" />
+                      <Label htmlFor="development" className="flex-1 cursor-pointer">
                         <div className="flex justify-between">
                           <div>
-                            <div className="font-medium">Ongoing Management</div>
+                            <div className="font-medium">Development Package</div>
                             <div className="text-sm text-muted-foreground">
-                              24/7 monitoring & maintenance
+                              Everything in Maintenance + 10hrs/mo development
                             </div>
                           </div>
-                          <span className="font-semibold text-nowrap ml-2">$200/mo</span>
+                          <span className="font-semibold text-nowrap ml-2">$499/mo</span>
                         </div>
                       </Label>
                     </div>
@@ -419,12 +419,22 @@ const OrderReviewFinal = () => {
                   </RadioGroup>
                 </div>
 
-                {selectedUpsell === 'environment' && (
+                {selectedUpsell === 'maintenance' && (
                   <>
                     <Separator />
                     <div className="flex justify-between">
-                      <span className="font-medium">Environment Setup</span>
-                      <span className="font-semibold">$500</span>
+                      <span className="font-medium">Maintenance Package</span>
+                      <span className="font-semibold">$200/mo</span>
+                    </div>
+                  </>
+                )}
+                
+                {selectedUpsell === 'development' && (
+                  <>
+                    <Separator />
+                    <div className="flex justify-between">
+                      <span className="font-medium">Development Package</span>
+                      <span className="font-semibold">$499/mo</span>
                     </div>
                   </>
                 )}
@@ -437,10 +447,10 @@ const OrderReviewFinal = () => {
                     <span className="font-bold">Total (One-time)</span>
                     <span className="font-bold">${prices.oneTimeTotal}</span>
                   </div>
-                  {selectedUpsell === 'management' && (
+                  {(selectedUpsell === 'maintenance' || selectedUpsell === 'development') && (
                     <div className="flex justify-between text-sm text-muted-foreground">
-                      <span>Plus monthly</span>
-                      <span>$200/mo</span>
+                      <span>Plus monthly subscription</span>
+                      <span>{selectedUpsell === 'maintenance' ? '$200/mo' : '$499/mo'}</span>
                     </div>
                   )}
                 </div>

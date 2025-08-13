@@ -51,10 +51,8 @@ const StripeCheckout = () => {
       setOrderSummary(checkoutData);
       
       // Determine the final amount and selected plan
-      // Map 'management' upsell to 'maintenance' plan for Stripe
-      // 'environment' is a one-time charge, not a subscription
-      const selectedPlan = checkoutData.selectedUpsell === 'management' ? 'maintenance' : 
-                          checkoutData.selectedUpsell === 'development' ? 'development' : 'none';
+      // Pass the selected upsell directly (maintenance or development)
+      const selectedPlan = checkoutData.selectedUpsell || 'none';
       
       const finalAmount = checkoutData.oneTimeTotal || checkoutData.workflowCost || checkoutData.amount;
 
@@ -216,17 +214,17 @@ const StripeCheckout = () => {
                     </span>
                   </div>
                   
-                  {orderSummary.selectedUpsell === 'environment' && (
+                  {orderSummary.selectedUpsell === 'maintenance' && (
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">n8n Environment Setup</span>
-                      <span className="font-medium">$500</span>
+                      <span className="text-muted-foreground">Maintenance Package (Monthly)</span>
+                      <span className="font-medium">$200/mo</span>
                     </div>
                   )}
                   
-                  {orderSummary.selectedUpsell === 'management' && (
+                  {orderSummary.selectedUpsell === 'development' && (
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Ongoing Management (Monthly)</span>
-                      <span className="font-medium">$200/mo</span>
+                      <span className="text-muted-foreground">Development Package (Monthly)</span>
+                      <span className="font-medium">$499/mo</span>
                     </div>
                   )}
                   
@@ -235,9 +233,9 @@ const StripeCheckout = () => {
                       <span>Total Due Now</span>
                       <span>${orderSummary.oneTimeTotal || orderSummary.amount || 0}</span>
                     </div>
-                    {orderSummary.selectedUpsell === 'management' && (
+                    {(orderSummary.selectedUpsell === 'maintenance' || orderSummary.selectedUpsell === 'development') && (
                       <div className="text-sm text-muted-foreground mt-1">
-                        Plus $200/month starting in 30 days
+                        Plus {orderSummary.selectedUpsell === 'maintenance' ? '$200' : '$499'}/month starting in 30 days
                       </div>
                     )}
                   </div>

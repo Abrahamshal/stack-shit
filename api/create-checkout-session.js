@@ -1,6 +1,8 @@
 // Vercel Serverless Function for creating Stripe checkout sessions (Embedded mode)
 import Stripe from 'stripe';
 
+// Environment variable DOMAIN_URL should be set to your custom domain (e.g., https://yourdomain.com)
+// This ensures Stripe redirects to your custom domain instead of the Vercel URL
 export default async function handler(req, res) {
   // Enable CORS
   res.setHeader('Access-Control-Allow-Credentials', true);
@@ -158,7 +160,7 @@ export default async function handler(req, res) {
           }
         },
         // Remove payment_intent_data - not allowed in subscription mode
-        return_url: `${process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:8080'}/success?session_id={CHECKOUT_SESSION_ID}`,
+        return_url: `${process.env.DOMAIN_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:8080')}/success?session_id={CHECKOUT_SESSION_ID}`,
         billing_address_collection: 'required',
         phone_number_collection: {
           enabled: true
@@ -179,7 +181,7 @@ export default async function handler(req, res) {
         payment_method_types: ['card'],
         line_items: lineItems,
         mode: 'payment',
-        return_url: `${process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:8080'}/success?session_id={CHECKOUT_SESSION_ID}`,
+        return_url: `${process.env.DOMAIN_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:8080')}/success?session_id={CHECKOUT_SESSION_ID}`,
         billing_address_collection: 'required',
         phone_number_collection: {
           enabled: true

@@ -73,6 +73,7 @@ export default async function handler(req, res) {
 
     // Server-side price validation
     const PRICE_PER_WORKFLOW = 40; // $40 per workflow
+    const MINIMUM_ORDER = 150; // $150 minimum order
     const workflowCount = parseInt(metadata?.workflowCount || '0');
     
     // Calculate expected base price
@@ -85,6 +86,17 @@ export default async function handler(req, res) {
     // Validate the amount (convert cents to dollars for comparison)
     const requestedAmount = amount / 100;
     const tolerance = 1; // Allow $1 difference for minor adjustments
+    
+    // Check minimum order amount
+    if (requestedAmount < MINIMUM_ORDER) {
+      console.error('Order below minimum:', {
+        requested: requestedAmount,
+        minimum: MINIMUM_ORDER
+      });
+      return res.status(400).json({ 
+        error: `Minimum order amount is $${MINIMUM_ORDER}. Your order total is $${requestedAmount}.`
+      });
+    }
     
     if (Math.abs(requestedAmount - expectedTotal) > tolerance && workflowCount > 0) {
       console.error('Price validation failed:', {

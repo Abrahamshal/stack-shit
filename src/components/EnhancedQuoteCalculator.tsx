@@ -14,6 +14,8 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useNavigate } from 'react-router-dom';
 // Removed Stripe imports - navigation only now
 
+const MINIMUM_ORDER = 150; // $150 minimum order
+
 const EnhancedQuoteCalculator = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -323,12 +325,16 @@ const EnhancedQuoteCalculator = () => {
                             size="lg"
                             variant="default"
                             className="w-full"
-                            disabled={!canContinue || isPreparingCheckout}
+                            disabled={!canContinue || isPreparingCheckout || estimatedPrice < MINIMUM_ORDER}
                           >
                             {isPreparingCheckout ? (
                               <>
                                 <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
                                 Preparing Checkout...
+                              </>
+                            ) : estimatedPrice < MINIMUM_ORDER ? (
+                              <>
+                                Minimum Order: ${MINIMUM_ORDER} (Add ${MINIMUM_ORDER - estimatedPrice} more)
                               </>
                             ) : (
                               <>
@@ -466,7 +472,15 @@ const EnhancedQuoteCalculator = () => {
                           </div>
                           <div className="text-right">
                             <p className="text-2xl font-bold text-primary">${estimatedPrice}</p>
-                            <p className="text-sm text-muted-foreground">Migration Cost</p>
+                            <p className="text-sm text-muted-foreground">
+                              {estimatedPrice < MINIMUM_ORDER ? (
+                                <span className="text-amber-600">
+                                  Min. order: ${MINIMUM_ORDER}
+                                </span>
+                              ) : (
+                                'Migration Cost'
+                              )}
+                            </p>
                           </div>
                         </div>
                       </div>
@@ -508,12 +522,16 @@ const EnhancedQuoteCalculator = () => {
                         size="lg"
                         variant="default"
                         className="flex-1"
-                        disabled={isPreparingCheckout}
+                        disabled={isPreparingCheckout || estimatedPrice < MINIMUM_ORDER}
                       >
                         {isPreparingCheckout ? (
                           <>
                             <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
                             Preparing Checkout...
+                          </>
+                        ) : estimatedPrice < MINIMUM_ORDER ? (
+                          <>
+                            Add ${MINIMUM_ORDER - estimatedPrice} to Meet Minimum
                           </>
                         ) : (
                           <>
@@ -560,12 +578,16 @@ const EnhancedQuoteCalculator = () => {
                   onClick={handleProceedToCheckout}
                   size="lg"
                   variant="default"
-                  disabled={!canContinue || isPreparingCheckout}
+                  disabled={!canContinue || isPreparingCheckout || estimatedPrice < MINIMUM_ORDER}
                 >
                   {isPreparingCheckout ? (
                     <>
                       <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
                       Preparing Checkout...
+                    </>
+                  ) : estimatedPrice < MINIMUM_ORDER ? (
+                    <>
+                      Minimum Order: ${MINIMUM_ORDER} (Add ${MINIMUM_ORDER - estimatedPrice} more)
                     </>
                   ) : (
                     <>

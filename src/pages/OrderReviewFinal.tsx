@@ -5,13 +5,15 @@ import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { 
   ArrowLeft, 
   CheckCircle,
   FileJson,
   Trash2,
   Zap,
-  Shield
+  Shield,
+  AlertCircle
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import HeaderFixed from '@/components/HeaderFixed';
@@ -124,6 +126,8 @@ const OrderReviewFinal = () => {
     return filename.replace(/\.(json|blueprint)$/i, '').replace(/[-_]/g, ' ');
   };
 
+  const MINIMUM_ORDER = 150; // $150 minimum order
+  
   const calculatePrices = () => {
     const pricePerWorkflow = 40;
     const workflowCost = selectedWorkflows.length * pricePerWorkflow;
@@ -455,18 +459,31 @@ const OrderReviewFinal = () => {
                   )}
                 </div>
 
+                {/* Minimum Order Alert */}
+                {prices.oneTimeTotal < MINIMUM_ORDER && selectedWorkflows.length > 0 && (
+                  <Alert className="border-amber-200 bg-amber-50">
+                    <AlertCircle className="h-4 w-4 text-amber-600" />
+                    <AlertDescription className="text-amber-800">
+                      Minimum order amount is $150. Add {Math.ceil((MINIMUM_ORDER - prices.oneTimeTotal) / 40)} more workflow{Math.ceil((MINIMUM_ORDER - prices.oneTimeTotal) / 40) !== 1 ? 's' : ''} to proceed.
+                    </AlertDescription>
+                  </Alert>
+                )}
+
                 {/* Proceed to Payment Button */}
                 <Button 
                   onClick={handleProceedToPayment}
                   className="w-full"
                   size="lg"
-                  disabled={selectedWorkflows.length === 0}
+                  disabled={selectedWorkflows.length === 0 || prices.oneTimeTotal < MINIMUM_ORDER}
                 >
-                  Proceed to Payment
+                  {prices.oneTimeTotal < MINIMUM_ORDER ? 
+                    `Add $${MINIMUM_ORDER - prices.oneTimeTotal} to Meet Minimum` : 
+                    'Proceed to Payment'
+                  }
                 </Button>
 
                 <p className="text-xs text-center text-muted-foreground">
-                  Secure payment powered by Stripe
+                  Secure payment powered by Stripe • Minimum order: $150
                 </p>
               </CardContent>
             </Card>

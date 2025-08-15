@@ -3,7 +3,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { CheckCircle, Upload, Loader2, Home, FileJson } from 'lucide-react';
+import { CheckCircle, Upload, Loader2, Home } from 'lucide-react';
 import { db } from '@/lib/firebase';
 import { collection, addDoc } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
@@ -134,11 +134,11 @@ const Success = () => {
             console.log('Preparing files for server upload...');
             
             // Create order ID first for reference
-            const tempOrderId = `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+            const tempOrderId = `order_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
             
             // Call the server-side API to upload files
             console.log('Calling server API at /api/upload-files');
-            console.log('Files being sent:', uploadedFiles.map(f => ({ name: f.name, size: f.size, hasData: !!f.data })));
+            console.log('Files being sent:', uploadedFiles.map((f: any) => ({ name: f.name, size: f.size, hasData: !!f.data })));
             
             const uploadResponse = await fetch('/api/upload-files', {
               method: 'POST',
@@ -164,12 +164,12 @@ const Success = () => {
             console.log('Server upload successful:', uploadResult);
             
             // Extract successfully uploaded files
-            uploadedFileRefs = uploadResult.uploadedFiles.filter(f => !f.error);
+            uploadedFileRefs = uploadResult.uploadedFiles.filter((f: any) => !f.error);
             
             console.log(`Successfully uploaded ${uploadedFileRefs.length} of ${uploadedFiles.length} files`);
             
             // Log any failed uploads
-            const failedUploads = uploadResult.uploadedFiles.filter(f => f.error);
+            const failedUploads = uploadResult.uploadedFiles.filter((f: any) => f.error);
             if (failedUploads.length > 0) {
               console.warn('Some files failed to upload:', failedUploads);
             }
@@ -335,7 +335,7 @@ const Success = () => {
                     Back to Home
                   </Button>
                   <Button
-                    onClick={() => window.location.href = 'https://convert2n8n.com/onboarding'}
+                    onClick={() => window.location.href = 'https://links.convert2n8n.com/onboarding'}
                     size="lg"
                     className="bg-primary hover:bg-primary/90"
                   >

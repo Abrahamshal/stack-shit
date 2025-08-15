@@ -48,7 +48,7 @@ const Header = () => {
             className="font-sora font-bold text-2xl text-gradient cursor-pointer"
             onClick={() => scrollToSection('hero')}
           >
-            Stack Shift
+            Convert2n8n
           </div>
 
           {/* Desktop Navigation */}

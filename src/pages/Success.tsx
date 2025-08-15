@@ -325,13 +325,21 @@ const Success = () => {
                   </div>
                 )}
 
-                <div className="flex justify-center pt-4">
+                <div className="flex justify-center gap-4 pt-4">
                   <Button
                     onClick={() => navigate('/')}
+                    variant="outline"
                     size="lg"
                   >
                     <Home className="h-4 w-4 mr-2" />
                     Back to Home
+                  </Button>
+                  <Button
+                    onClick={() => window.location.href = 'https://convert2n8n.com/onboarding'}
+                    size="lg"
+                    className="bg-primary hover:bg-primary/90"
+                  >
+                    Start Onboarding →
                   </Button>
                 </div>
               </div>
@@ -352,7 +360,7 @@ const Success = () => {
                     Back to Home
                   </Button>
                   <Button
-                    onClick={() => window.location.href = 'mailto:support@flowstrate.com'}
+                    onClick={() => window.location.href = 'mailto:support@convert2n8n.com'}
                   >
                     Contact Support
                   </Button>

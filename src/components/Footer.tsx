@@ -18,7 +18,7 @@ const Footer = () => {
           {/* Brand */}
           <div className="md:col-span-2">
             <div className="font-sora font-bold text-2xl text-gradient mb-4">
-              Stack Shift
+              Convert2n8n
             </div>
             <p className="text-muted-foreground leading-relaxed mb-6 max-w-md">
               Professional workflow migration and automation strategy services. 
@@ -30,7 +30,7 @@ const Footer = () => {
                 href="mailto:hello@stackshift.com" 
                 className="hover:text-primary transition-colors"
               >
-                hello@stackshift.com
+                hello@convert2n8n.com
               </a>
             </div>
           </div>
@@ -104,7 +104,7 @@ const Footer = () => {
         <div className="border-t border-muted pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="text-muted-foreground text-sm">
-              © {currentYear} Stack Shift. All rights reserved.
+              © {currentYear} Convert2n8n. All rights reserved.
             </div>
             
             <div className="text-muted-foreground text-sm text-center md:text-right">

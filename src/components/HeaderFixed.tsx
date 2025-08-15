@@ -28,7 +28,7 @@ const HeaderFixed = () => {
             className="font-bold text-2xl cursor-pointer"
             onClick={() => handleNavigation('/')}
           >
-            Stack Shift
+            Convert2n8n
           </div>
 
           {/* Desktop Navigation */}

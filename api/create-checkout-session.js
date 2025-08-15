@@ -6,9 +6,8 @@ import Stripe from 'stripe';
 export default async function handler(req, res) {
   // Configure CORS - ONLY allow your domain
   const allowedOrigins = [
-    'https://stack-shit.vercel.app',
-    'https://stackshift.com',
-    'https://www.stackshift.com',
+    'https://convert2n8n.com',
+    'https://www.convert2n8n.com',
     process.env.DOMAIN_URL,
     // Only allow localhost in development
     process.env.NODE_ENV === 'development' ? 'http://localhost:8080' : null

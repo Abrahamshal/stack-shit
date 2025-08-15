@@ -26,13 +26,13 @@ const Terms = () => {
           
           <h2>1. Agreement to Terms</h2>
           <p>
-            By accessing or using Stack Shift's services, you agree to be bound by these Terms of Service 
+            By accessing or using Convert2n8n's services, you agree to be bound by these Terms of Service 
             and all applicable laws and regulations.
           </p>
 
           <h2>2. Services Description</h2>
           <p>
-            Stack Shift provides workflow migration, automation strategy consulting, and managed hosting 
+            Convert2n8n provides workflow migration, automation strategy consulting, and managed hosting 
             services for n8n automation platform.
           </p>
 
@@ -50,13 +50,13 @@ const Terms = () => {
 
           <h2>5. Limitation of Liability</h2>
           <p>
-            Stack Shift shall not be liable for any indirect, incidental, special, consequential, or 
+            Convert2n8n shall not be liable for any indirect, incidental, special, consequential, or 
             punitive damages resulting from your use of our services.
           </p>
 
           <h2>6. Contact Information</h2>
           <p>
-            For questions about these Terms, please contact us at hello@stackshift.com
+            For questions about these Terms, please contact us at hello@convert2n8n.com
           </p>
         </div>
       </div>

@@ -56,7 +56,7 @@ const Privacy = () => {
 
           <h2>6. Contact Us</h2>
           <p>
-            If you have any questions about this Privacy Policy, please contact us at hello@stackshift.com
+            If you have any questions about this Privacy Policy, please contact us at hello@convert2n8n.com
           </p>
         </div>
       </div>

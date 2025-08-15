@@ -74,7 +74,7 @@ const FAQ = () => {
               href="mailto:hello@stackshift.com"
               className="text-primary hover:text-primary-light font-semibold transition-colors"
             >
-              Contact us at hello@stackshift.com
+              Contact us at hello@convert2n8n.com
             </a>
           </div>
         </div>

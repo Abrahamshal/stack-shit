@@ -33,13 +33,25 @@ if (!admin.apps.length) {
 }
 
 export default async function handler(req, res) {
-  // Enable CORS
-  res.setHeader('Access-Control-Allow-Credentials', true);
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+  // Configure CORS - ONLY allow your domain
+  const allowedOrigins = [
+    'https://stack-shit.vercel.app',
+    'https://stackshift.com',
+    'https://www.stackshift.com',
+    process.env.DOMAIN_URL,
+    // Only allow localhost in development
+    process.env.NODE_ENV === 'development' ? 'http://localhost:8080' : null
+  ].filter(Boolean);
+  
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Credentials', true);
+  }
+  res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
   res.setHeader(
     'Access-Control-Allow-Headers',
-    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+    'Content-Type'
   );
 
   // Handle preflight requests
@@ -129,17 +141,18 @@ export default async function handler(req, res) {
           },
         });
 
-        // Make the file publicly accessible (optional - remove if you want private files)
-        await fileRef.makePublic();
-
-        // Get the public URL
-        const publicUrl = `https://storage.googleapis.com/${process.env.FIREBASE_STORAGE_BUCKET}/${filePath}`;
+        // File remains private - no public access
+        // Generate a signed URL for internal access only (expires in 7 days)
+        const [signedUrl] = await fileRef.getSignedUrl({
+          action: 'read',
+          expires: Date.now() + 7 * 24 * 60 * 60 * 1000, // 7 days
+        });
 
         uploadedFiles.push({
           name: file.name,
           size: file.size,
           type: file.type || 'application/json',
-          url: publicUrl,
+          url: signedUrl, // Temporary signed URL for internal use only
           path: filePath,
           uploadedAt: new Date().toISOString(),
         });

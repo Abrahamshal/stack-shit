@@ -2,13 +2,25 @@
 import Stripe from 'stripe';
 
 export default async function handler(req, res) {
-  // Enable CORS
-  res.setHeader('Access-Control-Allow-Credentials', true);
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+  // Configure CORS - ONLY allow your domain
+  const allowedOrigins = [
+    'https://stack-shit.vercel.app',
+    'https://stackshift.com',
+    'https://www.stackshift.com',
+    process.env.DOMAIN_URL,
+    // Only allow localhost in development
+    process.env.NODE_ENV === 'development' ? 'http://localhost:8080' : null
+  ].filter(Boolean);
+  
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Credentials', true);
+  }
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
   res.setHeader(
     'Access-Control-Allow-Headers',
-    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+    'Content-Type'
   );
 
   // Handle preflight requests
@@ -42,6 +54,13 @@ export default async function handler(req, res) {
       return res.status(400).json({ 
         error: 'Missing session_id parameter' 
       });
+    }
+
+    // Basic validation: Stripe session IDs follow a specific format
+    // This prevents arbitrary enumeration attempts
+    if (!session_id.startsWith('cs_') || session_id.length < 20) {
+      console.warn('Invalid session ID format attempted:', session_id.substring(0, 10));
+      return res.status(400).json({ error: 'Invalid session ID format' });
     }
 
     console.log('Retrieving session:', session_id);

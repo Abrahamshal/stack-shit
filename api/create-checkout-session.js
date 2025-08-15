@@ -4,13 +4,25 @@ import Stripe from 'stripe';
 // Environment variable DOMAIN_URL should be set to your custom domain (e.g., https://yourdomain.com)
 // This ensures Stripe redirects to your custom domain instead of the Vercel URL
 export default async function handler(req, res) {
-  // Enable CORS
-  res.setHeader('Access-Control-Allow-Credentials', true);
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+  // Configure CORS - ONLY allow your domain
+  const allowedOrigins = [
+    'https://stack-shit.vercel.app',
+    'https://stackshift.com',
+    'https://www.stackshift.com',
+    process.env.DOMAIN_URL,
+    // Only allow localhost in development
+    process.env.NODE_ENV === 'development' ? 'http://localhost:8080' : null
+  ].filter(Boolean);
+  
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Credentials', true);
+  }
+  res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
   res.setHeader(
     'Access-Control-Allow-Headers',
-    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+    'Content-Type'
   );
 
   // Handle preflight requests
@@ -57,6 +69,33 @@ export default async function handler(req, res) {
     if (typeof amount !== 'number' || amount <= 0) {
       return res.status(400).json({ 
         error: 'Invalid amount: must be a positive number' 
+      });
+    }
+
+    // Server-side price validation
+    const PRICE_PER_WORKFLOW = 40; // $40 per workflow
+    const workflowCount = parseInt(metadata?.workflowCount || '0');
+    
+    // Calculate expected base price
+    const expectedBasePrice = workflowCount * PRICE_PER_WORKFLOW;
+    
+    // For subscription plans, we only validate the base price
+    // The subscription amount is handled separately via environment variables
+    let expectedTotal = expectedBasePrice;
+    
+    // Validate the amount (convert cents to dollars for comparison)
+    const requestedAmount = amount / 100;
+    const tolerance = 1; // Allow $1 difference for minor adjustments
+    
+    if (Math.abs(requestedAmount - expectedTotal) > tolerance && workflowCount > 0) {
+      console.error('Price validation failed:', {
+        requested: requestedAmount,
+        expected: expectedTotal,
+        workflowCount,
+        selectedPlan: metadata?.selectedPlan
+      });
+      return res.status(400).json({ 
+        error: 'Invalid checkout amount. Please refresh and try again.'
       });
     }
 
@@ -248,17 +287,8 @@ export default async function handler(req, res) {
     } else {
       // Generic error - provide more details for debugging
       return res.status(500).json({ 
-        error: error.message || 'Failed to create checkout session',
-        type: error.type || 'Unknown',
-        code: error.code || 'unknown_error',
-        // Include debug info
-        debug: {
-          hasStripeKey: !!process.env.STRIPE_SECRET_KEY,
-          hasMaintenancePriceId: !!process.env.STRIPE_MAINTENANCE_PRICE_ID,
-          hasDevelopmentPriceId: !!process.env.STRIPE_DEVELOPMENT_PRICE_ID,
-          keyLength: process.env.STRIPE_SECRET_KEY ? process.env.STRIPE_SECRET_KEY.length : 0,
-          keyPrefix: process.env.STRIPE_SECRET_KEY ? process.env.STRIPE_SECRET_KEY.substring(0, 7) : 'not_set'
-        }
+        error: 'Failed to create checkout session. Please try again later.',
+        code: error.code || 'unknown_error'
       });
     }
   }

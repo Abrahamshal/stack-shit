@@ -30,32 +30,18 @@ export default defineConfig(({ mode }) => ({
   },
   build: {
     // Disable source maps in production for security
-    sourcemap: mode === 'development',
+    sourcemap: false,
     // Minify the code
     minify: 'terser',
     terserOptions: {
       compress: {
         // Remove console logs in production
-        drop_console: mode === 'production',
+        drop_console: true,
         drop_debugger: true,
-      },
-      mangle: {
-        // Obfuscate variable names
-        safari10: true,
       },
       format: {
         // Remove comments
         comments: false,
-      },
-    },
-    // Rollup options for better optimization
-    rollupOptions: {
-      output: {
-        // Manually chunk vendor libraries
-        manualChunks: {
-          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
-          'ui-vendor': ['@radix-ui/react-dialog', '@radix-ui/react-label', '@radix-ui/react-slot'],
-        },
       },
     },
   },

@@ -37,20 +37,21 @@ const Pricing = () => {
       popular: true
     },
     {
-      name: "Development Plan", 
-      price: "$499",
-      period: "/month",
-      description: "For growing automation needs",
+      name: "Custom Development", 
+      price: "Custom",
+      period: "pricing",
+      description: "Tailored automation solutions",
       features: [
-        "Everything in Maintenance Plan",
-        "Monthly development hours included",
-        "Priority SLA support",
-        "Advanced monitoring & alerts",
-        "Custom integrations",
-        "Dedicated support channel"
+        "Custom workflow development",
+        "API integrations & webhooks",
+        "Complex automation logic",
+        "Database design & optimization",
+        "Third-party service integration",
+        "Dedicated project management"
       ],
-      cta: "Get Started",
-      popular: false
+      cta: "Book a Call",
+      popular: false,
+      isCustom: true
     }
   ];
 
@@ -126,7 +127,11 @@ const Pricing = () => {
               <Button 
                 variant={plan.popular ? "cta" : "outline-light"}
                 className="w-full"
-                onClick={() => scrollToSection(plan.name === "Migration Package" ? "enhanced-quote-calculator" : "calendly")}
+                onClick={() => scrollToSection(
+                  plan.name === "Migration Package" ? "enhanced-quote-calculator" : 
+                  plan.isCustom ? "calendly" : 
+                  "calendly"
+                )}
               >
                 {plan.cta}
                 <ArrowRight size={16} className="ml-2" />

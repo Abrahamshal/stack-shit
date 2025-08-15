@@ -161,33 +161,6 @@ export default async function handler(req, res) {
           quantity: 1,
         });
       }
-    } else if (metadata?.selectedPlan === 'development') {
-      hasSubscription = true;
-      const priceId = process.env.STRIPE_DEVELOPMENT_PRICE_ID;
-      if (!priceId) {
-        console.warn('STRIPE_DEVELOPMENT_PRICE_ID not configured, using price_data fallback');
-        // Fallback to price_data if environment variable not set
-        lineItems.push({
-          price_data: {
-            currency: 'usd',
-            product_data: {
-              name: 'Development Plan',
-              description: 'Everything in Maintenance plus 10 hours monthly development',
-            },
-            unit_amount: 49900, // $499 in cents
-            recurring: {
-              interval: 'month'
-            }
-          },
-          quantity: 1,
-        });
-      } else {
-        lineItems.push({
-          price: priceId,
-          quantity: 1,
-        });
-      }
-    }
     // For mixed cart (one-time + subscription), we need to use subscription mode
     // and add the one-time payment as an invoice item
     let sessionConfig;

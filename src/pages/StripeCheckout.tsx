@@ -260,21 +260,15 @@ const StripeCheckout = () => {
                     </div>
                   )}
                   
-                  {orderSummary.selectedUpsell === 'development' && (
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Development Package (Monthly)</span>
-                      <span className="font-medium">$499/mo</span>
-                    </div>
-                  )}
                   
                   <div className="pt-3 border-t">
                     <div className="flex justify-between text-lg font-bold">
                       <span>Total Due Now</span>
                       <span>${orderSummary.oneTimeTotal || orderSummary.amount || 0}</span>
                     </div>
-                    {(orderSummary.selectedUpsell === 'maintenance' || orderSummary.selectedUpsell === 'development') && (
+                    {orderSummary.selectedUpsell === 'maintenance' && (
                       <div className="text-sm text-muted-foreground mt-1">
-                        Plus {orderSummary.selectedUpsell === 'maintenance' ? '$200' : '$499'}/month starting in 30 days
+                        Plus $200/month starting in 30 days
                       </div>
                     )}
                   </div>

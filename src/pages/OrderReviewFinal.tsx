@@ -137,8 +137,6 @@ const OrderReviewFinal = () => {
     
     if (selectedUpsell === 'maintenance') {
       upsellMonthly = 200;
-    } else if (selectedUpsell === 'development') {
-      upsellMonthly = 499;
     }
     
     const oneTimeTotal = workflowCost + upsellCost;
@@ -399,20 +397,6 @@ const OrderReviewFinal = () => {
                       </Label>
                     </div>
                     
-                    <div className="flex items-start space-x-2">
-                      <RadioGroupItem value="development" id="development" className="mt-1" />
-                      <Label htmlFor="development" className="flex-1 cursor-pointer">
-                        <div className="flex justify-between">
-                          <div>
-                            <div className="font-medium">Development Package</div>
-                            <div className="text-sm text-muted-foreground">
-                              Everything in Maintenance + 10hrs/mo development
-                            </div>
-                          </div>
-                          <span className="font-semibold text-nowrap ml-2">$499/mo</span>
-                        </div>
-                      </Label>
-                    </div>
 
                     <div className="flex items-start space-x-2">
                       <RadioGroupItem value="none" id="none" className="mt-1" />
@@ -433,15 +417,6 @@ const OrderReviewFinal = () => {
                   </>
                 )}
                 
-                {selectedUpsell === 'development' && (
-                  <>
-                    <Separator />
-                    <div className="flex justify-between">
-                      <span className="font-medium">Development Package</span>
-                      <span className="font-semibold">$499/mo</span>
-                    </div>
-                  </>
-                )}
 
                 <Separator />
 
@@ -451,10 +426,10 @@ const OrderReviewFinal = () => {
                     <span className="font-bold">Total (One-time)</span>
                     <span className="font-bold">${prices.oneTimeTotal}</span>
                   </div>
-                  {(selectedUpsell === 'maintenance' || selectedUpsell === 'development') && (
+                  {selectedUpsell === 'maintenance' && (
                     <div className="flex justify-between text-sm text-muted-foreground">
                       <span>Plus monthly subscription</span>
-                      <span>{selectedUpsell === 'maintenance' ? '$200/mo' : '$499/mo'}</span>
+                      <span>$200/mo</span>
                     </div>
                   )}
                 </div>
